@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import useTabStatus from "./hooks/useTabStatus";
 import ExamPage from "./pages/testpage/ExamPage"
-let count = 2
+import { useDisableContextMenu } from "./hooks/useDisableContextMenu";
+import { useSelectionDisable } from "./hooks/useSelectionDisable";
+let count : number = 2
 function App() {
   const [examStatus, setexamStatus] = useState("continue");
   const tabStatus = useTabStatus();
+  useDisableContextMenu(); //disable right click on exam page
+  useSelectionDisable(); //disable text selection on exam page
   useEffect(() => {
     if (tabStatus === "false") {
       count--;
-      if (count === 0) {
+      if (count <= 0) {
         setexamStatus("cancelled");
       } else{
         setexamStatus("paused");

@@ -6,7 +6,7 @@ function QuetionList() {
     });
     
     return (
-        <div className="border border-2 w-[30%] p-[30px] bg-gray-200 flex flex-col gap-[2rem]">
+        <div className="border-2 w-[30%] p-[30px] bg-gray-200 flex flex-col gap-[2rem]">
             <h2 className=" text-xl text-slate-700">Questions: </h2>
             <ul className="flex flex-row flex-wrap gap-5">
                 {renderedCount}

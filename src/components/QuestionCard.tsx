@@ -18,7 +18,7 @@ function QuestionCard() {
     );
 
     return (
-        <div className="border border-2 w-[70%] p-[30px] bg-gray-200 flex flex-col gap-[1.5rem]">
+        <div className="border-2 w-[70%] p-[30px] bg-gray-200 flex flex-col gap-[1.5rem]">
             <h2 className=" text-xl text-slate-700">Question no. 5</h2>
             <h2 className=" text-xl">In C/C++ a dangling pointer is</h2>
             <ul className="flex flex-col gap-[1.5rem]">{renderedOptions}</ul>
