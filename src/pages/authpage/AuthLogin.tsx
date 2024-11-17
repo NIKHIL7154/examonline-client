@@ -1,5 +1,5 @@
 import React from 'react'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, UserButton,GoogleOneTap  } from '@clerk/clerk-react'
 
 //type Props = {}
 {/* <header>
@@ -17,6 +17,7 @@ const AuthLogin = () => {
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
             <h2 className="text-2xl font-bold mb-6 text-center">Login to Your Account</h2>
             <SignedOut>
+                <GoogleOneTap />
                 <SignInButton>
                 <button className="w-full flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
