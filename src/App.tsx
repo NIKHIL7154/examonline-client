@@ -23,7 +23,7 @@ function App() {
   return (
     <>
       {/* <h2 className=''>A new thing is going to happen</h2> */}
-      <div className="min-h-screen flex relative">
+      <div className="w-[100vw] h-[100vh] flex relative">
         
         {(() => {
           switch (examStatus) {
