@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useTabStatus from "./hooks/useTabStatus";
 // import ExamPage from "./pages/testpage/ExamPage"
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 let count = 2
 function App() {
   const [examStatus, setexamStatus] = useState("continue");
@@ -45,7 +46,7 @@ function App() {
         })()}
           
       </div> */}
-      <LoginPage/>
+      <RegisterPage/>
     </>
   )
 }

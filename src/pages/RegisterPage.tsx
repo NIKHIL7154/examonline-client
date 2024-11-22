@@ -1,16 +1,24 @@
 import { FaGoogle } from "react-icons/fa6";
 import { BsApple } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
-import lady from "../assets/unsure.svg";
+import man from "../assets/person_window.svg";
 
-function LoginPage() {
+function RegisterPage() {
     // f6faf4
     return <div className="min-h-screen flex justify-center items-center poppins-regular">
+
         <div className=" w-[1000px] h-[600px] flex ">
-            <div className="w-full p-10 flex flex-col items-center gap-[2.5rem] border-y border-l rounded-l-[15px]">
+
+            <div className="p-10 bg-[#f0faea] gap-[3rem] text-center w-full size-full rounded-[15px] flex flex-col justify-center items-center">
+
+                <img src={man} alt="lady" />
+                <p className="text-xl">Streamline your exam process and boost efficiency with our app. </p>
+            </div>
+
+            <div className="w-full p-10 flex flex-col items-center gap-[2.5rem] border-y border-r rounded-r-[15px]">
 
                 <div className="flex flex-col justify-center items-center w-[350px]">
-                    <h1 className="text-4xl poppins-medium tracking-normal">Welcome back!</h1>
+                    <h1 className="text-4xl poppins-medium tracking-normal">Get Started</h1>
                     <small className="break-words p-2 text-center poppins-medium text-slate-500">
                         Streamline your exam process and boost efficiency with our app. Start for free today!
                     </small>
@@ -18,9 +26,10 @@ function LoginPage() {
 
                 <form className="flex flex-col gap-3 w-[400px]">
                     <input className="border border-2 border-gray-500 px-6 py-2 rounded-[25px]" type="text" placeholder="Username" />
+                    <input className="border border-2 border-gray-500 px-6 py-2 rounded-[25px]" type="text" placeholder="Email" />
                     <input className="border border-2 border-gray-500 px-6 py-2 rounded-[25px]" type="text" placeholder="Password" />
-                    <button className="text-[0.8rem] poppins-medium ml-auto hover:text-gray-400"> Forgot Password?</button>
-                    <button type="submit" className="hover:bg-white hover:text-black hover:border-black border border-black bg-black text-white py-2 rounded-[25px]">Login</button>
+                    {/* <button className="text-[0.8rem] poppins-medium ml-auto hover:text-gray-400"> Forgot Password?</button> */}
+                    <button type="submit" className="hover:bg-white hover:text-black hover:border-black border border-black bg-black text-white py-2 rounded-[25px]">Sign Up</button>
                 </form>
 
 
@@ -30,27 +39,23 @@ function LoginPage() {
                         <small className="break-keep w-full poppins-medium text-slate-800  flex justify-center">or continue with</small>
                         <hr className="w-full border border-gray-300" />
                     </div>
-                    <div className="flex flex-row justify-center gap-[2rem]"> 
+                    <div className="flex flex-row justify-center gap-[2rem]">
                         <button className="h-[55px] w-[55px] flex border bg-black rounded-[50%] text-white hover:bg-white hover:text-black">
-                            <FaGoogle className="text-2xl my-auto mx-auto"/></button>
+                            <FaGoogle className="text-2xl my-auto mx-auto" /></button>
                         <button className="h-[55px] w-[55px] flex border bg-black rounded-[50%] text-white hover:bg-white hover:text-black">
-                            <BsApple className="text-2xl my-auto mx-auto"/></button>
+                            <BsApple className="text-2xl my-auto mx-auto" /></button>
                         <button className="h-[55px] w-[55px] flex border bg-black rounded-[50%] text-white hover:bg-white hover:text-black">
-                            <MdOutlineEmail className="text-3xl my-auto mx-auto"/></button>
+                            <MdOutlineEmail className="text-3xl my-auto mx-auto" /></button>
                     </div>
                 </div>
 
-                    <small>Not a member? <button className="hover:text-[#2d4d25] text-[#4d7743] font-medium">Register now</button></small>
+                <small>Already a member? <button className="hover:text-[#2d4d25] text-[#4d7743] font-medium">Sign in</button></small>
             </div>
-            <div className="p-10 bg-[#f0faea] gap-[3rem] text-center w-full size-full rounded-[15px] flex flex-col justify-center items-center">
 
-                <img src={lady} alt="lady" />
-                <p className="text-xl">Streamline your exam process and boost efficiency with our app. </p>
-            </div>
 
         </div>
 
     </div>
 }
 
-export default LoginPage;
+export default RegisterPage;
