@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .sized{
+    width: 100vw;
+    height: 100vh;
+  }
+  .flexed{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .bd{
+    border: 1px solid black;
+  }
+}

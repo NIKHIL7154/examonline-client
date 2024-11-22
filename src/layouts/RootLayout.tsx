@@ -19,7 +19,7 @@ export default function RootLayout() {
       
       
     >
-      <main className='w-[100vw] h-[100vh] flex justify-center items-center'>
+      <main className='sized flexed'>
         <Outlet />
       </main>
     </ClerkProvider>
