@@ -7,10 +7,29 @@ import { FormEvent, useState } from "react";
 function LoginPage() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [error, setError] = useState<string>("");
     // f6faf4
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        console.log(email, password);
+         // Regex for validating email
+         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+         // Regex for validating password (at least 8 characters, one number, one special character)
+         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+ 
+         if (!emailRegex.test(email)) {
+             setError("Please enter a valid email.");
+             console.log(error);
+             return;
+         }
+         
+         if (!passwordRegex.test(password)) {
+             setError("Password must be at least 8 characters, contain a number and a special character.");
+             console.log(error);
+             return;
+         }
+
+        console.log("Form submitted", email, password);
     };
 
     return <div className="min-h-screen flex justify-center items-center poppins-regular">
