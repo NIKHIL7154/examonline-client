@@ -2,7 +2,7 @@ function QuetionList() {
     const questionCount: number[] = [1, 2, 3, 4, 5, 6];
 
     const renderedCount = questionCount.map( (item ) => {
-        return <li className="text-xl py-1 px-3 border border-black hover:bg-slate-400 cursor-pointer"> {item} </li>
+        return <li key={item} className="text-xl py-1 px-3 border border-black hover:bg-slate-400 cursor-pointer"> {item} </li>
     });
     
     return (

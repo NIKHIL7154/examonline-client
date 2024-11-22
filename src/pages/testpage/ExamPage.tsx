@@ -1,12 +1,13 @@
-import React from 'react'
+// import React from 'react'
 import QuetionCard from '../../components/QuestionCard'
 import QuetionList from '../../components/QuestionList'
 
-type Props = {
+// type Props = {
   //define prop types here
-}
+// }
 
-const ExamPage = (props: Props) => {
+// const ExamPage = (props: Props) => {
+const ExamPage = () => {
   return (
     <div className='mx-auto my-auto flex flex-row w-[80%] h-[500px] gap-[20px]'>
       {/* hello */}
