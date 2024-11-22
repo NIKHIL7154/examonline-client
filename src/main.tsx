@@ -7,6 +7,7 @@ import DashboardLayout from './layouts/DashboardLayout'
 import IndexPage from './pages/indexpage/IndexPage'
 import { SignIn, SignUp } from '@clerk/clerk-react'
 import App from './App'
+import ErrorBoundary from './pages/ErrorBoundary'
 
 
 //whole app routes
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
         ],
       },
     ],
+    errorElement:<ErrorBoundary />
   },
 ],{
   future: {

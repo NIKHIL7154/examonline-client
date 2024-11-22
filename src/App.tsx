@@ -6,10 +6,10 @@ import { useSelectionDisable } from "./hooks/useSelectionDisable";
 let count : number = 2
 function App() {
   const [examStatus, setexamStatus] = useState("continue");
-  const tabStatus = useTabStatus();
-  useDisableContextMenu(); //disable right click on exam page
-  useSelectionDisable(); //disable text selection on exam page
-  useEffect(() => {
+  //const tabStatus = useTabStatus();
+  //useDisableContextMenu(); //disable right click on exam page
+  //useSelectionDisable(); //disable text selection on exam page
+  /* useEffect(() => {
     if (tabStatus === "false") {
       count--;
       if (count <= 0) {
@@ -19,11 +19,11 @@ function App() {
       }
       
     }
-  }, [tabStatus])
+  }, [tabStatus]) */
   return (
     <>
       {/* <h2 className=''>A new thing is going to happen</h2> */}
-      <div className="w-[100vw] h-[100vh] flex relative">
+      <div className="w-full flex relative">
         
         {(() => {
           switch (examStatus) {
