@@ -46,7 +46,7 @@ function App() {
         })()}
           
       </div> */}
-      <RegisterPage/>
+      <LoginPage/>
     </>
   )
 }
