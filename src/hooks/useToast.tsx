@@ -12,7 +12,7 @@ const useToast = () => {
         setToast({ message, type });
         setTimeout(() => {
             setToast(null);
-        }, 3000); // Toast will disappear after 3 seconds
+        }, 4000); // Toast will disappear after 4 seconds
     };
     const colors={
         success:"bg-green-500",

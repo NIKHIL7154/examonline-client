@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom'
 export default function IndexPage() {
   return (
     <div>
-      <h1>This is the index page</h1>
+      <h1>This is the landing page</h1>
       <div>
         <ul>
           <li>
-            <Link to="/register">Sign Up</Link>
+            <Link to="/auth">Sign Up</Link>
           </li>
           <li>
-            <Link to="/login">Sign In</Link>
+            <Link to="/auth">Sign In</Link>
           </li>
           
           <li>
