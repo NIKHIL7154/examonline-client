@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { RedirectToSignIn, useAuth } from '@clerk/clerk-react'
+import { useAuth } from '@clerk/clerk-react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { SignedIn, SignedOut} from '@clerk/clerk-react'
+import { SignedIn,  } from '@clerk/clerk-react'
 import NavHeader from '../components/navbar/NavHeader'
 import SideNav from '../components/sidebar/SideNav'
 
@@ -9,13 +9,13 @@ export default function DashboardLayout() {
   const { userId, isLoaded } = useAuth()
   const navigate = useNavigate()
 
-  console.log('test', userId)
+  //console.log('test', userId)
 
   React.useEffect(() => {
     if (isLoaded && !userId) {
-      navigate('/login')
+      navigate('/auth')
     }
-  }, [isLoaded])
+  }, [isLoaded, userId,navigate])
 
   if (!isLoaded) return 'Loading...'
 
@@ -33,9 +33,7 @@ export default function DashboardLayout() {
     </div>
     
   </SignedIn>
-  <SignedOut>
-    <RedirectToSignIn/>
-  </SignedOut>
+  
   
   </>
   
