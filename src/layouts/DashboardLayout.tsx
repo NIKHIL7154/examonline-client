@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import { SignedIn,  } from '@clerk/clerk-react'
 import NavHeader from '../components/navbar/NavHeader'
 import SideNav from '../components/sidebar/SideNav'
+import OverviewPage from '../pages/OverviewPage'
 
 export default function DashboardLayout() {
   const { userId, isLoaded } = useAuth()
@@ -25,7 +26,9 @@ export default function DashboardLayout() {
       <NavHeader/>
       <div className='w-full h-[90%] flex'>
         <SideNav/>
-        <div className='flex-grow h-full bg-slate-300 flexed '>{/* <Outlet /> */}{window.location.pathname} all the pages here</div>
+        <div className='flex-grow h-full bg-slate-300 flexed '>
+          <OverviewPage/>
+        </div>
         
       </div>
       
