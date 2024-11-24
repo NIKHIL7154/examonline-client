@@ -1,4 +1,5 @@
-const ProgressBar = ({ percentage }) => {
+import React from 'react';
+const ProgressBar: React.FC<{ percentage: number }> = ({ percentage }) => {
     return (
         <>
             <div className="w-full bg-slate-300 rounded-full h-4">

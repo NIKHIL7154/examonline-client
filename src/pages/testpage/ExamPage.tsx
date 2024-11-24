@@ -1,6 +1,6 @@
 
-import QuetionCard from '../../components/QuestionCard'
-import QuetionList from '../../components/QuestionList'
+import QuetionCard from '../../components/overview/QuestionCard'
+import QuetionList from '../../components/overview/QuestionList'
 
 
 
