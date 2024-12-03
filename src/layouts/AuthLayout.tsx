@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useAuth } from '@clerk/clerk-react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import Loader from '../components/Loader'
 
 
 
@@ -17,7 +18,7 @@ const AuthLayout = () => {
     }
   }, [isLoaded])
 
-  if (!isLoaded) return 'Loading...'
+  if (!isLoaded) return <Loader/>
   return (
     <div className='w-full h-full'>
         <Outlet />
