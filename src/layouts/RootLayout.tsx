@@ -20,7 +20,7 @@ export default function RootLayout() {
       
       
     >
-      <main className='sized flexed overflow-hidden'>
+      <main className='sized flexed overflow-hidden relative'>
         
         <Outlet />
       </main>

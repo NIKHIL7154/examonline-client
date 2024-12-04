@@ -4,23 +4,22 @@ import { useEffect, useRef } from "react"
 type Props = {
     item: {
         testId: string,
-  name: string,
-  questionSetId: number,
-  createdOn: string,
-  status: string,
+        name: string,
+        questionSetId: number,
+        createdOn: string,
+        status: string,
     }
-    ,delay:number
+    , delay: number
 }
 
 
 const TestCard = (props: Props) => {
-    const testCardRef=useRef(null);
-    const {testId, name, questionSetId, createdOn, status} = props.item
-    const {delay}=props;
-    console.log(delay,`${delay*4500}id`);
+    const testCardRef = useRef(null);
+    const { testId, name, questionSetId, createdOn, status } = props.item
+    const { delay } = props;
     useEffect(() => {
         if (testCardRef.current) {
-            gsap.fromTo(testCardRef.current, { opacity: 0, y: 200 }, { opacity: 1, y: 0, duration: 2, ease: "power3.out" ,delay:delay/1000});
+            gsap.fromTo(testCardRef.current, { opacity: 0, y: 200 }, { opacity: 1, y: 0, duration: 2, ease: "power3.out", delay: delay });
         }
     }, [delay]);
 
@@ -36,11 +35,10 @@ const TestCard = (props: Props) => {
             </div>
             <div className="flex justify-between">
                 <span
-                    className={`px-2 py-1 font-semibold rounded border ${
-                        status === 'Active' ? 'bg-green-200 border-green-400' :
-                        status === 'Completed' ? 'bg-gray-200 border-gray-400' :
-                        'bg-red-200 border-red-400'
-                    }`}
+                    className={`px-2 py-1 font-semibold rounded border ${status === 'Active' ? 'bg-green-200 border-green-400' :
+                            status === 'Completed' ? 'bg-gray-200 border-gray-400' :
+                                'bg-red-200 border-red-400'
+                        }`}
                 >
                     {status}
                 </span>
@@ -50,11 +48,11 @@ const TestCard = (props: Props) => {
     )
 }
 
-type LabelChildren={
-    children:React.ReactNode
+type LabelChildren = {
+    children: React.ReactNode
 }
-const Clabel=(props:LabelChildren)=>{
-    return(
+const Clabel = (props: LabelChildren) => {
+    return (
         <label className="text-black text-lg font-bold pb-2">{props.children}</label>
     )
 }

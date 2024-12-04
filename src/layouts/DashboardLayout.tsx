@@ -1,12 +1,15 @@
 import * as React from 'react'
 import { useAuth } from '@clerk/clerk-react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet,useNavigate } from 'react-router-dom'
 import { SignedIn,  } from '@clerk/clerk-react'
 import NavHeader from '../components/navbar/NavHeader'
 import SideNav from '../components/sidebar/SideNav'
-import TestsPage from '../pages/tests/TestsPage'
+
 import Loader from '../components/Loader'
-import TestsLayout from '../pages/tests/TestsLayout'
+
+import { ToastProvider } from '../hooks/ToastContext'
+import Toast from '../hooks/Toast'
+
 
 export default function DashboardLayout() {
   const { userId, isLoaded } = useAuth()
@@ -25,16 +28,21 @@ export default function DashboardLayout() {
 
   return (
     <><SignedIn>
+      <ToastProvider>
     <div className='sized'>
+
       <NavHeader/>
-      <div className='w-full h-[90%] flex'>
+
+      <div className='w-full h-[90%] flex overflow-hidden'>
+
         <SideNav/>
-        <div className='flex-grow h-full border-l-[0.5px] border-t-[0.5px] overflow-hidden'>{/* <Outlet /> */}
-          <TestsLayout/>
+        <div className='flex-grow h-full border-l-[0.5px] border-t-[0.5px] overflow-hidden'>
+          <Outlet />
         </div>
       </div>
     </div>
-    
+    <Toast/>
+    </ToastProvider>
   </SignedIn>
   
   

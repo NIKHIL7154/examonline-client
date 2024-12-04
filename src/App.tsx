@@ -7,43 +7,49 @@ import AuthPage from './pages/authpage/AuthPage'
 import LoginPage from './pages/authpage/LoginPage'
 
 import ErrorBoundary from './pages/ErrorBoundary'
+import TestsLayout from './pages/tests/TestsLayout'
 
 const router = createBrowserRouter([
-    {
-      element: <RootLayout />,
-      children: [
-        { path: '/', element: <IndexPage /> },
-        {
-          path: "auth", element: <AuthLayout />, children: [
-            {path:"",element:<AuthPage/>},
-          ]
-        }
-        , {
-          element: <DashboardLayout />,
-          path: 'app',
-          children: [
-            { path: '', element: <LoginPage /> },
-          ],
-        },
-      ],
-      errorElement: <ErrorBoundary />
-    },
-  ], {
-    future: {
-      v7_relativeSplatPath: true,
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_skipActionErrorRevalidation: true,
-    },
-  })
+  {
+    element: <RootLayout />,
+    children: [
+      { path: '/', element: <IndexPage /> },
+      {
+        path: "auth", element: <AuthLayout />, children: [
+          { path: "", element: <AuthPage /> },
+        ]
+      }
+      , {
+        element: <DashboardLayout />,
+        path: 'app',
+        children: [
+          { path: '', element: <div>overview page</div> /* add overview page here */ },
+          { path: 'tests', element: <TestsLayout /> },
+          { path: 'create', element: <div>Create test</div> /* add create test page here */ },
+          {path:"questions",element:<div>Questions</div> /*add questions page here*/},
+          {path:"settings",element:<div>Settings</div>}
+
+        ],
+      },
+    ],
+    errorElement: <ErrorBoundary />
+  },
+], {
+  future: {
+    v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_skipActionErrorRevalidation: true,
+  },
+})
 
 
 const App = () => {
   return (
     <RouterProvider router={router} future={{
-        v7_startTransition: true,
-      }} />
+      v7_startTransition: true,
+    }} />
   )
 }
 

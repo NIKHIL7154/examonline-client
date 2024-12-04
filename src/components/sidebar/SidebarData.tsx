@@ -14,12 +14,12 @@ export interface SidebarDataProps {
 const SidebarData = [
     {
         title: 'Create Test',
-        path: 'createtest',
+        path: 'create',
         icon: <AddIcon/>,
     },
     {
         title:"Overview",
-        path:"",
+        path:"/app",
         icon:<BarChartIcon/>
     },
     {
