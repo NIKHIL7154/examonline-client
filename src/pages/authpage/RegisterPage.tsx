@@ -5,7 +5,7 @@ import man from "../../assets/person_window.svg";
 import { useState, FormEvent } from "react";
 import {useClerk, useSignUp } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../../hooks/useToast";
+import { useToast } from "../../hooks/ToastContext";
 const RegisterPage: React.FC = () => {
     // f6faf4
     const [userName, setUserName] = useState<string>("");

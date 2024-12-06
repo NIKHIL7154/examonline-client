@@ -1,6 +1,6 @@
 
 import createTestIcon from '../../../assets/createtest.png'
-type Props = {}
+
 
 const CreateTestDialog = () => {
   return (

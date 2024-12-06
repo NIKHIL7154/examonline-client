@@ -24,7 +24,7 @@ const SideItem = (props: Props) => {
   return (
     <div onClick={handleMenuUpdate} className={`flex items-center w-[90%] h-[60px] cursor-pointer duration-400
 
-    ${action.menuItem===item.path?`bg-[#25fb1d] hover:bg-[##25fb1d]  text-white`:`bg-white text-black hover:bg-[#74ff6f3b]`}
+    ${action.menuItem===item.path?`bg-[#25fb1d]  text-white`:`bg-white text-black hover:bg-[#74ff6f3b]`}
 
     rounded-xl`}
     >

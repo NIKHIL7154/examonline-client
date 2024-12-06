@@ -5,14 +5,14 @@ import lady from "../../assets/unsure.svg";
 import { FormEvent, useState } from "react";
 import { useSignIn } from "@clerk/clerk-react";
 ;
-import { useToast } from "../../hooks/useToast";
+import { useToast } from "../../hooks/ToastContext";
 import { useNavigate } from "react-router-dom";
 function LoginPage() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string>("");
     const {setActive,signIn}=useSignIn();
-    const {ToastElement,showToast} = useToast();
+    const {showToast} = useToast();
     const navigate=useNavigate();
     // f6faf4
     const handleSubmit =async (e: FormEvent) => {
@@ -58,7 +58,7 @@ function LoginPage() {
     };
 
     return <div className="min-h-screen flex justify-center items-center poppins-regular">
-        <ToastElement/>
+        
         <div className=" w-[1000px] h-[600px] flex ">
             <div className="w-full p-10 flex flex-col items-center gap-[2.5rem] border-y border-l rounded-l-[15px]">
 

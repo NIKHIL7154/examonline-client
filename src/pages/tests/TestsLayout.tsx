@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import TestsChecker from './components/testView/TestsChecker';
 import TestSpawner from './components/testView/TestSpawner';
-import CreateTestDialog from './components/CreateTestDialog';
+
 export type TestObject = {
   testId: string,
   name: string,
@@ -43,12 +43,10 @@ const TestsLayout = () => {
   const [testPageState, setTestPageState] = useState<"noTests" | "viewTests" | "createTests">("noTests");
   return (
     <div className='w-full h-full overflow-y-auto overflow-x-hidden flexed'>
-      {/* <button onClick={()=>{
-            setTestPageState(testPageState === "noTests" ? "viewTests" : "noTests")
-        }}>Toggle state</button> */}
-      {testPageState === "noTests" && <TestsChecker testNavigate={setTestPageState} />}
-      {testPageState === "viewTests" && <TestSpawner testObjects={testObjects} testNavigate={setTestPageState} />}
-      {testPageState === "createTests" && <CreateTestDialog />}
+      
+      {testPageState === "noTests" && <TestsChecker />}
+      {testPageState === "viewTests" && <TestSpawner testObjects={testObjects} />}
+      
     </div>
   )
 }
