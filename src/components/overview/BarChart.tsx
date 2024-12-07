@@ -42,9 +42,9 @@ const BarChart = () => {
   };
 
   return (
-    <div style={{ width: '300px', height: '120px' }}>
+    <div className='flex items-center justify-center pt-6 ' style={{ width: '300px', height: '150px' }}>
       {/* Bar chart with data and options */}
-      <Bar data={data} options={options} />
+      <Bar data={data} options={options}/>
     </div>
   );
 };

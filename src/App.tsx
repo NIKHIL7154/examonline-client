@@ -4,10 +4,11 @@ import DashboardLayout from './layouts/DashboardLayout'
 import IndexPage from './pages/indexpage/IndexPage'
 import AuthLayout from './layouts/AuthLayout'
 import AuthPage from './pages/authpage/AuthPage'
-import LoginPage from './pages/authpage/LoginPage'
+// import LoginPage from './pages/authpage/LoginPage'
 
 import ErrorBoundary from './pages/ErrorBoundary'
 import TestsLayout from './pages/tests/TestsLayout'
+import OverviewPage from './pages/overviewpage/OverviewPage'
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         path: 'app',
         children: [
-          { path: '', element: <div>overview page</div> /* add overview page here */ },
+          // { path: '', element: <div>overview page</div> /* add overview page here */ },
+          { path: '', element: <OverviewPage/> /* add overview page here */ },
           { path: 'tests', element: <TestsLayout /> },
           { path: 'create', element: <div>Create test</div> /* add create test page here */ },
           {path:"questions",element:<div>Questions</div> /*add questions page here*/},

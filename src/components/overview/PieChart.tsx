@@ -13,6 +13,8 @@ const PieChart = () => {
             {
                 data: [300, 80, 50, 50], // Data values for each slice
                 backgroundColor: ['#91D794', '#6FA371', '#5A765B', '#D1F1D3'], // Colors for the slices
+                borderColor: '#000',
+                borderWidth: 0.7,
                 // Optionally: hoverBackgroundColor for hover effects
                 // hoverBackgroundColor: ['#91D794', '#6FA371', '#5A765B', '#D1F1D3'], // Colors on hover
             },
