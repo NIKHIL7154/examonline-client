@@ -42,7 +42,7 @@ const BarChart = () => {
   };
 
   return (
-    <div className='flex items-center justify-center pt-6 ' style={{ width: '300px', height: '150px' }}>
+    <div className='flex items-center justify-center pt-6 ' style={{ width: '300px', height: '170px' }}>
       {/* Bar chart with data and options */}
       <Bar data={data} options={options}/>
     </div>
