@@ -1,26 +1,29 @@
-import { useEffect, useState } from 'react'
-const useTabStatus = () => {
-    const [tabStatus,settabStatus]=useState("true");
-    
-    useEffect(() => {
-        document.addEventListener("blur",()=>settabStatus("false"))
-        document.addEventListener("focus",()=>settabStatus("true"))
-        window.addEventListener("blur",()=>settabStatus("false"))
-        window.addEventListener("focus",()=>settabStatus("true"))
-        return () => {
-            function removeEventListener() {
-                document.removeEventListener("blur",()=>settabStatus("false"))
-                document.removeEventListener("focus",()=>settabStatus("true"))
-                window.removeEventListener("blur",()=>settabStatus("false"))
-                window.removeEventListener("focus",()=>settabStatus("true"))
-            }
-            removeEventListener();
-        };
-    }, []);
-    
-  return (
-    tabStatus
-  )
-}
+import { useEffect, useState } from 'react';
 
-export default useTabStatus
+const useTabStatus = () => {
+  const [tabStatus, setTabStatus] = useState(true);
+
+  const checkTabStatus = () => {
+    const isTabVisible = document.visibilityState === 'visible';
+    const isTabFocused = document.hasFocus();
+    if (isTabVisible && isTabFocused) {
+      setTabStatus(true);
+    } else {
+      setTabStatus(false);
+    }
+    console.log(isTabVisible && isTabFocused ? "Tab focused" : "Tab switched");
+  };
+
+  useEffect(() => {
+    // Initial check
+    checkTabStatus();
+    
+    const interval = setInterval(checkTabStatus, 1000); // Polling every second
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return tabStatus;
+};
+
+export default useTabStatus;

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useAuth } from '@clerk/clerk-react'
-import { Outlet,useNavigate } from 'react-router-dom'
-import { SignedIn,  } from '@clerk/clerk-react'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { SignedIn, } from '@clerk/clerk-react'
 import NavHeader from '../components/navbar/NavHeader'
 import SideNav from '../components/sidebar/SideNav'
 
@@ -21,33 +21,33 @@ export default function DashboardLayout() {
     if (isLoaded && !userId) {
       navigate('/auth')
     }
-  }, [isLoaded, userId,navigate])
+  }, [isLoaded, userId, navigate])
 
-  if (!isLoaded) return (<Loader/>
-)
+  if (!isLoaded) return (<Loader />
+  )
 
   return (
     <><SignedIn>
       <ToastProvider>
-    <div className='sized'>
+        <div className='sized'>
 
-      <NavHeader/>
+          <NavHeader />
 
-      <div className='w-full h-[90%] flex overflow-hidden'>
+          <div className='w-full h-[90%] flex overflow-hidden'>
 
-        <SideNav/>
-        <div className='flex-grow h-full border-l-[0.5px] border-t-[0.5px] overflow-hidden'>
-          <Outlet />
+            <SideNav />
+            <div className='flex-grow h-full border-l-[0.5px] border-t-[0.5px] overflow-hidden'>
+              <Outlet />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <Toast/>
-    </ToastProvider>
-  </SignedIn>
-  
-  
-  </>
-  
-  
-)
+        <Toast />
+      </ToastProvider>
+    </SignedIn>
+
+
+    </>
+
+
+  )
 }

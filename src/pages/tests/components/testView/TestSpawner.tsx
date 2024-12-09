@@ -17,7 +17,7 @@ const TestsTableView = (props: Props) => {
             <button
                 onMouseEnter={(e) => { e.currentTarget.innerText = "Create Test"; e.currentTarget.style.transform = "scale(1.1)"; }} 
                 onMouseLeave={(e) => { e.currentTarget.innerText = "+"; e.currentTarget.style.transform = "scale(1)"; }} 
-                onClick={() => { navigate("create") }} 
+                onClick={() => { navigate("/app/create") }} 
                 className='btn absolute right-5 bottom-5 z-[2]'>
                 +
             </button>

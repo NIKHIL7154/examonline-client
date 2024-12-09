@@ -13,7 +13,7 @@ const RegisterPage: React.FC = () => {
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string>("");
     const {setActive,signUp}=useSignUp();
-    const {ToastElement,showToast} = useToast();
+    const {showToast} = useToast();
     const navigate=useNavigate();
     const clerk = useClerk()
     const handleSubmit =async (e: FormEvent) => {
@@ -65,7 +65,7 @@ const RegisterPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center poppins-regular">
-            <ToastElement />
+            
             <div className="w-[1000px] h-[600px] flex">
                 <div className="p-10 bg-[#f0faea] gap-[3rem] text-center w-full size-full rounded-[15px] flex flex-col justify-center items-center">
                     <img src={man} alt="man" />

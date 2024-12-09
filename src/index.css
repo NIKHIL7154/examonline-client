@@ -29,6 +29,12 @@
 
   }
 
+  .although{
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-user-drag: none !important;
+    -webkit-touch-callout: none !important;
+  }
   .flexed{
     display: flex;
     justify-content: center;

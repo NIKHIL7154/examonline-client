@@ -18,12 +18,17 @@ export function useSelectionDisable() {
       '-ms-user-select',
       '-moz-user-select',
     ] as const
-
-    properties.forEach((property) => element.style.setProperty(property, 'none'))
+    async function removeRightClick(){
+      properties.forEach((property) => element.style.setProperty(property, 'none'))
+    }
+    const interval=setInterval(removeRightClick,1000)
+    
 
     return () => {
+      clearInterval(interval)
       properties.forEach((property) => element.style.setProperty(property, 'auto'))
     }
+
   }, [])
 
   return

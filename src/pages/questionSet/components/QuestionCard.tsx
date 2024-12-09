@@ -1,8 +1,8 @@
 
 
-type Props = {}
 
-const QuestionCard = (props: Props) => {
+
+const QuestionCard = () => {
     return (
         
             <div className="bd group relative cursor-pointer overflow-hidden bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl sm:mx-auto sm:max-w-sm sm:rounded-lg sm:px-10">
