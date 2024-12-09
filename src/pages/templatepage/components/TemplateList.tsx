@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import UploadTemplate from "./UploadTemplate";
 
 function TemplateList() {
-    const [expandOptions, setExpandOptions] = useState(false);
-    const [expandUpload, setExpandUpload] = useState(false) ;
+    const [expandOptions, setExpandOptions] = useState<boolean>(false);
+    const [expandUpload, setExpandUpload] = useState<boolean>(false);
 
     const navigate = useNavigate();
     const templateDetails = [
@@ -15,17 +15,21 @@ function TemplateList() {
         { label: "Template 4", image: "" }];
 
 
-    const handleTemplateWindow = (e) => {
-        const button = e.target.closest('button[data-button]');
-        const uploadBtn = e.target.closest('div[data-button]');
-        // const createBtn = e.target.closest('button[data-button]');
+    const handleTemplateWindow = (e: React.MouseEvent<HTMLDivElement>) => {
+
+        // const button = e.target.closest('button[data-button]');
+        // const uploadBtn = e.target.closest('div[data-button]');
+        const target = e.target as HTMLElement;        
+        const button = target.closest('button[data-button]') as HTMLButtonElement | null;
+        const uploadBtn = target.closest('div[data-button]') as HTMLDivElement | null;
+        
         if (button?.dataset.button === "create-set-button") {
             setExpandOptions((prevstate) => !prevstate);
             return;
         }
 
-        
-        if(button?.dataset.button === "download-pdf" || button?.dataset.button === "download-txt"){
+
+        if (button?.dataset.button === "download-pdf" || button?.dataset.button === "download-txt") {
             setExpandUpload(true);
             return;
         }
@@ -37,8 +41,6 @@ function TemplateList() {
             navigate('/app/edit-set');
             return;
         }
-
-
         setExpandOptions(false);
 
     }
@@ -47,7 +49,7 @@ function TemplateList() {
         <li className="flex flex-col gap-3 ">
             <button data-button={"create-set-button"}>
                 <div className={`
-                ${expandOptions ? "border-green-500 border-2 text-7xl text-green-700" :"border-slate-300 text-green-900 text-8xl" } 
+                ${expandOptions ? "border-green-500 border-2 text-7xl text-green-700" : "border-slate-300 text-green-900 text-8xl"} 
                 h-[130px] w-[180px] border bg-white flex transition-[font] duration-100
                 hover:text-green-700 hover:text-7xl hover:border-2 hover:border-green-500`}>
                     <IoMdAdd className=" m-auto " />
@@ -82,7 +84,7 @@ function TemplateList() {
 
                 {
                     expandOptions &&
-                    <div  className="w-full h-auto flex flex-row text-xl mt-2 bg-white relative ">
+                    <div className="w-full h-auto flex flex-row text-xl mt-2 bg-white relative ">
                         <UploadTemplate expandUpload={expandUpload} />
 
                         <span className="bg-white pb-1 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">or</span>
