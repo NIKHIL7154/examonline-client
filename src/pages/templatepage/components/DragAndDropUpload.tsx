@@ -2,12 +2,24 @@ import { useState, useRef } from 'react';
 import { FiUpload } from "react-icons/fi";
 
 const DragAndDropUpload = () => {
-    const [file, setFile] = useState<File | null>(null);
-    const inputRef = useRef<HTMLInputElement | null>(null);;
+    const [file, setFile] = useState<File | null>(null); // sets file for question extraction
+    const [isDragging, setIsDragging] = useState<boolean>(false); // for styling div 
+
+    const inputRef = useRef<HTMLInputElement | null>(null); // stores ref to input field
 
     const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        handleDrag(e);
+        setIsDragging(true); // Set dragging state
+    };
+
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+        handleDrag(e);
+        setIsDragging(false); // Reset dragging state when leaving the drop zone
     };
 
     const validateFile = (file: File) => {
@@ -47,16 +59,19 @@ const DragAndDropUpload = () => {
         reader.onerror = () => {
             console.error('Error reading file:', file.name);
         };
-        reader.readAsText(file); 
+        reader.readAsText(file);
     };
 
     return (
         <>
             <div
-                className="border cursor-pointer gap-[0] h-auto p-4 border border-2 border-dashed border-slate-300 hover:border-lime-700 flex justify-center items-center flex-col text-center"
+                className={`
+                    ${isDragging ? "border-lime-700 text-gray-500" : "border-slate-300 "}  
+                border cursor-pointer gap-[0] h-auto p-4 border-2 border-dashed flex justify-center items-center flex-col text-center
+                hover:border-lime-700 transition-all duration-200`}
                 onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
                 onDrop={handleDrop}
             >
                 <input
@@ -65,7 +80,8 @@ const DragAndDropUpload = () => {
                     onChange={handleFileChange}
                     style={{ display: 'none' }}
                 />
-                
+
+                {/* I file exists show file else show upload options: Drag or Browse */}
                 {file ? (
                     <div className='flex flex-col gap-2'>
                         <h3>Selected file: <strong className='font-semibold'>{file.name} </strong></h3>
@@ -74,13 +90,22 @@ const DragAndDropUpload = () => {
                     </div>
                 ) : (
                     <>
-                        <FiUpload className="text-gray-500 text-5xl mb-2" /> Drag and drop a .txt or .xlsx file <br /> or
+                        <FiUpload className="text-gray-500 text-5xl mb-1" />
+                        Drag and drop a .txt or .xlsx file <br /> or
                         <button className="text-green-600 font-semibold hover:text-lime-500"
                             onClick={() => inputRef.current?.click()}>Browse</button>
                     </>
                 )}
             </div>
-            {file && <button className='rounded-lg border p-2 bg-green-600 text-white hover:bg-green-500' onClick={uploadFile}>Upload File</button>}
+
+            {/* If file does not exists, dont show upload button */}
+            {file &&
+                <button
+                    className='rounded-lg border p-2 bg-green-600 text-white hover:bg-green-500'
+                    onClick={uploadFile}>
+                    Upload File
+                </button>
+            }
         </>
     );
 };
