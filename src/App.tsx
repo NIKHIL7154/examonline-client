@@ -4,10 +4,16 @@ import DashboardLayout from './layouts/DashboardLayout'
 import IndexPage from './pages/indexpage/IndexPage'
 import AuthLayout from './layouts/AuthLayout'
 import AuthPage from './pages/authpage/AuthPage'
-import LoginPage from './pages/authpage/LoginPage'
+// import LoginPage from './pages/authpage/LoginPage'
 
 import ErrorBoundary from './pages/ErrorBoundary'
 import TestsLayout from './pages/tests/TestsLayout'
+import OverviewPage from './pages/overviewpage/OverviewPage'
+import QuestionTemplate from './pages/templatepage/QuestionTemplate'
+
+import QuestionMaker from './pages/questionMakerPage/QuestionMaker'
+import QuestionsPage from './pages/questionSet/QuestionsPage'
+import TestCreationPage from './pages/testCreationPage/TestCreationPage'
 
 const router = createBrowserRouter([
   {
@@ -23,11 +29,15 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         path: 'app',
         children: [
-          { path: '', element: <div>overview page</div> /* add overview page here */ },
+          // { path: '', element: <div>overview page</div> /* add overview page here */ },
+          { path: '', element: <OverviewPage/> /* add overview page here */ },
           { path: 'tests', element: <TestsLayout /> },
-          { path: 'create', element: <div>Create test</div> /* add create test page here */ },
-          {path:"questions",element:<div>Questions</div> /*add questions page here*/},
-          {path:"settings",element:<div>Settings</div>}
+          // { path: 'create', element: <div>Create test</div> /* add create test page here */ },
+          { path: 'create', element: <TestCreationPage/> /* add create test page here */ },
+          {path:"edit-set",element:<div>Edit set</div> /*add questions page here*/},
+          {path:"questions",element:<QuestionsPage/> /*add questions page here*/},
+          {path:"settings",element:<div>Settings</div>},
+          {path:"questions/create",element:<QuestionMaker/>}
 
         ],
       },
