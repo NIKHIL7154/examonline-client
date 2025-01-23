@@ -19,7 +19,7 @@ const SidebarData = [
     },
     {
         title:"Overview",
-        path:"/app",
+        path:"",
         icon:<BarChartIcon/>
     },
     {

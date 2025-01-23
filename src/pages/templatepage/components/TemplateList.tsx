@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom'
 import UploadTemplate from "./UploadTemplate";
+import { setQuestions } from "../../../helpers/variables";
 
 function TemplateList() {
     const [expandOptions, setExpandOptions] = useState<boolean>(false);
@@ -30,6 +31,12 @@ function TemplateList() {
 
 
         if (button?.dataset.button === "download-pdf" || button?.dataset.button === "download-txt") {
+            const anchor = document.createElement('a');
+            anchor.href = '/files/examFusion.xlsx';
+            anchor.download = 'examFusion_template.xlsx';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
             setExpandUpload(true);
             return;
         }
@@ -38,7 +45,8 @@ function TemplateList() {
         }
 
         if (button?.dataset.button === "create-button") {
-            navigate('/app/edit-set');
+            navigate('/app/questions/create');
+            setQuestions([]);
             return;
         }
         setExpandOptions(false);
@@ -86,6 +94,7 @@ function TemplateList() {
                     expandOptions &&
                     <div className="w-full h-auto flex flex-row text-xl mt-2 bg-white relative ">
                         <UploadTemplate expandUpload={expandUpload} />
+                        
 
                         <span className="bg-white pb-1 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">or</span>
 

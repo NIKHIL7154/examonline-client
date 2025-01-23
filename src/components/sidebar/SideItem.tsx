@@ -1,11 +1,11 @@
 
 import { SidebarDataProps } from './SidebarData'
-import React, { useEffect, useRef } from 'react'
+import  {  useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 type Props = {
     item:SidebarDataProps
     active:boolean
-    action:{menuItem:string,setmenuItem:React.Dispatch<React.SetStateAction<string>>}
+    action:{menuItem:string,handleNavigate:(path:string)=>void}
 }
 
 const SideItem = (props: Props) => {
@@ -19,7 +19,7 @@ const SideItem = (props: Props) => {
     }, [active])
 
     const handleMenuUpdate=()=>{
-        action.setmenuItem(item.path)
+        action.handleNavigate(item.path)
     }
   return (
     <div onClick={handleMenuUpdate} className={`flex items-center w-[90%] h-[60px] cursor-pointer duration-400

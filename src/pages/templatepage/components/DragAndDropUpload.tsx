@@ -1,7 +1,11 @@
 import { useState, useRef } from 'react';
 import { FiUpload } from "react-icons/fi";
-
+import * as XLSX from "xlsx";
+import { genUID } from '../../../helpers/gens';
+import { setQuestions } from '../../../helpers/variables';
+import { useNavigate } from 'react-router-dom';
 const DragAndDropUpload = () => {
+    const navigate = useNavigate();
     const [file, setFile] = useState<File | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);;
 
@@ -37,23 +41,44 @@ const DragAndDropUpload = () => {
     };
 
     const uploadFile = async () => {
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const content = event.target?.result;
-            console.log('File content:', content);
-        };
-        reader.onerror = () => {
-            console.error('Error reading file:', file.name);
-        };
-        reader.readAsText(file); 
+        if (file) {
+            const reader = new FileReader();
+      
+            reader.onload = (e) => {
+              const data = e.target?.result;
+              if (data) {
+                // Read the binary string
+                const workbook = XLSX.read(data, { type: "binary" });
+                const sheetName = workbook.SheetNames[0]; // Get the first sheet
+                const sheet = workbook.Sheets[sheetName]; // Get sheet data
+                const json = XLSX.utils.sheet_to_json(sheet); // Convert sheet to JSON
+                const questions = json.map((q: any) => {
+                    return {
+                        question: q.Question,
+                        options: {
+                        A: q.A,
+                        B: q.B,
+                        C: q.C,
+                        D: q.D,
+                        },
+                        answer: q.Answer,
+                        id: genUID(6),
+                    };
+                    });
+                setQuestions(questions);
+                navigate("/app/questions/create")
+                console.log(questions); // Update state
+              }
+            };
+      
+            reader.readAsBinaryString(file);
+          }
     };
 
     return (
         <>
             <div
-                className="border cursor-pointer gap-[0] h-auto p-4 border border-2 border-dashed border-slate-300 hover:border-lime-700 flex justify-center items-center flex-col text-center"
+                className="cursor-pointer gap-[0] h-auto p-4 border-2 border-dashed border-slate-300 hover:border-lime-700 flex justify-center items-center flex-col text-center"
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}

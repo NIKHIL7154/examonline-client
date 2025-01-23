@@ -7,7 +7,7 @@ function QuestionTemplate() {
 
     return (
         <div className="overflow-y-auto size-full">
-            <div className="flex flex flex-col items-center gap-6">
+            <div className="flex flex-col items-center gap-6">
                 <TemplateList />
                 <div className=" w-[1000px] min-h-[500px]">
                     <h2 className="poppins-regular mb-3">Recents</h2>
