@@ -5,10 +5,11 @@ import { SignedIn,  } from '@clerk/clerk-react'
 import NavHeader from '../components/navbar/NavHeader'
 import SideNav from '../components/sidebar/SideNav'
 
-import Loader from '../components/Loader'
+
 
 import { ToastProvider } from '../hooks/ToastContext'
 import Toast from '../hooks/Toast'
+import LoaderNew from '../components/LoaderNew'
 
 
 export default function DashboardLayout() {
@@ -23,7 +24,7 @@ export default function DashboardLayout() {
     }
   }, [isLoaded, userId,navigate])
 
-  if (!isLoaded) return (<Loader/>
+  if (!isLoaded) return (<LoaderNew/>
 )
 
   return (

@@ -67,7 +67,7 @@ const DragAndDropUpload = () => {
                     });
                 setQuestions(questions);
                 navigate("/app/questions/create")
-                console.log(questions); // Update state
+                 // Update state
               }
             };
       
