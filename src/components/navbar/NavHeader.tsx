@@ -10,7 +10,7 @@ const NavHeader = () => {
           <div className='h-full w-[10%] flexed'>
           <img className='h-[50%] w-[]' src="https://www.svgrepo.com/show/288255/exam.svg" alt="" />
             </div>
-        <h1 className='text-lg'>ExamOnline</h1>
+        <h1 className='text-lg'>ExamFusion</h1>
         </div>
         
         <div className="flexed !justify-end gap-6 w-[50%]">

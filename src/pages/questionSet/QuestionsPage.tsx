@@ -71,11 +71,11 @@ const QuestionsPage = () => {
   const [questionState, setquestionState] = useState<boolean>(false);
 
   return (
-    <div className='w-full h-full relative'>
+    <div className='w-full h-full'>
 
 
       {questionState ? <QuestionTemplate /> : <QuestionSetSpawner data={questionSets} />}
-      <button
+      {!questionState && <button
         className="absolute w-16 right-5 bottom-5 bg-blue-500 text-white p-4 rounded-full flex items-center justify-center shadow-lg duration-500 hover:w-52 hover:rounded-full overflow-hidden group"
         onClick={() => {
           setquestionState(true);
@@ -88,7 +88,7 @@ const QuestionsPage = () => {
    group-hover:opacity-100 duration-700 text-ellipsis overflow-hidden whitespace-nowrap">
           Create Question Set
         </span>
-      </button>
+      </button>}
 
 
 
