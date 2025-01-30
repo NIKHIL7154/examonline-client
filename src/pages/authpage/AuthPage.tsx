@@ -1,16 +1,24 @@
 
+
+
 import lady from "../../assets/unsure.svg";
 import {useClerk} from "@clerk/clerk-react";
-
 function AuthPage() {
     const clerk= useClerk();
-  
+ 
+    
+    
    const handleLogin=()=>{
     clerk.openSignIn({redirectUrl:'/app'})
    }
-   const handleRegister=()=>{
+   const handleRegister=async ()=>{
     clerk.openSignUp({redirectUrl:'/app'})
+    
    }
+   
+   
+   
+
 
     return <div className="min-h-screen flex justify-center items-center poppins-regular">
         
@@ -22,6 +30,7 @@ function AuthPage() {
                     <small className="break-words p-2 text-center poppins-medium text-slate-500">
                         Streamline your exam process and boost efficiency with our app. Start for free today!
                     </small>
+                    
                 </div>
 
                 <div className="flex flex-col gap-3 w-[400px]">

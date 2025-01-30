@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import RootLayout from './layouts/RootLayout'
 import DashboardLayout from './layouts/DashboardLayout'
-import IndexPage from './pages/indexpage/IndexPage'
+import IndexPage from './pages/verificationPage/IndexPage'
 import AuthLayout from './layouts/AuthLayout'
 import AuthPage from './pages/authpage/AuthPage'
 
