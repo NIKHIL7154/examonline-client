@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import QuestionTemplate from '../templatepage/QuestionTemplate';
+import QuestionTemplate from './templatepage/QuestionTemplate';
 import QuestionSetSpawner from './components/QuestionSetSpawner';
 
 
@@ -68,28 +68,16 @@ const QuestionsPage = () => {
   }, []);
 
 
-  const [questionState, setquestionState] = useState<boolean>(false);
 
   return (
-    <div className='w-full h-full'>
+    <div className='w-full h-full overflow-y-auto'>
 
 
-      {questionState ? <QuestionTemplate /> : <QuestionSetSpawner data={questionSets} />}
-      {!questionState && <button
-        className="absolute w-16 right-5 bottom-5 bg-blue-500 text-white p-4 rounded-full flex items-center justify-center shadow-lg duration-500 hover:w-52 hover:rounded-full overflow-hidden group"
-        onClick={() => {
-          setquestionState(true);
-        }}
-      >
-        <span className="text-2xl font-bold transition-all duration-300 transform group-hover:translate-x-2">
-          +
-        </span>
-        <span className="ml-4 opacity-0 h-full hidden group-hover:block 
-   group-hover:opacity-100 duration-700 text-ellipsis overflow-hidden whitespace-nowrap">
-          Create Question Set
-        </span>
-      </button>}
+      <QuestionTemplate /> 
+      <QuestionSetSpawner data={questionSets} />
 
+
+      
 
 
     </div>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom'
 import UploadTemplate from "./UploadTemplate";
-import { setQuestions } from "../../../helpers/variables";
+import { setQuestions } from "../../../../helpers/QuestionSetStore";
 import AiGenerativeDialog from "./AiGenerativeDialog";
 
 
@@ -111,7 +111,7 @@ function TemplateList() {
     });
 
     return (
-        <div onClick={handleTemplateWindow} className=" h-auto p-[30px] flex flex-col justify-center items-center bg-gray-100 w-full">
+        <div onClick={handleTemplateWindow} className=" h-auto p-[30px] flex flex-col justify-center items-center w-full">
             {genrateWithAiState.state &&<AiGenerativeDialog template={genrateWithAiState.template} effect={setgenrateWithAiState}/>}
             <div className="w-[1000px] h-full gap-4 flex flex-col overflow-hidden ">
                 <h2 className="poppins-regular ">Start a new set</h2>

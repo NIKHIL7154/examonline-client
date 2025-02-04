@@ -19,7 +19,7 @@ const TestCard = (props: Props) => {
     const { delay } = props;
     useEffect(() => {
         if (testCardRef.current) {
-            gsap.fromTo(testCardRef.current, { opacity: 0, y: 200 }, { opacity: 1, y: 0, duration: 2, ease: "power3.out", delay: delay });
+            gsap.fromTo(testCardRef.current, { opacity: 0, y: 200 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out", delay: delay });
         }
     }, [delay]);
 
