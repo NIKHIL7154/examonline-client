@@ -6,10 +6,10 @@ const userSet = "empty";
 function QuestionTemplate() {
 
     return (
-        <div className="overflow-y-auto size-full">
+        <div className="">
             <div className="flex flex-col items-center gap-6">
                 <TemplateList />
-                <div className=" w-[1000px] min-h-[500px]">
+                {/* <div className=" w-[1000px] min-h-[500px]">
                     <h2 className="poppins-regular mb-3">Recents</h2>
 
                     {
@@ -21,7 +21,7 @@ function QuestionTemplate() {
                             : "display user sets"
                     }
 
-                </div>
+                </div> */}
             </div>
             <Outlet/>
         </div>
