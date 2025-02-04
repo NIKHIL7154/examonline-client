@@ -15,6 +15,11 @@ import OverviewPage from './pages/overviewpage/OverviewPage'
 import QuestionsPage from './pages/questionSet/QuestionsPage'
 import TestCreationPage from './pages/testCreationPage/TestCreationPage'
 import QuestionModifierPage from './pages/questionMakerPage/QuestionModifierPage'
+import CreateNewTestPage from './pages/testCreationPage/CreateNewTestPage'
+import QuestionSetSelector from './pages/testCreationPage/components/QuestionSetSelector'
+import TestOptionForm from './pages/testCreationPage/components/TestOptionForm'
+import TestParticipants from './pages/testCreationPage/components/TestParticipants'
+import { TestConfigProvider } from './pages/testCreationPage/context/TestConfigContext'
 
 const router = createBrowserRouter([
   {
@@ -31,14 +36,21 @@ const router = createBrowserRouter([
         path: 'app',
         children: [
           // { path: '', element: <div>overview page</div> /* add overview page here */ },
-          { path: '', element: <OverviewPage/> /* add overview page here */ },
+          { path: '', element: <OverviewPage /> /* add overview page here */ },
           { path: 'tests', element: <TestsLayout /> },
           // { path: 'create', element: <div>Create test</div> /* add create test page here */ },
-          { path: 'create', element: <TestCreationPage/> /* add create test page here */ },
-          {path:"edit-set",element:<div>Edit set</div> /*add questions page here*/},
-          {path:"questions",element:<QuestionsPage/> /*add questions page here*/},
-          {path:"settings",element:<QuestionModifierPage/>},
-          {path:"questions/create",element:<QuestionModifierPage/>}
+          { path: 'create', element: <TestCreationPage /> /* add create test page here */ },
+          { path: "edit-set", element: <div>Edit set</div> /*add questions page here*/ },
+          { path: "questions", element: <QuestionsPage /> /*add questions page here*/ },
+          { path: "settings", element: <QuestionModifierPage /> },
+          { path: "questions/create", element: <QuestionModifierPage /> },
+          {
+            path: "create/new-test", element: <TestConfigProvider><CreateNewTestPage /></TestConfigProvider>, children: [
+              { path: "testQuestions", element: <QuestionSetSelector /> },
+              { path: "testSettings", element: <TestOptionForm /> },
+              { path: "testParticipants", element: <TestParticipants /> },
+            ]
+          },
 
         ],
       },
