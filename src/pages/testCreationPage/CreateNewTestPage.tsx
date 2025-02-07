@@ -1,55 +1,93 @@
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTestConfig } from "./context/TestConfigContext";
-// import QuestionSetSelector from "./components/QuestionSetSelector";
-// import TestOptionForm from "./components/TestOptionForm";
-// import TestParticipants from "./components/TestParticipants";
+import { useEffect, useState } from "react";
 
 function CreateNewTestPage() {
-    const { testConfig, isTestQuestionsEmpty, isTestSettingsEmpty, isTestParticipantsEmpty } = useTestConfig();
     const navigate = useNavigate();
-
-    const testFormSteps = ["testQuestions", "testSettings", "testParticipants"];
     const location = useLocation();
+    const { testConfig, isTestQuestionsEmpty, isTestSettingsEmpty, isTestParticipantsEmpty } = useTestConfig();
+    const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true);
+
+    const ROUTES = {
+        TEST_QUESTIONS: "testQuestions",
+        TEST_SETTINGS: "testSettings",
+        TEST_PARTICIPANTS: "testParticipants",
+    };
+
+    const testFormSteps = [ROUTES.TEST_QUESTIONS, ROUTES.TEST_SETTINGS, ROUTES.TEST_PARTICIPANTS];
+    // const testFormSteps = ["testQuestions", "testSettings", "testParticipants"];
+
+    const getNextRoute = (currentStep) => {
+        return currentStep < testFormSteps.length - 1 ? testFormSteps[currentStep + 1] : null;
+    };
+
+    const getPrevRoute = (currentStep) => {
+        return currentStep > 0 ? testFormSteps[currentStep - 1] : null;
+    };
+
     const currentRoute = location.pathname.split("/").at(-1)
     const currentFormStep = testFormSteps.indexOf(currentRoute);
-    const prevFormStep = (currentFormStep - 1) <= 0 ? 0 : (currentFormStep - 1);
-    const prevRoute = testFormSteps[prevFormStep];
-    const nextFormStep = (currentFormStep + 1) >= 2 ? 2 : (currentFormStep + 1);
-    const nextRoute = testFormSteps[nextFormStep];
+
+    const nextRoute = getNextRoute(currentFormStep);
+    const prevRoute = getPrevRoute(currentFormStep);
+
+    const formStatusCheck = {
+        [ROUTES.TEST_QUESTIONS]: isTestQuestionsEmpty,
+        [ROUTES.TEST_SETTINGS]: isTestSettingsEmpty,
+        [ROUTES.TEST_PARTICIPANTS]: isTestParticipantsEmpty,
+    };
+
+    useEffect(() => {
+        const checkFormStatus = () => {
+            if (currentRoute === ROUTES.TEST_PARTICIPANTS) {
+                // Check if any of the forms are empty
+                setIsNextButtonDisabled(
+                    !isTestParticipantsEmpty() || !isTestSettingsEmpty() || !isTestQuestionsEmpty()
+                );
+            } else {
+                // For other pages, check the current page form status
+                setIsNextButtonDisabled(!currentPageFormStatus(currentRoute));
+            }
+        };
+
+        checkFormStatus();
+    }, [currentRoute, isTestQuestionsEmpty, isTestSettingsEmpty, isTestParticipantsEmpty]);
+
 
     const currentPageFormStatus = (page) => {
-        if (page === "testQuestions")
-            return isTestQuestionsEmpty();
+        return formStatusCheck[page] ? formStatusCheck[page]() : null;
+    };
 
-        else if (page === "testSettings")
-            return isTestSettingsEmpty();
+    useEffect(() => {
+        if (currentRoute === ROUTES.TEST_SETTINGS && !isTestQuestionsEmpty())
+            navigate("testQuestions", { replace: true })
 
-        else if (page === "testParticipants") 
-            return isTestParticipantsEmpty();
+        if (currentRoute === ROUTES.TEST_PARTICIPANTS && (!isTestQuestionsEmpty() || !isTestSettingsEmpty()))
+            navigate("testQuestions", { replace: true })
 
-        return null;
-    }
+
+    }, [isTestQuestionsEmpty, navigate, ROUTES, currentRoute]);
 
     const handleNextRoute = () => {
-        if (currentRoute === "testParticipants" 
-            && isTestParticipantsEmpty() 
-            && isTestSettingsEmpty()
-            && isTestQuestionsEmpty()
-        ) {
-            // form finish logic and api call goes here //
+        if (currentRoute === ROUTES.TEST_PARTICIPANTS) {
+            // Check if any of the forms are empty
+            if (!isTestParticipantsEmpty() || !isTestSettingsEmpty() || !isTestQuestionsEmpty()) {
+                // Handle form validation error
+                console.error("Please fill out all fields before submitting.");
+                return;
+            }
+            // Form submission logic
             console.log(testConfig);
             return;
         }
 
+        // Check if the current page form is valid before navigating to the next step
         if (currentPageFormStatus(currentRoute)) {
             navigate(nextRoute);
-            return;
+        } else {
+            console.error("Please complete the current form before proceeding.");
         }
-        return;
-
-    }
-    console.log(currentPageFormStatus(currentRoute));
-    
+    };
 
     const handlePrevRoute = () => {
         navigate(prevRoute);
@@ -68,14 +106,12 @@ function CreateNewTestPage() {
                     className="border px-3 py-1 disabled:text-red-300"
                 >Prev
                 </button>
-                {/* <Link className="border px-3 py-1" to={prevRoute}>Prev</Link> */}
-                {/* <Link className="border px-3 py-1" to={nextRoute}>Next</Link> */}
                 <button
-                    disabled={!currentPageFormStatus(currentRoute)}
+                    disabled={isNextButtonDisabled}
                     onClick={handleNextRoute}
                     className="border px-3 py-1 disabled:text-red-300"
                 >
-                    {currentFormStep === 2 ? "Submit" : "Next" }
+                    {currentFormStep === 2 ? "Submit" : "Next"}
                 </button>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import RootLayout from './layouts/RootLayout'
 import DashboardLayout from './layouts/DashboardLayout'
 import IndexPage from './pages/verificationPage/IndexPage'
@@ -46,6 +46,8 @@ const router = createBrowserRouter([
           { path: "questions/create", element: <QuestionModifierPage /> },
           {
             path: "create/new-test", element: <TestConfigProvider><CreateNewTestPage /></TestConfigProvider>, children: [
+              //  if (condition) navigate("/path" , {replace: true});
+              { index: true, element: <Navigate to="testQuestions" replace /> },
               { path: "testQuestions", element: <QuestionSetSelector /> },
               { path: "testSettings", element: <TestOptionForm /> },
               { path: "testParticipants", element: <TestParticipants /> },
