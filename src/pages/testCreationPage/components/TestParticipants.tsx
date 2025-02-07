@@ -12,14 +12,14 @@ function TestParticipants() {
     const inputRef = useRef<HTMLInputElement | null>(null);;
 
     // console.log(testParticipants);
-    
+
     const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
     };
 
     const validateFile = (file: File) => {
-        const allowedTypes = ['text/plain', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']; // MIME types for .txt and .xlsx
+        const allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
         if (allowedTypes.includes(file.type)) {
             // setFile(file);
             setTestConfig(cur => {
@@ -29,7 +29,7 @@ function TestParticipants() {
                 }
             })
         } else {
-            alert('Please upload a .txt or .xlsx file.');
+            alert('Please upload a .xlsx file.');
         }
     };
 
@@ -49,6 +49,15 @@ function TestParticipants() {
             validateFile(selectedFile);
         }
     };
+    const handleDownload = () => {
+        const anchor = document.createElement('a');
+        anchor.href = '/files/testParticipants.xlsx';
+        anchor.download = 'test-partipants.xlsx';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        return;
+    }
 
     return (
         <div>
@@ -60,7 +69,7 @@ function TestParticipants() {
                 <h3 className="text-xl">
                     Upload information using template file:
                 </h3>
-                <button className="group hover:border-green-500 hover:bg-green-500 text-xl border-2 border-gray-500 px-3 py-2 rounded-md flex items-center gap-2">
+                <button onClick={handleDownload} className="group hover:border-green-500 hover:bg-green-500 text-xl border-2 border-gray-500 px-3 py-2 rounded-md flex items-center gap-2">
                     <GrDocumentDownload className="group-hover:text-white" />
                     <span className="group-hover:text-white">test-participants.xlsx</span>
                 </button>

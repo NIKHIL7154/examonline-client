@@ -38,7 +38,8 @@ function TemplateList() {
         }
 
 
-        if (button?.dataset.button === "download-pdf" || button?.dataset.button === "download-txt") {
+        // if (button?.dataset.button === "download-pdf" || button?.dataset.button === "download-txt") {
+        if (button?.dataset.button === "download-pdf") {
             const anchor = document.createElement('a');
             anchor.href = '/files/examFusion.xlsx';
             anchor.download = 'examFusion_template.xlsx';
