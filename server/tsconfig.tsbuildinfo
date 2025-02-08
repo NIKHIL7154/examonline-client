@@ -1,0 +1,1 @@
+{"root":["./src/app.ts","./src/config/db.ts","./src/middleware/verifyuserwithtoken.ts","./src/models/questionsetmodel.ts","./src/models/testmodel.ts","./src/models/usermodel.ts","./src/routes/createtoken.ts","./src/routes/showtests.ts","./types/express.d.ts","./types/globals.d.ts"],"version":"5.7.2"}

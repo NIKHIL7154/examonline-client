@@ -11,7 +11,7 @@ function UploadTemplate({ expandUpload }: UploadTemplateProps) {
     return (
         <div data-button={"upload-button"} className="w-[500px] p-6  border  flex flex-col gap-4">
             <small className="poppins-regular w-[40ch]">
-                *Please download one of the Question format files from the options below.
+                *Please download and update the Questions format file from the option below.
             </small>
 
             <div className="  flex  flex-col justify-evenly gap-2 ">
@@ -21,10 +21,10 @@ function UploadTemplate({ expandUpload }: UploadTemplateProps) {
                     <h3 className="text-xl"> Download template.xlsx</h3>
                 </button>
 
-                <button data-button="download-txt" className=" border flex items-center p-2 rounded-lg gap-2 border-2 hover:border-gray-400">
+                {/* <button data-button="download-txt" className=" border flex items-center p-2 rounded-lg gap-2 border-2 hover:border-gray-400">
                     <FiFileText className="text-4xl text-gray-500" />
                     <h3 className="text-xl "> Download template.txt</h3>
-                </button>
+                </button> */}
 
             </div>
 

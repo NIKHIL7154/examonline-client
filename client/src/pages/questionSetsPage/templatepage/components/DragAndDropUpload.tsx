@@ -15,7 +15,7 @@ const DragAndDropUpload = () => {
     };
 
     const validateFile = (file: File) => {
-        const allowedTypes = ['text/plain', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']; // MIME types for .txt and .xlsx
+        const allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']; // MIME types for .txt and .xlsx
         if (allowedTypes.includes(file.type)) {
             setFile(file);
         } else {
