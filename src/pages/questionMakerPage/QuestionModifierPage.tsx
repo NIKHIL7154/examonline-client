@@ -1,7 +1,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { genUID } from "../../helpers/gens";
 import AutoTextArea from "./component/AutoTextArea";
-import { getQuestions } from "../../helpers/variables";
+import { getQuestions } from "../../helpers/QuestionSetStore";
 
 type Question = {
     question: string;

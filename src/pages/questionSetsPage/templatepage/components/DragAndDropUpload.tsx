@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
 import { FiUpload } from "react-icons/fi";
 import * as XLSX from "xlsx";
-import { genUID } from '../../../helpers/gens';
-import { setQuestions } from '../../../helpers/variables';
+import { genUID } from '../../../../helpers/gens';
+import { setQuestions } from '../../../../helpers/QuestionSetStore';
 import { useNavigate } from 'react-router-dom';
 const DragAndDropUpload = () => {
     const navigate = useNavigate();

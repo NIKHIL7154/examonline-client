@@ -12,7 +12,7 @@ import OverviewPage from './pages/overviewpage/OverviewPage'
 
 
 
-import QuestionsPage from './pages/questionSet/QuestionsPage'
+import QuestionsPage from './pages/questionSetsPage/QuestionsPage'
 import TestCreationPage from './pages/testCreationPage/TestCreationPage'
 import QuestionModifierPage from './pages/questionMakerPage/QuestionModifierPage'
 import CreateNewTestPage from './pages/testCreationPage/CreateNewTestPage'
