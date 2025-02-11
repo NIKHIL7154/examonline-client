@@ -3,9 +3,10 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 interface TestConfig {
     testQuestions: number[];
     testSettings: {
-        startDate: Date | undefined,
-        endDate: Date | undefined,
-        proctureOption: string,
+        startAt: Date | undefined,
+        endAt: Date | undefined,
+        procturing: string,
+        resumable: string,
     };
     testParticipants: File | undefined;
 }
@@ -14,9 +15,10 @@ interface TestConfigContextType {
     testConfig: {
         testQuestions: number[];
         testSettings: {
-            startDate: Date | undefined;
-            endDate: Date | undefined;
-            proctureOption: string;
+            startAt: Date | undefined;
+            endAt: Date | undefined;
+            procturing: string;
+            resumable: string;
         };
         testParticipants: File | undefined;
     };
@@ -29,9 +31,10 @@ interface TestConfigContextType {
 const initialState: TestConfig = {
     testQuestions: [],
     testSettings: {
-        startDate: undefined,
-        endDate: undefined,
-        proctureOption: "",
+        startAt: undefined,
+        endAt: undefined,
+        procturing: "",
+        resumable: "",
     },
     testParticipants: undefined,
 };
@@ -51,9 +54,9 @@ function TestConfigProvider({ children }: { children: ReactNode }) {
 
     // const [testQuestions, setTestQuestions] = useState<number[]>([]);
     const [testConfig, setTestConfig] = useState<TestConfig>(initialState);
-    const {testSettings: {startDate, endDate, proctureOption}, testQuestions, testParticipants} = testConfig;
+    const {testSettings: {startAt, endAt, procturing, resumable}, testQuestions, testParticipants} = testConfig;
 
-    const isTestSettingsEmpty = () => !!(startDate && endDate && proctureOption);
+    const isTestSettingsEmpty = () => !!(startAt && endAt && procturing && resumable);
     const isTestQuestionsEmpty = () => testQuestions.length > 0
     const isTestParticipantsEmpty = () => !!(testParticipants)
 

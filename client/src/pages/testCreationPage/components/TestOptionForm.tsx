@@ -14,29 +14,29 @@ function TestOptionForm() {
     // const [endDate, setEndDate] = useState<Date | undefined>(undefined);
     // const [proctureOption, setProctureOption] = useState('');
     const { testConfig, setTestConfig } = useTestConfig();
-    const {testSettings: { startDate, endDate, proctureOption}} = testConfig;
+    const { testSettings: { startAt, endAt, procturing ,resumable } } = testConfig;
 
-    const handleStartDate = (date) => {
+    const handleStartAt = (date) => {
         // setStartDate(date);
         setTestConfig(cur => {
             return {
                 ...cur,
                 testSettings: {
                     ...cur.testSettings,
-                    startDate: date,
+                    startAt: date,
                 }
             }
         })
     }
 
-    const handleEndDate = (date) => {
+    const handleEndAt = (date) => {
         // setEndDate(date);
         setTestConfig(cur => {
             return {
                 ...cur,
                 testSettings: {
                     ...cur.testSettings,
-                    endDate: date,
+                    endAt: date,
                 }
             }
         })
@@ -49,14 +49,24 @@ function TestOptionForm() {
                 ...cur,
                 testSettings: {
                     ...cur.testSettings,
-                    proctureOption: e.target.value,
+                    procturing: e.target.value,
                 }
             }
         })
     }
     // console.log(testConfig);
-    
-    
+    const handleResumeOptions = (e) => {
+        setTestConfig(cur => {
+            return {
+                ...cur,
+                testSettings: {
+                    ...cur.testSettings,
+                    resumable: e.target.value,
+                }
+            }
+        })
+    }
+
     // Handle input changes
     // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     //     const { name, value } = e.target;
@@ -81,12 +91,12 @@ function TestOptionForm() {
             <div className="text-xl space-y-4" >
                 {/* <form onSubmit={handleSubmit}> */}
                 <div className="flex gap-2 relative w-[90%] ">
-                    <label className=" w-[35%]">Start Time</label>
+                    <label className="w-[35%]">Start Time</label>
                     <DatePicker
-                        className="border rounded-md w-[400px] px-2 py-1"
+                        className="border rounded-md w-[410px] px-2 py-1"
                         showTimeSelect
-                        selected={startDate}
-                        onChange={handleStartDate}
+                        selected={startAt}
+                        onChange={handleStartAt}
                         timeFormat="HH:mm"
                         dateFormat="MMMM d, yyyy h:mm aa"
                         timeCaption="Time"
@@ -96,10 +106,10 @@ function TestOptionForm() {
                 <div className="flex gap-2 relative w-[90%]">
                     <label className="w-[35%]">End Time</label>
                     <DatePicker
-                        className="border rounded-md w-[400px] px-2 py-1"
+                        className="border rounded-md w-[410px] px-2 py-1"
                         showTimeSelect
-                        selected={endDate}
-                        onChange={handleEndDate}
+                        selected={endAt}
+                        onChange={handleEndAt}
                         timeFormat="HH:mm"
                         dateFormat="MMMM d, yyyy h:mm aa"
                         timeCaption="Time"
@@ -111,15 +121,31 @@ function TestOptionForm() {
                     <select
                         name="procture-level"
                         id="procture-level"
-                        className="border rounded-md w-[400px] px-2 py-1 cursor-pointer"
-                        value={proctureOption}
+                        className="border rounded-md w-[410px] px-2 py-1 cursor-pointer"
+                        value={procturing}
                         onChange={handleProctureOption}
                     >
                         <option value="" disabled hidden>
                             Select level of procturing
                         </option>
-                        <option value="level-1">Tab switch, copy paste, full screen</option>
-                        <option value="level-2">face recognition, object detection</option>
+                        <option value="level-1">Level-1: Tab switch, copy paste, full screen</option>
+                        <option value="level-2">Level-2: face recognition, object detection</option>
+                    </select>
+                </div>
+                <div className="flex gap-2 w-[90%]">
+                    <label className="w-[35%]">Is Test Resumable?</label>
+                    <select
+                        name="resume"
+                        id="resume"
+                        className="border rounded-md w-[410px] px-2 py-1 cursor-pointer"
+                        value={resumable}
+                        onChange={handleResumeOptions}
+                    >
+                        <option value="" disabled hidden>
+                            Select option
+                        </option>
+                        <option value={"true"}>Resumable</option>
+                        <option value={"false"}>Not Resumable</option>
                     </select>
                 </div>
                 {/* <div>

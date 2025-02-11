@@ -1,36 +1,11 @@
 import mongoose from "mongoose";
 
-const OptionSchema = new mongoose.Schema({
-    startTime: {
-        type: Date,
-        required: true
-    },
-    endTime: {
-        type: Date,
-        required: true
-    },
-    proctoring: {
-        type: Boolean,
-        required: true
-    },
-    tabSwitchLimit: {
-        type: Number,
-        required: true
-    },
-    resume: {
-        type: Boolean,
-        required: true
-    },
-    trackUserData: {
-        type: Boolean,
-        required: true
-    }
-});
-//"questionSetId name status createdAt"
 const TestSchema = new mongoose.Schema({
+    // connect with user id
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     questionSetId: {
         type:String,
@@ -43,12 +18,34 @@ const TestSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     },
-    options:{
-        type: OptionSchema,
+    startAt: {
+        type: Date,
         required: true
-    }
+    },
+    endAt: {
+        type: Date,
+        required: true
+    },
+    proctoring: {
+        type: Boolean,
+        required: true,
+    },
+    tabSwitchLimit: {
+        type: Number,
+        required: true,
+        default: 1,
+    },
+    resumable: {
+        type: Boolean,
+        required: true
+    },
+    // work on this later
+    // trackUserData: {
+    //     type: Boolean,
+    //     required: true
+    // }
 });
 
 export const Test = mongoose.model('Test', TestSchema);
