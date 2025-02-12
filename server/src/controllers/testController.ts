@@ -1,165 +1,113 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { Test } from "../models/TestModel";
 import { ProtectedRequest } from "../types/expressTypes";
 import User from "../models/UserModel";
+import catchAsync from "../utils/catchAsync";
+import AppError from "../utils/appError";
 
-export const getAllTestsByUser = async (req: ProtectedRequest, res: Response) => {
 
-    try {
-        const userId = req.auth.userId;
+export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    const userId = req.auth.userId;
 
-        const user = await User.findById(userId)
-            .populate({ path: 'tests' })
-        // .populate({ path: 'tests', select: 'questionSetId name status createdAt' })
+    const user = await User.findById(userId)
+        .populate({ path: 'tests' })
+    // .populate({ path: 'tests', select: 'questionSetId name status createdAt' })
 
-        if (!user) {
-            throw new Error('User not found');
+    if (!user) return next(new AppError("No user found with that ID", 404));
+
+    const tests = user.tests;
+
+    // if (tests.length === 0) return next(new AppError("No test found with user", 404))
+
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            tests,
         }
-        const tests = user.tests;
+    });
+})
 
-        if (tests.length === 0) {
-            throw new Error('No test created');
-        }
-
-
-        res.status(200).json({
-            status: "success",
-            data: {
-                tests,
-            }
-        });
-    } catch (error: unknown) {
-               
-        if (error instanceof Error) {
-            res.status(404).json({
-                status: "error",
-                data: {
-                    error: error.message,  // now you can safely access error.message
-                }
-            });
-        } else {
-            // Handle cases where `error` is not an instance of `Error`
-            res.status(404).json({
-                status: "error",
-                data: {
-                    message: 'An unknown error occurred', // fallback message
-                    error,
-                }
-            });
-        }
-    }
-}
-
-export const createTest = async (req: ProtectedRequest, res: Response) => {
-    // console.log(req.body);
+export const createTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth?.userId;
-    try {
 
-        const newTest = await Test.create(req.body)
-        // console.log(newTest);
-        await User.findByIdAndUpdate(userId, {
-            $push: { tests: newTest._id }
-        })
+    const user = await User.findById(userId);
+    if (!user) return next(new AppError("No user found with that ID", 404));
 
-        res.status(201).json({
-            status: "success",
-            data: {
-                newTest,
-            },
-        });
-    }
-    catch (error) {
-        res.status(400).json({
-            status: "fail",
-            data: {
-                message: "Error creating Test",
-                error,
-            }
-        })
-    }
-}
+    const newTest = await Test.create(req.body)
 
-export const getTest = async (req: Request, res: Response) => {
-    // console.log(req.params.id);
-    try {
+    // await User.findByIdAndUpdate(userId, {
+    //     $push: { tests: newTest._id }
+    // })
 
-        const test = await Test.findById(req.params.id)
-        // console.log(test);
+    user.tests.push(newTest._id);
 
-        res.status(200).json({
-            status: "success",
-            data: {
-                test,
-            },
-        });
-    }
-    catch (error) {
-        res.status(404).json({
-            status: "fail",
-            data: {
-                message: "Test does not exist",
-                error,
-            }
-        })
-    }
-}
+    await user.save();
 
-export const deleteTest = async (req: ProtectedRequest, res: Response) => {
-    // console.log(req.params.id);
-    try {
-        const userId = req.auth.userId;
-        const testId = req.params.id
-        // const test = await Test.findByIdAndDelete(req.params.id)
-        const test = await Test.findByIdAndDelete(testId)
+    res.status(201).json({
+        status: "success",
+        data: {
+            newTest,
+        },
+    });
+});
 
-        if (!test) {
-            throw new Error('Test not found');
-        }
+export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    const test = await Test.findById(req.params.id)
+    // console.log(test);
 
-        await User.findByIdAndUpdate(userId, {
-            $pull: { tests: testId } // Remove the test ID from the user's tests array
-        }, { new: true });
+    if (!test) return next(new AppError("No test found with that ID", 404));
 
-        res.status(204).json({
-            status: "success",
-            data: null,
-        });
-    }
-    catch (error) {
-        res.status(404).json({
-            status: "fail",
-            data: {
+    res.status(200).json({
+        status: "success",
+        data: {
+            test,
+        },
+    });
+})
 
-                error,
-            }
-        })
-    }
-}
+export const deleteTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    const userId = req.auth.userId;
+    const testId = req.params.id;
 
-export const updateTest = async (req: Request, res: Response) => {
-    // console.log(req.params.id);
-    try {
+    const user = await User.findById(userId);
+    if (!user) return next(new AppError("No user found with that ID", 404));
 
-        // const test = await Test.findByIdAndDelete(req.params.id)
-        const test = await Test.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true,
-        })
+    const test = await Test.findByIdAndDelete(testId)
 
-        res.status(200).json({
-            status: "success",
-            data: {
-                test,
-            },
-        });
-    }
-    catch (error) {
-        res.status(404).json({
-            status: "fail",
-            data: {
-                message: "Test does not exist",
-                error,
-            }
-        })
-    }
-}
+    if (!test) return next(new AppError("No test found with that ID", 404));
+
+    await User.updateOne(
+        { _id: userId },
+        { $pull: { tests: testId } }
+    );
+
+    // await User.findByIdAndUpdate(userId, {
+    //     $pull: { tests: testId } // Remove the test ID from the user's tests array
+    // }, { new: true });
+
+    res.status(204).json({
+        status: "success",
+        data: null,
+    });
+})
+
+export const updateTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    
+    const testId = req.params.id;
+
+    const test = await Test.findByIdAndUpdate(testId, req.body, {
+        new: true,
+        runValidators: true,
+    })
+
+    if (!test) return next(new AppError("No test found with that ID", 404));
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            test,
+        },
+    });
+    
+})

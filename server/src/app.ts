@@ -1,11 +1,13 @@
-import express,{ Request,Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import connect from "./config/db";
 import "dotenv/config";
 import cors from "cors"
 import { clerkMiddleware } from '@clerk/express';
 import { verifyUserWithToken } from "./middleware/verifyUserWithToken";
 import morgan from "morgan";
-// const morgan = require("morgan");
+import { ProtectedRequest } from "./types/expressTypes";
+import AppError from "./utils/appError";
+import globalAppHandler from "./controllers/errorController";
 
 //routes
 import verifyUserDataRoute from "./routes/verifyUserData";
@@ -13,7 +15,6 @@ import testsFetchRoute from "./routes/testRoutes";
 
 // DISABLE ON PROD
 import { verifyTestUser } from "./middleware/apiTest";
-import { ProtectedRequest } from "./types/expressTypes";
 
 
 const PORT = process.env.PORT || 3000;
@@ -23,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin:"http://localhost:5173"
+    origin: "http://localhost:5173"
 }));
 
 if (process.env.NODE_ENV === "development") {
@@ -38,21 +39,20 @@ connect(MongoURL);
 // app.use("/api",clerkMiddleware(),verifyUserWithToken);
 
 // DISABLE ON PROD
-app.use("/api",verifyTestUser)
+app.use("/api", verifyTestUser)
 
 //user verification route
-app.use("/api/verifyuser",verifyUserDataRoute);
+app.use("/api/verifyuser", verifyUserDataRoute);
 
 //tests fetch route
-app.use("/api/v1/user/tests",testsFetchRoute);
+app.use("/api/v1/user/tests", testsFetchRoute);
 
 // Handling Unhandled Routes
 app.all("*", (req: ProtectedRequest, res: Response, next) => {
-    res.status(404).json({
-        status: "fail",
-        message: `Can't find ${req.originalUrl} on this server!`,
-    });
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
+
+app.use(globalAppHandler)
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
