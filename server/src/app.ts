@@ -11,10 +11,13 @@ import globalAppHandler from "./controllers/errorController";
 
 //routes
 import verifyUserDataRoute from "./routes/verifyUserData";
-import testsFetchRoute from "./routes/testRoutes";
+import testRoutes from "./routes/testRoutes";
+import participantsRoutes from "./routes/participantsRoutes";
+import questionSetRoutes from "./routes/questionSetRoutes";
 
 // DISABLE ON PROD
 import { verifyTestUser } from "./middleware/apiTest";
+import { createUser } from "./controllers/testController";
 
 
 const PORT = process.env.PORT || 3000;
@@ -44,8 +47,13 @@ app.use("/api", verifyTestUser)
 //user verification route
 app.use("/api/verifyuser", verifyUserDataRoute);
 
+app.route("/api/v1/user")
+    .get(createUser);
+
 //tests fetch route
-app.use("/api/v1/user/tests", testsFetchRoute);
+app.use("/api/v1/user/tests", testRoutes);
+app.use("/api/v1/user/participants", participantsRoutes);
+app.use("/api/v1/user/questionSets", questionSetRoutes);
 
 // Handling Unhandled Routes
 app.all("*", (req: ProtectedRequest, res: Response, next) => {

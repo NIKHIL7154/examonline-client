@@ -5,24 +5,28 @@ import User from "../models/UserModel";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 
+export const createUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    const user = await User.create(req.body);
+    if (!user) return next(new AppError("No user found with that ID", 404));
+
+    res.status(201).json({
+        status: "success",
+        data: {
+            user,
+        }
+    });
+
+});
 
 export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth.userId;
 
-    const user = await User.findById(userId)
-        .populate({ path: 'tests' })
-    // .populate({ path: 'tests', select: 'questionSetId name status createdAt' })
-
-    if (!user) return next(new AppError("No user found with that ID", 404));
-
-    const tests = user.tests;
-
-    // if (tests.length === 0) return next(new AppError("No test found with user", 404))
-
+    const tests = await Test.find({ user: userId });
 
     res.status(200).json({
         status: "success",
         data: {
+            totalTests: tests.length,
             tests,
         }
     });
@@ -31,30 +35,21 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
 export const createTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth?.userId;
 
-    const user = await User.findById(userId);
-    if (!user) return next(new AppError("No user found with that ID", 404));
-
-    const newTest = await Test.create(req.body)
-
-    // await User.findByIdAndUpdate(userId, {
-    //     $push: { tests: newTest._id }
-    // })
-
-    user.tests.push(newTest._id);
-
-    await user.save();
+    const newTest = await Test.create({ ...req.body, user: userId })
+    if (!newTest) return next(new AppError("Error occured while test creation, please try again", 404));
 
     res.status(201).json({
         status: "success",
         data: {
-            newTest,
+            test: newTest,
         },
     });
 });
 
 export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
-    const test = await Test.findById(req.params.id)
-    // console.log(test);
+    const test = await Test
+        .findById(req.params.id)
+        .populate({path: "questionSet participants"})
 
     if (!test) return next(new AppError("No test found with that ID", 404));
 
@@ -67,24 +62,10 @@ export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, n
 })
 
 export const deleteTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
-    const userId = req.auth.userId;
     const testId = req.params.id;
 
-    const user = await User.findById(userId);
-    if (!user) return next(new AppError("No user found with that ID", 404));
-
     const test = await Test.findByIdAndDelete(testId)
-
     if (!test) return next(new AppError("No test found with that ID", 404));
-
-    await User.updateOne(
-        { _id: userId },
-        { $pull: { tests: testId } }
-    );
-
-    // await User.findByIdAndUpdate(userId, {
-    //     $pull: { tests: testId } // Remove the test ID from the user's tests array
-    // }, { new: true });
 
     res.status(204).json({
         status: "success",
@@ -93,7 +74,7 @@ export const deleteTest = catchAsync(async (req: ProtectedRequest, res: Response
 })
 
 export const updateTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
-    
+
     const testId = req.params.id;
 
     const test = await Test.findByIdAndUpdate(testId, req.body, {
@@ -109,5 +90,5 @@ export const updateTest = catchAsync(async (req: ProtectedRequest, res: Response
             test,
         },
     });
-    
+
 })
