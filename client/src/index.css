@@ -4,6 +4,7 @@
 @tailwind utilities;
 
 @layer utilities {
+  
   .sized {
     width: 100vw;
     height: 100vh;
@@ -172,4 +173,30 @@
     font-weight: 900;
     font-style: italic;
   }
+}
+
+/* headings */
+
+h1 {
+  @apply text-4xl font-bold text-gray-900 leading-tight;
+}
+
+h2 {
+  @apply text-3xl font-semibold text-gray-800 leading-snug;
+}
+
+h3 {
+  @apply text-2xl font-medium text-gray-700 leading-snug;
+}
+
+h4 {
+  @apply text-xl font-medium text-gray-600 leading-snug;
+}
+
+h5 {
+  @apply text-lg font-medium text-gray-500 leading-normal;
+}
+
+h6 {
+  @apply text-base font-medium text-gray-400 leading-normal;
 }

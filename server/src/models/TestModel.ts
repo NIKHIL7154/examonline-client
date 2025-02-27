@@ -9,7 +9,7 @@ function normalizeDate(date: Date): Date {
 
 
 // ADD DURATION
-interface TestType extends Document {
+export interface TestType extends Document {
     name: string;
     questionSet: mongoose.Types.ObjectId[];
     status: string;

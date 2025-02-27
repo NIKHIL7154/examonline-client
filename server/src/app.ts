@@ -9,11 +9,21 @@ import { ProtectedRequest } from "./types/expressTypes";
 import AppError from "./utils/appError";
 import globalAppHandler from "./controllers/errorController";
 
+//socket setup
+import http from "http";
+import {initializeSockets} from "./config/socket";
+
+
+
+
+
 //routes
 import verifyUserDataRoute from "./routes/verifyUserData";
 import testRoutes from "./routes/testRoutes";
 import participantsRoutes from "./routes/participantsRoutes";
 import questionSetRoutes from "./routes/questionSetRoutes";
+
+import examConductRoutes from "./routes/examConductRoutes";
 
 // DISABLE ON PROD
 import { verifyTestUser } from "./middleware/apiTest";
@@ -41,8 +51,18 @@ if (process.env.NODE_ENV === "development") {
 }
 
 
+//socket initialized
+const server = http.createServer(app);
+initializeSockets(server);
+
+
+
+
+app.use(express.json());
 const MongoURL = process.env.MONGO_URI ? process.env.MONGO_URI : "mongodb://localhost:27017/test";
 connect(MongoURL);
+
+
 
 // clerk middleware to verify Jwt Token
 // app.use("/api",clerkMiddleware(),verifyUserWithToken);
@@ -53,54 +73,6 @@ app.use("/api", verifyTestUser)
 //user verification route
 app.use("/api/verifyuser", verifyUserDataRoute);
 
-// const delay = (duration: number, id: string): (() => Promise<void>) => {
-//     return async () => {
-//         // console.log(`Starting delay for ${duration / 1000} seconds...`);
-//         return new Promise((resolve) => {
-//             setTimeout(() => {
-//                 console.log(`${id} Finished delay for ${duration / 1000} seconds.`);
-//                 resolve();
-//             }, duration);
-//         });
-//     };
-// };
-
-// const e_info = [
-//     [
-//         {name: "abc", email: "abc@email.com"},
-//         {name: "cde", email: "cde@email.com"},
-//         {name: "fgh", email: "fgh@email.com"},
-//     ] ,
-//      [
-//         {name: "ijk", email: "ijk@email.com"},
-//         {name: "lmn", email: "lmn@email.com"},
-//     ] ,
-
-// ]
-// app.route("/:id").get(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
-//     const id = req.params.id;
-//     // console.log('Starting multiple delays...');
-//     const url = 'https://example.com/welcome';
-//     // Create an array of functions that return promises
-    
-//     initializeTaskCount(id, e_info[Number(id)].length);
-//     // // Call each function to get the promises and wait for all to resolve
-//     // // await Promise.all(tasks.map(task => task()));
-//     // tasks.forEach(task => {
-//     //     TestQueue.enqueue(task)
-//     // });
-
-//     e_info[Number(id)].forEach(participant => {
-//         EmailQueueCpy.enqueue(sendEmailTaskCpy(participant, url, id));
-//     });
-//     // console.log('All delays done!');
-
-//     emailProcessingEmitter.once(`emailsProcessed:${id}`, () => {
-//         console.log(`All emails have been sent for request ID: ${id}`);
-//         // Additional actions can be performed here
-//     });
-//     res.send('Finished all delays');
-// })
 
 app.route("/api/v1/user")
     .get(createUser);
@@ -110,14 +82,43 @@ app.use("/api/v1/user/tests", testRoutes);
 app.use("/api/v1/user/participants", participantsRoutes);
 app.use("/api/v1/user/questionSets", questionSetRoutes);
 
+//test conduct route
+app.use("/test",examConductRoutes);
+
+app.use(globalAppHandler)
+
+app.get("/", (req: Request, res: Response) => {
+    res.send("Hello World");
+});
+
+app.get("/api/testing",(req:ProtectedRequest,res:Response)=>{
+    res.json({user:req.auth.userId})
+})
+
+
+
+//cors
+app.use(cors({
+    //origin:"http://localhost:5173"
+    origin:"*"
+}));
+
+
+
+
+
+
+
+
+
 // Handling Unhandled Routes
 app.all("*", (req: ProtectedRequest, res: Response, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
 
-app.use(globalAppHandler)
 
-const server = app.listen(PORT, () => {
+
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 

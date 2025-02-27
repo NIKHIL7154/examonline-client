@@ -40,7 +40,7 @@ export default function DashboardLayout() {
 
   if (!isLoaded) return (<VerifyUserInDataBase />)
   //uncomment this to verify user in database
-  //if(userVerification) return (<VerifyUserInDataBase user={user} updateState={setuserVerification}/>)
+  // if(userVerification) return (<VerifyUserInDataBase user={user} updateState={setuserVerification}/>)
 
   return (
     <><SignedIn>

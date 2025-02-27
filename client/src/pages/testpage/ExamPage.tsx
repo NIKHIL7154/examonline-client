@@ -9,7 +9,6 @@ const ExamPage = () => {
     <div className='mx-auto my-auto flex flex-row w-[80%] h-[500px] gap-[20px]'>
       {/* hello */}
       <time className="absolute text-xl right-[30px] top-[10px]"> Timer : 59:59</time>
-
       <QuetionCard />
       <QuetionList />
       <div className="absolute text-xl right-[100px] bottom-[30px] flex flex-row gap-[2rem]"> 
