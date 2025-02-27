@@ -23,6 +23,12 @@ import { createUser } from "./controllers/testController";
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+process.on('uncaughtException', (err) => {
+    console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+    console.log(err.name, err.message);
+    process.exit(1);
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -47,6 +53,55 @@ app.use("/api", verifyTestUser)
 //user verification route
 app.use("/api/verifyuser", verifyUserDataRoute);
 
+// const delay = (duration: number, id: string): (() => Promise<void>) => {
+//     return async () => {
+//         // console.log(`Starting delay for ${duration / 1000} seconds...`);
+//         return new Promise((resolve) => {
+//             setTimeout(() => {
+//                 console.log(`${id} Finished delay for ${duration / 1000} seconds.`);
+//                 resolve();
+//             }, duration);
+//         });
+//     };
+// };
+
+// const e_info = [
+//     [
+//         {name: "abc", email: "abc@email.com"},
+//         {name: "cde", email: "cde@email.com"},
+//         {name: "fgh", email: "fgh@email.com"},
+//     ] ,
+//      [
+//         {name: "ijk", email: "ijk@email.com"},
+//         {name: "lmn", email: "lmn@email.com"},
+//     ] ,
+
+// ]
+// app.route("/:id").get(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+//     const id = req.params.id;
+//     // console.log('Starting multiple delays...');
+//     const url = 'https://example.com/welcome';
+//     // Create an array of functions that return promises
+    
+//     initializeTaskCount(id, e_info[Number(id)].length);
+//     // // Call each function to get the promises and wait for all to resolve
+//     // // await Promise.all(tasks.map(task => task()));
+//     // tasks.forEach(task => {
+//     //     TestQueue.enqueue(task)
+//     // });
+
+//     e_info[Number(id)].forEach(participant => {
+//         EmailQueueCpy.enqueue(sendEmailTaskCpy(participant, url, id));
+//     });
+//     // console.log('All delays done!');
+
+//     emailProcessingEmitter.once(`emailsProcessed:${id}`, () => {
+//         console.log(`All emails have been sent for request ID: ${id}`);
+//         // Additional actions can be performed here
+//     });
+//     res.send('Finished all delays');
+// })
+
 app.route("/api/v1/user")
     .get(createUser);
 
@@ -62,6 +117,15 @@ app.all("*", (req: ProtectedRequest, res: Response, next) => {
 
 app.use(globalAppHandler)
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+process.on('unhandledRejection', (err: any) => {
+    console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+    console.log(err.name, err.message);
+
+    server.close(() => {
+        process.exit(1);
+    })
 });

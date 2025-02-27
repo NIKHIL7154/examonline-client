@@ -5,7 +5,7 @@ interface ParticipantInfoType {
     email: string;
 }
 
-interface ParticipantsType extends Document {
+export interface ParticipantsType extends Document {
     listName: String;
     list: ParticipantInfoType[];
     user: string;
@@ -17,7 +17,7 @@ const participantsScheme = new mongoose.Schema<ParticipantsType>({
     listName: {
         type: String,
         required: [true, "The list must have a name"],
-        unique: true,
+        // unique: true,
     },
     list: {
         type: [
@@ -34,6 +34,7 @@ const participantsScheme = new mongoose.Schema<ParticipantsType>({
             }
         ],
         required: true,
+        _id: false, // Disable automatic _id generation for subdocuments
     },
     user: {
         type: String,

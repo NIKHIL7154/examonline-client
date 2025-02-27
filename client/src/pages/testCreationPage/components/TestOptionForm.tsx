@@ -98,9 +98,11 @@ function TestOptionForm() {
                         selected={startAt}
                         onChange={handleStartAt}
                         timeFormat="HH:mm"
+                        timeIntervals={5}
                         dateFormat="MMMM d, yyyy h:mm aa"
                         timeCaption="Time"
                         placeholderText="Select test start date and time"
+                        minDate={new Date()}
                     />
                 </div>
                 <div className="flex gap-2 relative w-[90%]">
@@ -108,6 +110,7 @@ function TestOptionForm() {
                     <DatePicker
                         className="border rounded-md w-[410px] px-2 py-1"
                         showTimeSelect
+                        timeIntervals={5}
                         selected={endAt}
                         onChange={handleEndAt}
                         timeFormat="HH:mm"

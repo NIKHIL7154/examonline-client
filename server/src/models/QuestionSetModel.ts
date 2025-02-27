@@ -50,7 +50,7 @@ const QuestionSetSchema = new mongoose.Schema<QuestionSetType>({
                 },
                 correctOption: {
                     type: String,
-                    required: [true, "A mcq quetion must have a correctOption"],
+                    required: [true, "A mcq question must have a correctOption"],
                     maxlength: 1,
                     minlength: 1,
                     enum: {
@@ -60,6 +60,8 @@ const QuestionSetSchema = new mongoose.Schema<QuestionSetType>({
                 }
             }
         ],
+        required: [true, "Questions set must have questions"],
+        _id: false, // Disable automatic _id generation for subdocuments
     },
     user: {
         type: String,
@@ -72,88 +74,4 @@ const QuestionSetSchema = new mongoose.Schema<QuestionSetType>({
     }
 });
 
-// const QuestionSchema= new mongoose.Schema({
-//     question: {
-//         type: String,
-//         required: true
-//     },
-//     options: [
-//         {
-//             type: String,
-//             required: true
-//         }
-//     ],
-//     answer: {
-//         type: String,
-//         required: true
-//     },
-//     id:{
-//         type: String,
-//         required: true
-//     }
-    
-// });
-
 export const QuestionSet = mongoose.model<QuestionSetType>('QuestionSet', QuestionSetSchema);
-// export const Question = mongoose.model('Question', QuestionSchema);
-
-// const questionSchema = new mongoose.Schema({
-//     questionText: {
-//       type: String,
-//       required: true,
-//     },
-//     options: {
-//       type: [String], // Array of options for multiple-choice questions
-//       required: function() {
-//         return this.questionType === 'multiple-choice'; // Only required for multiple-choice questions
-//       },
-//     },
-//     correctAnswer: {
-//       type: String, // Can be the index of the correct option or the answer text
-//       required: true,
-//     },
-//     questionType: {
-//       type: String,
-//       enum: ['multiple-choice', 'true-false', 'short-answer'], // Define the types of questions
-//       required: true,
-//     },
-//     difficulty: {
-//       type: String,
-//       enum: ['easy', 'medium', 'hard'], // Optional: Define difficulty levels
-//     },
-//     tags: {
-//       type: [String], // Optional: Tags for categorization
-//     },
-//     createdAt: {
-//       type: Date,
-//       default: Date.now,
-//     },
-//   });
-  
-//   const Question = mongoose.model('Question', questionSchema);
-
-
-// const questionSetSchema = new mongoose.Schema({
-//     title: {
-//       type: String,
-//       required: true,
-//     },
-//     description: {
-//       type: String,
-//     },
-//     questions: [{
-//       question: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'Question', // Reference to the Question model
-//       },
-//       order: {
-//         type: Number, // Optional: To maintain the order of questions
-//       },
-//     }],
-//     createdAt: {
-//       type: Date,
-//       default: Date.now,
-//     },
-//   });
-  
-//   const QuestionSet = mongoose.model('QuestionSet', questionSetSchema);

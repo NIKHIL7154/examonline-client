@@ -1,5 +1,13 @@
 import mongoose, { Document, Query } from "mongoose";
 
+function normalizeDate(date: Date): Date {
+    const normalizedDate = new Date(date);
+    normalizedDate.setSeconds(0);
+    normalizedDate.setMilliseconds(0);
+    return normalizedDate;
+}
+
+
 // ADD DURATION
 interface TestType extends Document {
     name: string;
@@ -7,12 +15,14 @@ interface TestType extends Document {
     status: string;
     createdAt: Date;
     startAt: Date;
+    durationInSec: Number;
     endAt: Date;
     proctoring: boolean;
     tabSwitchLimit: number;
     resumable: boolean;
     user: string;
     participants: mongoose.Types.ObjectId[];
+    linksForwarded: string;
     // participants: mongoose.Types.ObjectId;
 }
 
@@ -21,7 +31,7 @@ const TestSchema = new mongoose.Schema<TestType>({
     name: {
         type: String,
         required: [true, "A test must have a name"],
-        unique: true,
+        // unique: true,
     },
     questionSet: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -44,21 +54,55 @@ const TestSchema = new mongoose.Schema<TestType>({
     startAt: {
         type: Date,
         required: [true, "A test must have a start time"],
-        validate: {
-            validator: function (value: Date): boolean {
-                return value >= new Date();
+        validate: [
+            {
+                validator: function (value: Date): boolean {
+                    return value >= new Date();
+                },
+                message: "startAt cannot be a historical date.",
             },
-            message: "startAt cannot be a historical date.",
+            {
+                validator: function (value: Date) {
+                    return value.getMinutes() % 5 === 0;
+                },
+                message: "Minutes must be a multiple of 5.",
+            },
+        ],
+        set: function (value: Date) {
+            // Normalize the date before saving
+            return normalizeDate(value);
+        }
+    },
+    durationInSec: {
+        type: Number,
+        required: [true, "A test must have duration"],
+        validate: {
+            validator: function (value) {
+                const durationInSeconds = (this.endAt.getTime() - this.startAt.getTime()) / 1000;
+                return value <= Math.floor(durationInSeconds);
+            }
         },
     },
     endAt: {
         type: Date,
         required: [true, "A test must have an end time"],
-        validate: {
-            validator: function (value: Date): boolean {
-                return value > this.startAt;
+        validate: [
+            {
+                validator: function (value: Date): boolean {
+                    return value > this.startAt;
+                },
+                message: "endAt must be after startAt.",
             },
-            message: "endAt must be after startAt.",
+            {
+                validator: function (value: Date) {
+                    return value.getMinutes() % 5 === 0;
+                },
+                message: "Minutes must be a multiple of 5.",
+            },
+        ],
+        set: function (value: Date) {
+            // Normalize the date before saving
+            return normalizeDate(value);
         },
     },
     proctoring: {
@@ -85,11 +129,21 @@ const TestSchema = new mongoose.Schema<TestType>({
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "Participants", 
     // }],
+    linksForwarded: {
+        type: String,
+        default: "pending",
+        required: true,
+        enum: {
+            values: ["pending", "forwarded"],
+            message: "Status is either: pending or forwarded",
+        }, 
+    },
     participants: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Participant",
-        required: [true, "A test must have participants"]  ,
+        required: [true, "A test must have participants"],
     }],
+
     // work on this later
     // trackUserData: {
     //     type: Boolean,
@@ -98,7 +152,7 @@ const TestSchema = new mongoose.Schema<TestType>({
 });
 
 TestSchema.pre<Query<any, TestType>>(/^find/, function (next) {
-    this.select('-__v'); 
+    this.select('-__v');
     next();
 });
 

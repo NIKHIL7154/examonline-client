@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
-import { createQuestionSet } from "../controllers/questionSetController";
+import { createQuestionSet, getAllSetsByUser, getQuestionSet } from "../controllers/questionSetController";
 
 
 const router = express.Router();
 
 router.route("/")
-    // .get(getAllTestsByUser)
+    .get(getAllSetsByUser)
     .post(createQuestionSet);
 
-// router.route("/:id")
-//     .get(getTest)
+router.route("/:id")
+    .get(getQuestionSet)
 //     .delete(deleteTest)
 //     .patch(updateTest)
 
