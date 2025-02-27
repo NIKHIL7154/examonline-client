@@ -6,25 +6,31 @@ import { useEffect } from 'react'
 /**
  * Prevent user select
  */
-export function useSelectionDisable() {
+export function useSelectionDisable(divRef: React.RefObject<HTMLDivElement>,socketStatus:boolean) {
   useEffect(() => {
-   
 
-    const element = document.body
 
-    const properties = [
-      'user-select',
-      '-webkit-user-select',
-      '-ms-user-select',
-      '-moz-user-select',
-    ] as const
+    const parent = divRef.current
+    const selectionDisbaleInterval = setInterval(() => {
+      const properties = [
+        'user-select',
+        '-webkit-user-select',
+        '-ms-user-select',
+        '-moz-user-select',
+      ] as const
+      const childs = parent?.querySelectorAll('*')
+      childs?.forEach((child) => {
+        properties.forEach((property) => (child as HTMLElement)?.style.setProperty(property, 'none', 'important'))
+      })
+    
 
-    properties.forEach((property) => element.style.setProperty(property, 'none'))
+    }, 500);
+
 
     return () => {
-      properties.forEach((property) => element.style.setProperty(property, 'auto'))
+      clearInterval(selectionDisbaleInterval)
     }
-  }, [])
+  }, [divRef,socketStatus])
 
   return
 }

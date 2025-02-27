@@ -1,0 +1,42 @@
+extends baseEmail
+block content
+    - const { testName, testValidRange, testStartTime } = testInfoEmail
+    p Hello #{firstName},    
+    p This is a reminder that your upcoming assessment: 
+        strong #{testName} 
+        | is right around the corner.
+    
+    p Your assessment will be active from #{testValidRange}.
+
+    if testStartTime
+        p MANDATORY: Login 
+            strong #{testStartTime} minutes 
+            | prior assessment start time for hassle free experience.
+            br 
+            | Click on the below button to get started with your tasks.
+    else
+        p Please ensure that you complete your assessment as soon as possible; 
+            | while a stipulated timeline is in place, it is advisable to submit it ahead of the deadline.
+            br 
+            | Click on the below button to get started with your tasks
+
+    //- p Click on the below button to get started with your tasks.
+    
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+        tbody
+            tr
+                td(align='left')
+                    table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                        tbody
+                            tr
+                                td
+                                    a(href=`${url}`, target='_blank') Start Now
+    p.test-link If the button doesn't work, copy and paste the following link into 
+        | your browser's address bar: 
+        br
+        | #{url}
+
+    p Make sure you complete all the required tasks and try to complete them in one sitting.
+        |  Best of luck with your assessment!
+
+    p - The ExamFusion Team

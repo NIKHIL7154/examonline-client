@@ -25,26 +25,32 @@ import mongoose from 'mongoose';
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now()
     },
-    tests: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Test'
-        }
-    ],
-    questionSets: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'QuestionSet'
-        }
-    ],
-    activeTests: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Test'
-        }
-    ]
+    // tests: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Test'
+    //     }
+    // ],
+    // participantLists: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Participants'
+    //     }
+    // ],
+    // questionSets: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'QuestionSet'
+    //     }
+    // ],
+    // activeTests: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Test'
+    //     }
+    // ]
 });
 const User = mongoose.model('User', UserSchema);
 export default User;

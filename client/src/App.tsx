@@ -20,6 +20,9 @@ import QuestionSetSelector from './pages/testCreationPage/components/QuestionSet
 import TestOptionForm from './pages/testCreationPage/components/TestOptionForm'
 import TestParticipants from './pages/testCreationPage/components/TestParticipants'
 import { TestConfigProvider } from './pages/testCreationPage/context/TestConfigContext'
+import TestConductLayout from './pages/testConductPages/TestConductLayout'
+import FaceVerification from './pages/testConductPages/pages/FaceProctoring'
+import { TestNavigationProvider } from './pages/testConductPages/context/TestNavigationContext'
 
 const router = createBrowserRouter([
   {
@@ -56,6 +59,13 @@ const router = createBrowserRouter([
 
         ],
       },
+      {
+        path:"test",element:<TestNavigationProvider><TestConductLayout/></TestNavigationProvider>
+
+      },
+      {
+        path:"face",element:<FaceVerification/>
+      }
     ],
     errorElement: <ErrorBoundary />
   },
