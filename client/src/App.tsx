@@ -12,7 +12,7 @@ import ErrorBoundary from './pages/ErrorBoundary'
 import TestsLayout from './pages/tests/TestsLayout'
 import OverviewPage from './pages/overviewpage/OverviewPage'
 
-
+import { Toaster } from "react-hot-toast";
 
 import QuestionsPage from './pages/questionSetsPage/QuestionsPage'
 import TestCreationPage from './pages/testCreationPage/TestCreationPage'
@@ -98,6 +98,27 @@ const App = () => {
       <RouterProvider router={router} future={{
         v7_startTransition: true,
       }} />
+
+      <Toaster
+        position="top-center"
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 5000,
+          },
+          style: {
+            fontSize: "16px",
+            maxWidth: "500px",
+            padding: "16px 24px",
+            backgroundColor: "#fff",
+            color: "#374151",
+          }
+        }}
+      />
     </QueryClientProvider>
   )
 }
