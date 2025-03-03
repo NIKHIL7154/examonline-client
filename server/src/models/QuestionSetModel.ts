@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Query } from "mongoose";
 
 interface QuestionType extends Document {
     questionTitle: String;
@@ -72,6 +72,11 @@ const QuestionSetSchema = new mongoose.Schema<QuestionSetType>({
         type: Date,
         default: Date.now(),
     }
+});
+
+QuestionSetSchema.pre<Query<any, QuestionSetType>>(/^find/, function (next) {
+    this.select('-__v');
+    next();
 });
 
 export const QuestionSet = mongoose.model<QuestionSetType>('QuestionSet', QuestionSetSchema);

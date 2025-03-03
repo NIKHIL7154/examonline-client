@@ -1,4 +1,6 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import RootLayout from './layouts/RootLayout'
 import DashboardLayout from './layouts/DashboardLayout'
 import IndexPage from './pages/verificationPage/IndexPage'
@@ -60,11 +62,11 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path:"test",element:<TestNavigationProvider><TestConductLayout/></TestNavigationProvider>
+        path: "test", element: <TestNavigationProvider><TestConductLayout /></TestNavigationProvider>
 
       },
       {
-        path:"face",element:<FaceVerification/>
+        path: "face", element: <FaceVerification />
       }
     ],
     errorElement: <ErrorBoundary />
@@ -81,10 +83,22 @@ const router = createBrowserRouter([
 
 
 const App = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 0,
+        // staleTime: 60 * 1000,
+      },
+    }
+  });
+
   return (
-    <RouterProvider router={router} future={{
-      v7_startTransition: true,
-    }} />
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <RouterProvider router={router} future={{
+        v7_startTransition: true,
+      }} />
+    </QueryClientProvider>
   )
 }
 

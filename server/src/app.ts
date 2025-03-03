@@ -65,10 +65,10 @@ connect(MongoURL);
 
 
 // clerk middleware to verify Jwt Token
-// app.use("/api",clerkMiddleware(),verifyUserWithToken);
+app.use("/api",clerkMiddleware(),verifyUserWithToken);
 
 // DISABLE ON PROD
-app.use("/api", verifyTestUser)
+// app.use("/api", verifyTestUser)
 
 //user verification route
 app.use("/api/verifyuser", verifyUserDataRoute);

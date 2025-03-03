@@ -1,0 +1,1 @@
+export const serverUrl = `http://localhost:2121/api/v1/user`;

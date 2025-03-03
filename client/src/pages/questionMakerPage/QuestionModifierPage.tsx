@@ -4,20 +4,21 @@ import AutoTextArea from "./component/AutoTextArea";
 import { getQuestions } from "../../helpers/QuestionSetStore";
 
 type Question = {
-    question: string;
+    questionTitle: string;
     options: {
         A: string;
         B: string;
         C: string;
         D: string;
     };
-    answer: "A" | "B" | "C" | "D";
+    correctOption: "A" | "B" | "C" | "D";
     id: string;
 };
 
 const QuestionModifierPage = () => {
-    const { control, handleSubmit, setValue } = useForm<{ questions: Question[] }>({
+    const { control, handleSubmit, setValue } = useForm<{ name: string, questions: Question[] }>({
         defaultValues: {
+            name: "",
             questions: getQuestions(),
         },
     });
@@ -26,7 +27,7 @@ const QuestionModifierPage = () => {
         name: "questions",
     });
 
-    const onSubmit = (data: { questions: Question[] }) => {
+    const onSubmit = (data: { name: string, questions: Question[] }) => {
         console.log("Form Data:", data);
         //create question set and save data to database
     };
@@ -42,6 +43,19 @@ const QuestionModifierPage = () => {
                         <p className="text-gray-600 mb-6">
                             Create a question set by adding questions and their options
                         </p>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-lg font-semibold text-gray-700 mb-2">
+                            Question Set Name
+                        </label>
+                        <input
+                            required
+                            type="text"
+                            onChange={(e) => setValue("name", e.target.value)}
+                            className="w-full border-b border-gray-300 rounded-sm focus:ring-indigo-500 focus:border-indigo-500 focus:border-b-2 outline-none"
+                            placeholder="Enter the name of the question set"
+                        />
                     </div>
 
                     {fields.map((field, index) => (
@@ -72,12 +86,12 @@ const QuestionModifierPage = () => {
                                     Question {index + 1}
                                 </label>
                                 <AutoTextArea
-                                    defaultValue={field.question}
+                                    defaultValue={field.questionTitle}
                                     onChange={(e) =>
-                                        setValue(`questions.${index}.question`, e.target.value)
+                                        setValue(`questions.${index}.questionTitle`, e.target.value)
                                     }
                                     placeholder="Enter your question here"
-                                    
+
                                 />
                             </div>
 
@@ -96,7 +110,7 @@ const QuestionModifierPage = () => {
                                                 )
                                             }
                                             placeholder={`Enter option ${key}`}
-                                           
+
                                         />
                                     </div>
                                 ))}
@@ -108,9 +122,9 @@ const QuestionModifierPage = () => {
                                 </label>
                                 <select
                                     onChange={(e) =>
-                                        setValue(`questions.${index}.answer`, e.target.value as "A" | "B" | "C" | "D")
+                                        setValue(`questions.${index}.correctOption`, e.target.value as "A" | "B" | "C" | "D")
                                     }
-                                    defaultValue={field.answer}
+                                    defaultValue={field.correctOption}
                                     className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                                 >
                                     <option value="A">Option A</option>
@@ -127,9 +141,9 @@ const QuestionModifierPage = () => {
                             type="button"
                             onClick={() =>
                                 append({
-                                    question: "",
+                                    questionTitle: "",
                                     options: { A: "", B: "", C: "", D: "" },
-                                    answer: "A",
+                                    correctOption: "A",
                                     id: genUID(6),
                                 })
                             }

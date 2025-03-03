@@ -1,24 +1,24 @@
 type Question = {
-    question: string;
+    questionTitle: string;
     options: {
         A: string;
         B: string;
         C: string;
         D: string;
     };
-    answer: "A" | "B" | "C" | "D";
+    correctOption: "A" | "B" | "C" | "D";
     id: string;
 };
 let Questions :Question[]=[
     {
-        question: "",
+        questionTitle: "",
         options: {
             A: "",
             B: "",
             C: "",
             D: "",
         },
-        answer: "A",
+        correctOption: "A",
         id: "tfg456",
     },
 ];
@@ -31,14 +31,14 @@ export const setQuestions=(questions : Question[])=>{
     if(questions.length<1){
         Questions=[
             {
-                question: "",
+                questionTitle: "",
                 options: {
                     A: "",
                     B: "",
                     C: "",
                     D: "",
                 },
-                answer: "A",
+                correctOption: "A",
                 id: "tfg456",
             },
             

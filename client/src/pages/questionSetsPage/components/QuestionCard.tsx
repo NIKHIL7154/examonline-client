@@ -1,9 +1,10 @@
+import { format } from 'date-fns';
 import { QuestionSet } from "../QuestionsPage"
 import { motion } from "framer-motion"
 
 type Props = { item: QuestionSet }
 
-const QuestionCard = ({ item: { name, id, questions } }: Props) => (
+const QuestionCard = ({ item: { name, createdAt, totalQuestions } }: Props) => (
     <motion.div
         variants={{
             hidden: { opacity: 0, y: -50 },
@@ -20,11 +21,11 @@ const QuestionCard = ({ item: { name, id, questions } }: Props) => (
             </div>
             <div className="flex-grow">
                 <h3 className="text-lg font-semibold text-neutral-800">{name}</h3>
-                <p className="text-neutral-500 text-sm">Set ID: {id}</p>
+                <p className="text-neutral-500 text-sm">Created: {format(createdAt, 'MMM dd, yyyy')}</p>
             </div>
         </div>
         <div className="border-t border-neutral-200 pt-4 flex justify-between items-center">
-            <p className="text-neutral-600">{questions} Questions</p>
+            <p className="text-neutral-600">{totalQuestions} Questions</p>
             <a href="#" className="text-neutral-800 font-medium hover:text-blue-600 transition-colors">
                 View Set →
             </a>
