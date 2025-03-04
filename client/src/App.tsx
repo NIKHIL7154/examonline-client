@@ -25,6 +25,8 @@ import { TestConfigProvider } from './pages/testCreationPage/context/TestConfigC
 import TestConductLayout from './pages/testConductPages/TestConductLayout'
 import FaceVerification from './pages/testConductPages/pages/FaceProctoring'
 import { TestNavigationProvider } from './pages/testConductPages/context/TestNavigationContext'
+import QuestionSetPage from './pages/questionSetView/questionSetPage';
+import TestPage from './pages/tests/TestPage';
 
 const router = createBrowserRouter([
   {
@@ -43,12 +45,14 @@ const router = createBrowserRouter([
           // { path: '', element: <div>overview page</div> /* add overview page here */ },
           { path: '', element: <OverviewPage /> /* add overview page here */ },
           { path: 'tests', element: <TestsLayout /> },
+          { path: 'tests/test/:testId', element: <TestPage /> },
           // { path: 'create', element: <div>Create test</div> /* add create test page here */ },
           { path: 'create', element: <TestCreationPage /> /* add create test page here */ },
           { path: "edit-set", element: <div>Edit set</div> /*add questions page here*/ },
           { path: "questions", element: <QuestionsPage /> /*add questions page here*/ },
-          { path: "settings", element: <QuestionModifierPage /> },
           { path: "questions/create", element: <QuestionModifierPage /> },
+          { path: "questions/set/:setId", element: <QuestionSetPage /> },
+          { path: "settings", element: <QuestionModifierPage /> },
           {
             path: "create/new-test", element: <TestConfigProvider><CreateNewTestPage /></TestConfigProvider>, children: [
               //  if (condition) navigate("/path" , {replace: true});

@@ -1,10 +1,11 @@
 import { format } from 'date-fns';
 import { QuestionSet } from "../QuestionsPage"
 import { motion } from "framer-motion"
+import { Link } from 'react-router-dom';
 
 type Props = { item: QuestionSet }
 
-const QuestionCard = ({ item: { name, createdAt, totalQuestions } }: Props) => (
+const QuestionCard = ({ item: { _id, name, createdAt, totalQuestions } }: Props) => (
     <motion.div
         variants={{
             hidden: { opacity: 0, y: -50 },
@@ -26,9 +27,10 @@ const QuestionCard = ({ item: { name, createdAt, totalQuestions } }: Props) => (
         </div>
         <div className="border-t border-neutral-200 pt-4 flex justify-between items-center">
             <p className="text-neutral-600">{totalQuestions} Questions</p>
-            <a href="#" className="text-neutral-800 font-medium hover:text-blue-600 transition-colors">
+            <Link to={`set/${_id}`} className="text-neutral-800 font-medium hover:text-blue-600 transition-colors">
+                
                 View Set →
-            </a>
+            </Link>
         </div>
     </motion.div>
 )

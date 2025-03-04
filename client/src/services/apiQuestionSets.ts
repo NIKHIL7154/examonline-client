@@ -22,8 +22,17 @@ export const getQuestionSets = async (authToken: () => Promise<string | null>) =
         const response = await createGetRequest(authToken, `${serverUrl}/questionSets`);
         return response;
     } catch (error) {
-        console.error(error);
+        console.error(error);   
         throw new Error("Question Sets could not be loaded");
+    }
+};
+export const getQuestionSet = async (authToken: () => Promise<string | null>, setId: string) => {
+    try {
+        const response = await createGetRequest(authToken, `${serverUrl}/questionSets/${setId}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Question Set could not be loaded");
     }
 };
 
