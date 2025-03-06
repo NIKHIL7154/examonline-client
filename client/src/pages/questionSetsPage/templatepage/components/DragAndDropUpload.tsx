@@ -54,14 +54,14 @@ const DragAndDropUpload = () => {
                 const json = XLSX.utils.sheet_to_json(sheet); // Convert sheet to JSON
                 const questions = json.map((q: any) => {
                     return {
-                        question: q.Question,
+                        questionTitle: q.Question,
                         options: {
                         A: q.A,
                         B: q.B,
                         C: q.C,
                         D: q.D,
                         },
-                        answer: q.Answer,
+                        correctOption: q.Answer,
                         id: genUID(6),
                     };
                     });

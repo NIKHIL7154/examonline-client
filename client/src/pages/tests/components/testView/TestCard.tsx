@@ -1,22 +1,20 @@
 import gsap from "gsap";
 import { useEffect, useRef } from "react"
+import { TestType } from "./TestSpawner";
+import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
 type Props = {
-    item: {
-        testId: string,
-        name: string,
-        questionSetId: number,
-        createdOn: string,
-        status: string,
-    }
-    , delay: number
+    item: TestType, 
+    delay: number,
 }
 
 
-const TestCard = (props: Props) => {
+const TestCard = ({item, delay}: Props) => {
+    // console.log("hello");
+    
     const testCardRef = useRef(null);
-    const { testId, name, questionSetId, createdOn, status } = props.item
-    const { delay } = props;
+    const { _id: testId, name, createdAt, status, durationInSec } = item
     useEffect(() => {
         if (testCardRef.current) {
             gsap.fromTo(testCardRef.current, { opacity: 0, y: 200 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out", delay: delay });
@@ -29,8 +27,9 @@ const TestCard = (props: Props) => {
             <div className="my-2">
                 <h2 className="text-black text-2xl font-bold pb-2">{name}</h2>
                 <p className="text-gray-900 py-1">Id: <Clabel>{testId}</Clabel></p>
-                <p className="text-gray-900 py-1">Created on: <Clabel>{createdOn}</Clabel></p>
-                <p className="text-gray-900 py-1">Question Set Id: <Clabel>{questionSetId}</Clabel></p>
+                {/* <p className="text-gray-900 py-1">Question Set Id: <Clabel>{questionSet[0]}</Clabel></p> */}
+                <p className="text-gray-900 py-1">Duration: <Clabel>{`${Math.floor((durationInSec)/60)} minutes`}</Clabel></p>
+                <p className="text-gray-900 py-1">Created on: <Clabel>{format(createdAt, 'MMM dd, yyyy')}</Clabel></p>
 
             </div>
             <div className="flex justify-between">
@@ -42,7 +41,7 @@ const TestCard = (props: Props) => {
                 >
                     {status}
                 </span>
-                <button className="px-2 py-1 text-black border border-gray-200 font-semibold rounded hover:bg-green-300">View</button>
+                <Link to={`test/${testId}`} className="px-2 py-1 text-black border border-gray-200 font-semibold rounded hover:bg-green-300">View</Link>
             </div>
         </div>
     )
