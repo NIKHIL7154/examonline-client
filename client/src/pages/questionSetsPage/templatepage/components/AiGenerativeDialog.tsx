@@ -2,6 +2,8 @@ import { useState } from "react"
 import GenerateButton from "./GenerateButton";
 import { GenerativeAiState } from "./TemplateList";
 import { aptitudeMCQs, computerFundamentalsMCQs, englishMCQs, reasoningMCQs } from "./templatequestions";
+import { useNavigate } from "react-router-dom";
+import { setQuestions } from "../../../../helpers/QuestionSetStore";
 
 export type Question = {
     question: string;
@@ -11,8 +13,8 @@ export type Question = {
         C: string;
         D: string;
     };
-    answer: string;
-    
+    answer: "A" | "B" | "C" | "D";
+    id?: string;
 };
 
 type Props = {
@@ -23,16 +25,18 @@ type DemoQuestionsObject={
     [key:string]:Question[]
 }
 const demoQuestionsArray:DemoQuestionsObject={
-    Aptitude:aptitudeMCQs,
-    Reasoning:reasoningMCQs,
-    English:englishMCQs,
-    Computer:computerFundamentalsMCQs
+    Aptitude:aptitudeMCQs as Question[],
+    Reasoning:reasoningMCQs as Question[],
+    English:englishMCQs as Question[],
+    Computer:computerFundamentalsMCQs as Question[]
 }
+
 
 
 const AiGenerativeDialog = (props: Props) => {
     const ques:Question[] = demoQuestionsArray[props.template]
     const [curQuestion, setcurQuestion] = useState(ques[0]);
+    const navigate = useNavigate();
     const generationOptions={
         level:0,
         numQuestions:0,
@@ -46,6 +50,11 @@ const AiGenerativeDialog = (props: Props) => {
         alert(`Generating ${generationOptions.numQuestions} questions of level ${generationOptions.level} for ${props.template}`)
         //api call to generate questions
         //and navigate to question maker page
+        // const ques=aptitudeMCQs as Question[]
+        
+        // setQuestions(ques)
+     
+        navigate("/app/questions/create")
         
     }
     return (

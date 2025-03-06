@@ -22,6 +22,7 @@ import verifyUserDataRoute from "./routes/verifyUserData";
 import testRoutes from "./routes/testRoutes";
 import participantsRoutes from "./routes/participantsRoutes";
 import questionSetRoutes from "./routes/questionSetRoutes";
+import questionGenRoute from "./routes/questionGenRoute";
 
 import examConductRoutes from "./routes/examConductRoutes";
 
@@ -53,7 +54,7 @@ if (process.env.NODE_ENV === "development") {
 
 //socket initialized
 const server = http.createServer(app);
-initializeSockets(server);
+// initializeSockets(server);
 
 
 
@@ -68,7 +69,8 @@ connect(MongoURL);
 // app.use("/api",clerkMiddleware(),verifyUserWithToken);
 
 // DISABLE ON PROD
-app.use("/api", verifyTestUser)
+// app.use("/api", ve
+// rifyTestUser)
 
 //user verification route
 app.use("/api/verifyuser", verifyUserDataRoute);
@@ -81,9 +83,11 @@ app.route("/api/v1/user")
 app.use("/api/v1/user/tests", testRoutes);
 app.use("/api/v1/user/participants", participantsRoutes);
 app.use("/api/v1/user/questionSets", questionSetRoutes);
+app.use("/api/v1/user/questionGen", questionGenRoute);
 
 //test conduct route
 app.use("/test",examConductRoutes);
+
 
 app.use(globalAppHandler)
 
@@ -130,3 +134,12 @@ process.on('unhandledRejection', (err: any) => {
         process.exit(1);
     })
 });
+
+export function envManager(envVariable:string):string{
+    if(!process.env[envVariable] || process.env[envVariable] === ""){
+        console.log('Environment Variable not found:',envVariable);
+        process.exit(1);
+    }
+    return process.env[envVariable];
+
+}
