@@ -15,9 +15,10 @@ export function initializeSockets(server: http.Server) {
     
 }
 
-export function getIoInstance(): Server {
+export function getIoInstance(): Server|null {
     if (!io) {
-        throw new Error("Socket.io not initialized");
+        // throw new Error("Socket.io not initialized");
+        return null;
     }
     return io;
 }
