@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import SidebarData from './SidebarData';
 import SideItem from './SideItem';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../../hooks/ToastContext';
+
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import useRouteName from './useRouteName';
@@ -14,12 +14,11 @@ const SideNav = () => {
   //const [menuItem, setmenuItem] = useState("/app")
   const navigate = useNavigate();
   const [menuItem, setMenuItem] = useRouteName() as [string, React.Dispatch<React.SetStateAction<string>>];
-  const { showToast } = useToast()
+ 
   
 
   const handleNavigate = (path: string) => {
     setMenuItem(path)
-    if (path != "/app") showToast("Redirecting to " + path, "success")
     navigate(path)
   }
   return (

@@ -4,15 +4,15 @@ import { MdOutlineEmail } from "react-icons/md";
 import lady from "../../assets/unsure.svg";
 import { FormEvent, useState } from "react";
 import { useSignIn } from "@clerk/clerk-react";
-;
-import { useToast } from "../../hooks/ToastContext";
+
+
 import { useNavigate } from "react-router-dom";
 function LoginPage() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string>("");
     const {setActive,signIn}=useSignIn();
-    const {showToast} = useToast();
+
     const navigate=useNavigate();
     // f6faf4
     const handleSubmit =async (e: FormEvent) => {
@@ -38,14 +38,14 @@ function LoginPage() {
             const obj=signIn?.create({identifier:email,strategy:"password",password:password,})
             obj?.then(async (res)=>{
                 console.log(res)
-                showToast("Successfully logged in","success")
+               
                 if (setActive && res.createdSessionId) {
                     await setActive({ session: res.createdSessionId });
                     navigate('/app')
                 }
                 
             }).catch((err)=>{
-                showToast(err.errors[0].message,"error")
+                
                 console.log(JSON.stringify(err))
             })
             

@@ -14,7 +14,7 @@ const TestInitialPage = (props: Props) => {
   const token = useParams().token;
   const [testVerificationStatus, setTestVerificationStatus] = useState<boolean>(true);
   const [requestStatus, setRequestStatus] = useState<boolean>(true);
-  const {setCurrentStep} =useTestNavigation();
+  const { setCurrentStep } = useTestNavigation();
   useEffect(() => {
     const verifyTest = async () => {
       try {
@@ -49,7 +49,14 @@ const TestInitialPage = (props: Props) => {
   }
 
   if (!testVerificationStatus) {
-    return <div>No test Found</div>
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-bold mb-4">Test Invalid or Expired</h2>
+        <p className="text-lg">The test you are trying to access is either invalid or has expired. Please check the test link or contact support for further assistance.</p>
+        <button onClick={() => window.location.href = '/'} className="mt-6 bg-[#4CD964] p-4 rounded text-white px-8 hover:bg-[#4CD964]/90">
+          Go to Home
+        </button>
+      </div>)
   }
 
 
@@ -113,7 +120,7 @@ const TestInitialPage = (props: Props) => {
           </ol>
 
           <div className="mt-12 flex justify-center">
-            <button onClick={()=>setCurrentStep('environment')} className="bg-[#4CD964] p-4 rounded text-white px-8 hover:bg-[#4CD964]/90">
+            <button onClick={() => setCurrentStep('environment')} className="bg-[#4CD964] p-4 rounded text-white px-8 hover:bg-[#4CD964]/90">
               Continue
             </button>
           </div>

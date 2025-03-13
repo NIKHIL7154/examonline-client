@@ -7,8 +7,7 @@ import SideNav from '../components/sidebar/SideNav'
 
 
 
-import { ToastProvider } from '../hooks/ToastContext'
-import Toast from '../hooks/Toast'
+
 //import LoaderNew from '../components/LoaderNew'
 import { useEffect, useState } from 'react'
 import VerifyUserInDataBase from '../pages/verificationPage/VerifyUserInDataBase'
@@ -39,12 +38,12 @@ export default function DashboardLayout() {
 
 
   if (!isLoaded) return (<VerifyUserInDataBase />)
-  //uncomment this to verify user in database
+  //uncomment this in prod to verify user in database
   // if(userVerification) return (<VerifyUserInDataBase user={user} updateState={setuserVerification}/>)
 
   return (
     <><SignedIn>
-      <ToastProvider>
+      
         <div className='sized'>
 
           <NavHeader />
@@ -57,8 +56,7 @@ export default function DashboardLayout() {
             </div>
           </div>
         </div>
-        <Toast />
-      </ToastProvider>
+    
     </SignedIn>
 
 

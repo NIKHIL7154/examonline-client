@@ -7,21 +7,14 @@ interface TestConfig {
         endAt: Date | undefined,
         procturing: string,
         resumable: string,
+        duration: number,
+        tabSwitchLimit: string,
     };
-    testParticipants: File | undefined;
+    testParticipants: string[];
 }
 
 interface TestConfigContextType {
-    testConfig: {
-        testQuestions: number[];
-        testSettings: {
-            startAt: Date | undefined;
-            endAt: Date | undefined;
-            procturing: string;
-            resumable: string;
-        };
-        testParticipants: File | undefined;
-    };
+    testConfig: TestConfig;
     setTestConfig: React.Dispatch<React.SetStateAction<TestConfig>>;
     isTestSettingsEmpty: () => void;
     isTestQuestionsEmpty: () => void;
@@ -35,8 +28,10 @@ const initialState: TestConfig = {
         endAt: undefined,
         procturing: "",
         resumable: "",
+        duration: 0,
+        tabSwitchLimit: "-1",
     },
-    testParticipants: undefined,
+    testParticipants: [],
 };
 
 // Create a default value for the context
@@ -54,11 +49,13 @@ function TestConfigProvider({ children }: { children: ReactNode }) {
 
     // const [testQuestions, setTestQuestions] = useState<number[]>([]);
     const [testConfig, setTestConfig] = useState<TestConfig>(initialState);
-    const {testSettings: {startAt, endAt, procturing, resumable}, testQuestions, testParticipants} = testConfig;
+    const {testSettings: {startAt, endAt, procturing, resumable,duration,tabSwitchLimit}, testQuestions, testParticipants} = testConfig;
 
-    const isTestSettingsEmpty = () => !!(startAt && endAt && procturing && resumable);
-    const isTestQuestionsEmpty = () => testQuestions.length > 0
-    const isTestParticipantsEmpty = () => !!(testParticipants)
+    // const isTestSettingsEmpty = () => !!(startAt && endAt && procturing && resumable && duration>0 && parseInt(tabSwitchLimit)> -1 && tabSwitchLimit!="");
+    const isTestSettingsEmpty = () => false
+    // const isTestQuestionsEmpty = () => testQuestions.length > 0
+    const isTestQuestionsEmpty = () => false
+    const isTestParticipantsEmpty = () => false
 
     return (
         <TestConfigContext.Provider value={{ testConfig, setTestConfig, isTestQuestionsEmpty, isTestSettingsEmpty, isTestParticipantsEmpty }}>

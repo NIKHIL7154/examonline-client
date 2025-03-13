@@ -4,6 +4,10 @@ import { GenerativeAiState } from "./TemplateList";
 import { aptitudeMCQs, computerFundamentalsMCQs, englishMCQs, reasoningMCQs } from "./templatequestions";
 import { useNavigate } from "react-router-dom";
 import { setQuestions } from "../../../../helpers/QuestionSetStore";
+import { useAuth } from "@clerk/clerk-react";
+import { createPostRequest } from "../../../../helpers/apiHelper";
+import { set } from "date-fns";
+import toast from "react-hot-toast";
 
 export type Question = {
     question: string;
@@ -37,24 +41,51 @@ const AiGenerativeDialog = (props: Props) => {
     const ques:Question[] = demoQuestionsArray[props.template]
     const [curQuestion, setcurQuestion] = useState(ques[0]);
     const navigate = useNavigate();
-    const generationOptions={
-        level:0,
+    const {getToken} =useAuth()
+    
+    const closeDialog = () => {
+        props.effect({state:false,template:""})
+    }
+    
+    const [genOptions, setgenOptions] = useState({
+        level:1,
         numQuestions:0,
         template:props.template
-    }
-    const handleGenerate = () => {
-        if(generationOptions.numQuestions<1 || generationOptions.numQuestions>100){
-            alert("Please enter number of questions between 1 and 100")
+    });
+    const handleGenerate =async () => {
+    // const { difficulty, count, topic } = req.body;
+
+        if(genOptions.numQuestions<1 || genOptions.numQuestions>100){
+            toast.error("Please enter number of questions between 1 and 100")
             return
         }
-        alert(`Generating ${generationOptions.numQuestions} questions of level ${generationOptions.level} for ${props.template}`)
+        toast.loading("Generating questions")
+        
+        try {
+            const payload={
+                difficulty:genOptions.level,
+                count:genOptions.numQuestions,
+                topic:props.template
+            }
+            const response=await createPostRequest(getToken,"http://localhost:2121/api/v1/user/questionGen",payload)
+            const {data:{questions}}=response
+            toast.dismiss()
+            toast.success("Questions generated successfully")
+            setQuestions(questions)
+            navigate("/app/questions/create")
+        } catch (error) {
+            toast.dismiss()
+            toast.error("Error occured while generating questions, Error : "+error)
+            closeDialog()
+        }
+        
         //api call to generate questions
         //and navigate to question maker page
         // const ques=aptitudeMCQs as Question[]
         
         // setQuestions(ques)
      
-        navigate("/app/questions/create")
+        
         
     }
     return (
@@ -70,12 +101,12 @@ const AiGenerativeDialog = (props: Props) => {
                 <div className='w-full h-[10%] flexed items-center p-4'>
                 <label htmlFor='level' className='text-lg mr-4'>Select Level:</label>
                 <select id='level' onChange={(e) => {
-                    setcurQuestion(ques[parseInt(e.target.value)])
-                    generationOptions.level=parseInt(e.target.value)+1
+                    setcurQuestion(ques[parseInt(e.target.value)-1])
+                    setgenOptions({...genOptions,level:parseInt(e.target.value)})
                 }
                 } className='w-1/3 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'>
                     {Array.from({ length: 10 }, (_, i) => (
-                        <option key={i} value={i}>{`Level ${i + 1}`}</option>
+                        <option key={i} value={i+1}>{`Level ${i + 1}`}</option>
                     ))}
                 </select>
                 </div>
@@ -87,7 +118,7 @@ const AiGenerativeDialog = (props: Props) => {
                         min='1'
                         max='100'
                         onChange={(e) => {
-                            generationOptions.numQuestions=parseInt(e.target.value)
+                            setgenOptions({...genOptions,numQuestions:parseInt(e.target.value)})
                         }}
                         className='w-1/3 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
                         placeholder='Enter number of questions 1 - 100'

@@ -5,7 +5,7 @@ import man from "../../assets/person_window.svg";
 import { useState, FormEvent } from "react";
 import {useClerk, useSignUp } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../../hooks/ToastContext";
+
 const RegisterPage: React.FC = () => {
     // f6faf4
     const [userName, setUserName] = useState<string>("");
@@ -13,7 +13,7 @@ const RegisterPage: React.FC = () => {
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string>("");
     const {setActive,signUp}=useSignUp();
-    const {ToastElement,showToast} = useToast();
+  
     const navigate=useNavigate();
     const clerk = useClerk()
     const handleSubmit =async (e: FormEvent) => {
@@ -40,20 +40,18 @@ const RegisterPage: React.FC = () => {
             const obj=  signUp?.create({emailAddress:email,password:password,firstName:userName,lastName:"hk",actionCompleteRedirectUrl:'/app',legalAccepted:true});
             obj?.then(async (res)=>{
                 console.log(res)
-                showToast("Successfully signed up","success")
+    
                 if (setActive && res.createdSessionId) {
                     await setActive({ session: res.createdSessionId });
                     navigate('/app')
-                }else{
-                    showToast("Unexpected error has hapened.","error")
                 }
             }).catch((err)=>{
-                showToast(err.errors[0].message,"error")
+              
                 console.log(err)
             })
         } catch (error) {
             console.log(error)
-            showToast("Unexpected error has hapened.","error")
+       
         }
         
         
@@ -65,7 +63,7 @@ const RegisterPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center poppins-regular">
-            <ToastElement />
+            
             <div className="w-[1000px] h-[600px] flex">
                 <div className="p-10 bg-[#f0faea] gap-[3rem] text-center w-full size-full rounded-[15px] flex flex-col justify-center items-center">
                     <img src={man} alt="man" />

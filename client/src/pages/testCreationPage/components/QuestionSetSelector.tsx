@@ -2,51 +2,40 @@ import { IoSearch } from "react-icons/io5";
 import { MdOutlineClose } from "react-icons/md";
 import { useState } from "react";
 import { useTestConfig } from "../context/TestConfigContext";
+import { useAuth } from "@clerk/clerk-react";
+import useQuestionSet from "../../questionSetsPage/hooks/useQuestionSets";
+import { useNavigate } from "react-router-dom";
+import LoaderNew from "../../../components/LoaderNew";
 
-const questionSet = [
-    {
-        name: "Set 5",
-        id: 5,
-        questions: 10
-    },
-    {
-        name: "Aptitude 101",
-        id: 4,
-        questions: 10
-    },
-    {
-        name: "General Knowledge",
-        id: 3,
-        questions: 10
-    },
-    {
-        name: "Computer Basics",
-        id: 2,
-        questions: 10
-    },
-    {
-        name: "Set 1",
-        id: 1,
-        questions: 10
-    },
-]
+
 
 function QuestionSetSelector() {
-    // const [testQuestions, setTestQuestions] = useState<number[]>([]);
 
     const [searchInput, setSearchInput] = useState<string>('');
-
+   
     const { testConfig, setTestConfig } = useTestConfig();
     const {testQuestions} = testConfig;
-    // console.log(testConfig);
+    const { getToken } = useAuth();
+    const { isLoading, questionSets } = useQuestionSet(getToken);
+    const navigate=useNavigate();
+
+    if(isLoading) return <div className="w-full h-full flexed"><LoaderNew/></div>
+
+    
+
+    const { totalSets, sets } = questionSets.data;
+
+
+   
 
     const userHasSearched = !(searchInput === "");
 
     const filteredQuestions = userHasSearched
-        ? questionSet.filter(question =>
+        ? sets.filter(question =>
             question.name.toLowerCase().includes(searchInput.toLowerCase())
         )
-        : questionSet;
+        : sets;
+    // const filteredQuestions=[]
 
     const handleClickToggle = (id: number) => {
         setTestConfig(cur => {
@@ -82,8 +71,9 @@ function QuestionSetSelector() {
         })
         // setTestQuestions(cur => cur.filter(questionId => questionId !== id))
     }
+    
     return (
-        <div>
+        <div className="w-full px-32">
             <h2 className="text-[1.7rem] font-semibold mb-4">
                 Start by selecting a question set...
             </h2>
@@ -107,7 +97,7 @@ function QuestionSetSelector() {
                         testQuestions.map(id =>
 
                             <li key={id} className="border-2 border-slate-300 rounded-full px-4 py-1 flex items-center justify-center gap-2 group cursor-pointer">
-                                {questionSet.find(q => q.id === id)?.name}
+                                {sets.find(q => q._id === id)?.name}
 
                                 <button onClick={() => handleDeselect(id)}>
                                     <MdOutlineClose className="text-xl group-hover:text-red-600 group-hover:scale-[1.2]  transition-all duration-150" />
@@ -119,7 +109,7 @@ function QuestionSetSelector() {
             </div>
 
             {/* Display atleast 4 recent/search questions */}
-            <div className=" w-[90%]">
+            <div className=" w-full">
 
                 <h4 className="text-lg mb-4">
                     {userHasSearched ? "Search Results" : "Recent"}
@@ -130,11 +120,11 @@ function QuestionSetSelector() {
                         {filteredQuestions.slice(0, 4).map(q => {
                             return (
                                 <li
-                                    key={q.id}
-                                    className={`border-2  ${(testQuestions.includes(q.id)) ? "border-green-400 hover:outline-green-400" : "border-slate-400 hover:border-gray-600 hover:outline-gray-600"} 
+                                    key={q._id}
+                                    className={`border-2  ${(testQuestions.includes(q._id)) ? "border-green-400 hover:outline-green-400" : "border-slate-400 hover:border-gray-600 hover:outline-gray-600"} 
                                             p-5 flex flex-col justify-between h-[200px] group
                                             w-[250px] rounded-md hover:outline-2 hover:outline cursor-pointer`}
-                                    onClick={() => handleClickToggle(q.id)}
+                                    onClick={() => handleClickToggle(q._id)}
                                 >
                                     <span className="border border-gray-400 flex items-center justify-center w-14 h-14 rounded-full">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-9 w-9 text-gray-500 ">
@@ -145,14 +135,33 @@ function QuestionSetSelector() {
 
                                     <div>
                                         <h6 className="text-md font-semibold">{q.name}</h6>
-                                        <p>Set id: {q.id}</p>
-                                        <p>Questions: {q.questions}</p>
+                                        <p>Set id: {q._id.substring(0,8)}</p>
+                                        <p>Questions: {q.totalQuestions}</p>
                                     </div>
                                 </li>
                             )
                         })}
+                        
+                        
 
                     </ul>
+                    {filteredQuestions.length === 0 && (
+                            <div className="flex flex-col items-center justify-center w-full">
+                                
+                                <p className="text-xl text-gray-500 mb-4">
+                                    {userHasSearched ? "No results found" : "No question sets available"}
+                                   </p>
+                                <button 
+                                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-all duration-150"
+                                    onClick={() => {
+                                        
+                                        navigate("/app/questions")
+                                    }}
+                                >
+                                    {userHasSearched ? "Create it now" : "Create a new one"}
+                                </button>
+                            </div>
+                        )}
 
                 </div>
             </div>

@@ -1,6 +1,8 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTestConfig } from "./context/TestConfigContext";
 import { useEffect, useState } from "react";
+import AnimatedTimeline from "./components/StepsTimeline";
+import TestParticipants from "./components/TestParticipants";
 
 function CreateNewTestPage() {
     const navigate = useNavigate();
@@ -76,6 +78,7 @@ function CreateNewTestPage() {
                 console.error("Please fill out all fields before submitting.");
                 return;
             }
+            alert("Form submitted successfully!");
             // Form submission logic
             console.log(testConfig);
             return;
@@ -94,22 +97,24 @@ function CreateNewTestPage() {
     }
 
     return (
-        <div className="w-full h-full overflow-y-auto overflow-x-hidden p-10">
-            {/* <TestParticipants/> */}
+        <div className="w-full h-full overflow-y-auto overflow-x-hidden px-10 py-4">
+            <TestParticipants/>
             {/* <QuestionSetSelector/> */}
             {/* <TestOptionForm/> */}
-            <Outlet />
+            {/* <AnimatedTimeline/> */}
+            {/* <Outlet /> */}
             <div className="w-full flex justify-between mt-7">
                 <button
                     disabled={currentFormStep === 0}
                     onClick={handlePrevRoute}
-                    className="border px-3 py-1 disabled:text-red-300"
-                >Prev
+                    className="bg-white text-gray-800 font-semibold py-3 px-6 border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white mr-3"
+                >
+                    Back
                 </button>
                 <button
                     disabled={isNextButtonDisabled}
                     onClick={handleNextRoute}
-                    className="border px-3 py-1 disabled:text-red-300"
+                    className="bg-indigo-600 text-white font-semibold py-3 px-6 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-indigo-600"
                 >
                     {currentFormStep === 2 ? "Submit" : "Next"}
                 </button>

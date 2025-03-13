@@ -44,11 +44,11 @@ const DragAndDropUpload = () => {
         if (file) {
             const reader = new FileReader();
       
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
               const data = e.target?.result;
               if (data) {
-                // Read the binary string
-                const workbook = XLSX.read(data, { type: "binary" });
+                // Read the array buffer
+                const workbook = XLSX.read(data, { type: "array" });
                 const sheetName = workbook.SheetNames[0]; // Get the first sheet
                 const sheet = workbook.Sheets[sheetName]; // Get sheet data
                 const json = XLSX.utils.sheet_to_json(sheet); // Convert sheet to JSON
@@ -71,7 +71,7 @@ const DragAndDropUpload = () => {
               }
             };
       
-            reader.readAsBinaryString(file);
+            reader.readAsArrayBuffer(file);
           }
     };
 

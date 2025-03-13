@@ -1,15 +1,10 @@
-import { useEffect } from 'react'
+
 import CreateTestOptions from './CreateTestOptions';
 
 type Props = {}
 
 const TestCreationPage = (props: Props) => {
-  useEffect(() => {
-    //api call to fetch question sets
-    return () => {
-
-    };
-  }, [])
+ 
   return (
 
     <div className='w-full h-full'>
