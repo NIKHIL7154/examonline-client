@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "strict": true, 
+    "noImplicitAny": true, 
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "resolveJsonModule": true,  // Enable importing JSON files if required
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "moduleResolution": "node",  // Use node module resolution strategy
+    "baseUrl": "./",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "include": [
+    "src/**/*",     // Include all files in the 'src' folder
+    "types/**/*",
+    "types/express.d.ts"    // Include custom types if you have any
+  ],
+  "exclude": [
+    "node_modules",  // Exclude node_modules from compilation
+    "dist"           // Exclude dist folder as it's for compiled code
+  ]
+}

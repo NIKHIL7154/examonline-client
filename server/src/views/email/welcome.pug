@@ -1,0 +1,29 @@
+extends baseEmail
+block content
+    p Hi #{firstName},
+    p 
+        | Thank you for signing up with ExamOnline! 
+        br
+        | We are thrilled to have you on board as a Test Creator.
+    //- p As a member, you can:
+    //- ul
+    //-     li Create and manage your own online exams.
+    //-     li Access a variety of question types and templates.
+    //-     li Analyze results and gather insights from your test-takers.
+    //-     li Collaborate with other educators and share your exams.
+    
+    p To get started, simply log in to your account using Google credentials:
+
+    
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+        tbody
+            tr
+                td(align='left')
+                    table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+                        tbody
+                            tr
+                                td
+                                    a(href=`${url}`, target='_blank') Log In to Your Account
+    p If you need any help with navigating our application, please don't hesitate to contact us!
+    p - The ExamFusion Team
+                                                            
