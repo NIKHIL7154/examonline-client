@@ -1,4 +1,4 @@
-import mongoose, { Document, Query } from "mongoose";
+import mongoose, { CallbackError, Document, Query } from "mongoose";
 
 function normalizeDate(date: Date): Date {
     const normalizedDate = new Date(date);
@@ -43,7 +43,7 @@ const TestSchema = new mongoose.Schema<TestType>({
         default: "pending",
         // required: true,
         enum: {
-            values: ["pending", "active", "completed"],
+            values: ["pending", "active", "completed", "stale"],
             message: "Status is either: pending, active or completed",
         },
     },
@@ -136,7 +136,7 @@ const TestSchema = new mongoose.Schema<TestType>({
         enum: {
             values: ["pending", "forwarded"],
             message: "Status is either: pending or forwarded",
-        }, 
+        },
     },
     participants: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -155,5 +155,52 @@ TestSchema.pre<Query<any, TestType>>(/^find/, function (next) {
     this.select('-__v');
     next();
 });
+
+// UPDATE TEST THAT ARE STALE (STARTAT > DATE.NOW())
+TestSchema.pre('aggregate', async function (next) {
+    const options = this.options; // Get the aggregation options
+    const isGetAllTests = options.getAllTests === true;  // Check if the custom flag is set
+
+    if (isGetAllTests) {
+        // Access the current aggregation pipeline
+        const pipeline = this.pipeline();  // Get the pipeline stages
+
+        // Add a stage to check and set the status to "stale" if conditions are met
+        pipeline.unshift({
+            $set: {
+                status: {
+                    $cond: {
+                        if: { $and: [{ $eq: ["$status", "pending"] }, { $lt: [new Date(), "$startAt"] }] },
+                        then: "$status", // If status is "pending" and startAt > Date.now(), keep "pending"
+                        else: "stale" // Otherwise, set it to "stale"
+                    }
+                }
+            }
+        });
+
+        try {
+            // Perform the update operation: set status to "stale" if conditions match
+            const result = await Test.updateMany(
+                {
+                    status: "pending",  // Only target "pending" status tests
+                    startAt: { $lt: new Date() }  // Where startAt < current date
+                },
+                {
+                    $set: { status: "stale" }  // Set status to "stale"
+                }
+            );
+
+            // Log the number of modified documents (for debugging purposes)
+            console.log(`${result.modifiedCount} documents updated to stale.`);
+
+            next();  // Proceed with the aggregation
+        } catch (err) {
+            return next(err as CallbackError);  // If error occurs, pass it to next middleware
+        }
+    }
+
+    next(); // Continue with the aggregation
+});
+
 
 export const Test = mongoose.model<TestType>('Test', TestSchema);

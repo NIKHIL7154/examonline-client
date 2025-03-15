@@ -11,7 +11,7 @@ function TestSpawner() {
     if (isLoading) return (<TestsLoading />)
     const { tests: testsArr, totalTests } = tests.data;
 
-    if (totalTests === 0) return <div className="mx-auto text-gray-500 font-normal"> Tests is Empty</div>
+    if (totalTests === 0) return <div className="m-auto text-gray-500 font-normal">My Tests is empty.</div>
 
 
     return (

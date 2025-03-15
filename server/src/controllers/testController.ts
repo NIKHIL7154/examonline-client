@@ -86,6 +86,22 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
                 }
             }
         },
+        // {
+        //     $set: {
+        //         status: {
+        //             $cond: {
+        //                 if: {
+        //                     $and: [
+        //                         { $eq: ["$status", "pending"] },
+        //                         { $lt: ["$startAt", new Date()] }
+        //                     ]
+        //                 },
+        //                 then: "stale",  // If status is "pending" and startAt < Date.now(), set status to "stale"
+        //                 else: "$status"  // Else, keep the existing status
+        //             }
+        //         }
+        //     }
+        // },
         {
             // Optionally, project only the fields you need
             $project: {
@@ -102,7 +118,7 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
                 totalParticipants: 1,
             }
         }
-    ]);
+    ]).option({ getAllTests: true });;
 
     if (!tests) return next(new AppError("Error occured while fetching tests, please try again", 404));
 
@@ -131,9 +147,15 @@ export const createTest = catchAsync(async (req: ProtectedRequest, res: Response
 });
 
 export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
-    const test = await Test
-        .findById(req.params.id)
-        // .populate({ path: "questionSet participants" })
+    const test = await Test.findOneAndUpdate(
+        {
+            _id: req.params.id,
+            status: 'pending',
+            startAt: { $lt: new Date() } // Check if startAt is less than the current date
+        },
+        { status: 'stale' }, // Update the status to 'stale'
+        { new: true, returnOriginal: false } // Return the updated document
+    )
         .populate({
             path: "questionSet",
             select: "_id name",  // Exclude the 'questions' field from the QuestionSet
@@ -143,8 +165,31 @@ export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, n
             select: "_id listName",  // Exclude the 'list' field from the Participants
         });
 
-    if (!test) return next(new AppError("No test found with that ID", 404));
+    // If no document was updated, fetch the old document
+    if (!test) {
+        const oldTest = await Test.findById(req.params.id)
+            .populate({
+                path: "questionSet",
+                select: "_id name",
+            })
+            .populate({
+                path: "participants",
+                select: "_id listName",
+            });
 
+        // Check if the old test exists
+        if (!oldTest) return next(new AppError("No test found with that ID", 404));
+
+        // Send the response with the old test
+        return res.status(200).json({
+            status: "success",
+            data: {
+                test: oldTest,
+            },
+        });
+    }
+
+    // Send the response with the updated test
     res.status(200).json({
         status: "success",
         data: {
