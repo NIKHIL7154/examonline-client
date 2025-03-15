@@ -5,13 +5,14 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useAuth } from "@clerk/clerk-react";
 import useTest from "../features/tests/useTest";
 import TestDataBox from "../features/tests/TestDataBox";
+import TestLoading from "../features/tests/TestLoading";
 
 function TestPage() {
     const { getToken } = useAuth();
     const navigate = useNavigate();
 
     const { isLoading, test: testObj } = useTest(getToken);
-    if (isLoading) return <div> Loading</div>;
+    if (isLoading) return <TestLoading/>
     const { test } = testObj.data;
 
 

@@ -17,6 +17,7 @@ import ErrorBoundary from "./pages/ErrorBoundary";
 import SetPage from "./pages/SetPage";
 import TestPage from "./pages/TestPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Settings from "./pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
           { path: 'questions', element: <QuestionSets /> },
           { path: 'questions/edit', element: <SetEditorPage /> },
           { path: 'questions/:setId', element: <SetPage /> },
+          { path: 'settings', element: <Settings/> },
 
         ],
       }, { path: "*", element: <div> page not found </div> }

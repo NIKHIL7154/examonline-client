@@ -34,7 +34,78 @@ export const createUser = catchAsync(async (req: ProtectedRequest, res: Response
 export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth.userId;
 
-    const tests = await Test.find({ user: userId });
+    // const tests = await Test.find({ user: userId });
+    const tests = await Test.aggregate([
+        {
+            // Match tests that belong to the current user
+            $match: { user: userId }
+        },
+        {
+            // Lookup the question sets to get the total number of questions in each questionSet
+            $lookup: {
+                from: 'questionsets', // Assuming your question set collection name is 'questionsets'
+                localField: 'questionSet', // Field in the Test model that references the QuestionSet model
+                foreignField: '_id', // Field in QuestionSet model
+                as: 'questionSets' // Alias to store the joined data
+            }
+        },
+        {
+            // Calculate the total number of questions across all questionSets for each test
+            $addFields: {
+                totalQuestions: {
+                    $sum: {
+                        $map: {
+                            input: '$questionSets', // Iterate through the questionSets array
+                            as: 'questionSet',
+                            in: { $size: '$$questionSet.questions' } // Count the questions in each questionSet
+                        }
+                    }
+                }
+            }
+        },
+        {
+            // Lookup the participants to get the total number of participants (based on the list array length)
+            $lookup: {
+                from: 'participants', // Assuming your participants collection name is 'participants'
+                localField: 'participants', // Field in Test model that references Participants model
+                foreignField: '_id', // Field in Participants model
+                as: 'participantInfo' // Alias to store the joined data
+            }
+        },
+        {
+            // Calculate the total number of participants by checking the size of the list array in each Participant document
+            $addFields: {
+                totalParticipants: {
+                    $sum: {
+                        $map: {
+                            input: '$participantInfo', // Iterate through the participantInfo array
+                            as: 'participant',
+                            in: { $size: '$$participant.list' } // Count the number of participants in the 'list' array
+                        }
+                    }
+                }
+            }
+        },
+        {
+            // Optionally, project only the fields you need
+            $project: {
+                name: 1,
+                status: 1,
+                createdAt: 1,
+                // startAt: 1,
+                durationInSec: 1,
+                // endAt: 1,
+                // proctoring: 1,
+                // tabSwitchLimit: 1,
+                // resumable: 1,
+                totalQuestions: 1,
+                totalParticipants: 1,
+            }
+        }
+    ]);
+
+    if (!tests) return next(new AppError("Error occured while fetching tests, please try again", 404));
+
 
     res.status(200).json({
         status: "success",
@@ -62,7 +133,15 @@ export const createTest = catchAsync(async (req: ProtectedRequest, res: Response
 export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const test = await Test
         .findById(req.params.id)
-        .populate({ path: "questionSet participants" })
+        // .populate({ path: "questionSet participants" })
+        .populate({
+            path: "questionSet",
+            select: "_id name",  // Exclude the 'questions' field from the QuestionSet
+        })
+        .populate({
+            path: "participants",
+            select: "_id listName",  // Exclude the 'list' field from the Participants
+        });
 
     if (!test) return next(new AppError("No test found with that ID", 404));
 

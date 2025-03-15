@@ -10,12 +10,26 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { FaArrowLeft } from "react-icons/fa";
 import { HiOutlineTrash } from "react-icons/hi";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
+import { useAuth } from "@clerk/clerk-react";
+import { useDeleteTest } from "./useDeleteTest";
+
+interface QuestionSet {
+    name: string;
+    _id: string;
+}
+
+interface Participants {
+    _id: string;
+    listName: string;
+}
 
 interface TestType extends Document {
     _id: string;
     name: string;
-    questionSet: string[];
-    status: string;
+    questionSet: QuestionSet[];
+    status: "pending" | "active" | "completed";
     createdAt: Date;
     startAt: Date;
     durationInSec: number;
@@ -24,7 +38,7 @@ interface TestType extends Document {
     tabSwitchLimit: number;
     resumable: boolean;
     user: string;
-    participants: string[];
+    participants: Participants[];
     linksForwarded: string;
     // participants: mongoose.Types.ObjectId;
 }
@@ -40,7 +54,7 @@ const numberToString: { [key: string]: string } = {
     "5": "five times",
 }
 
-function Row({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) {
+function FeatueRow({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) {
     return (
         <div className="flex gap-4">
             <p className="flex items-center gap-2 font-medium">
@@ -54,9 +68,11 @@ function Row({ title, icon, children }: { title: string, icon: React.ReactNode, 
 
 function TestDataBox({ test }: props) {
     const navigate = useNavigate();
+    const { getToken } = useAuth();
+    const { isDeleting, deleteTest } = useDeleteTest(getToken);
 
-    const { name, startAt, endAt, createdAt, durationInSec, proctoring, tabSwitchLimit, linksForwarded, questionSet, participants } = test;
-    const punc = (index: number, arr) => (arr.length - 1 === index) ? "" : ", "
+    const { _id: testId, name, status, startAt, endAt, createdAt, durationInSec, proctoring, tabSwitchLimit, linksForwarded, questionSet, participants } = test;
+    const punc = (index: number, arr: QuestionSet[] | Participants[]) => (arr.length - 1 === index) ? "" : ", "
     // console.log(participants);
     // console.log(questionSet);
 
@@ -75,10 +91,10 @@ function TestDataBox({ test }: props) {
                 </div>
 
                 <div className="px-9 py-6 space-y-[1.7rem]">
-                    <Row title="Duration" icon={<RiTimerLine className="text-emerald-600 text-xl" />}>
+                    <FeatueRow title="Duration" icon={<RiTimerLine className="text-emerald-600 text-xl" />}>
                         <span>{`${Math.floor(durationInSec / 60)} minutes`}</span>
-                    </Row>
-                    <Row title="Associated Question Set/s" icon={<PiNewspaperBold className="text-emerald-600 text-xl" />}>
+                    </FeatueRow>
+                    <FeatueRow title="Associated Question Set/s" icon={<PiNewspaperBold className="text-emerald-600 text-xl" />}>
                         <p>
                             {questionSet.map((set, index: number, arr) => {
                                 return <React.Fragment key={set._id}>
@@ -89,21 +105,21 @@ function TestDataBox({ test }: props) {
                                 </React.Fragment>
                             })}
                         </p>
-                    </Row>
+                    </FeatueRow>
 
-                    <Row title="Procturing" icon={<RiWebcamLine className="text-emerald-600 text-xl" />}>
+                    <FeatueRow title="Procturing" icon={<RiWebcamLine className="text-emerald-600 text-xl" />}>
                         <span>{proctoring ?
                             "Level 2 (Level 1 + Face Recognition/Object Detection)" :
                             "Level 1 (Full Screen Mode, Restricted: Tab Switch/Copy Paste)"}</span>
-                    </Row>
+                    </FeatueRow>
 
-                    <Row title="Tab Switch Limit" icon={<VscMultipleWindows className="text-emerald-600 text-xl" />}>
+                    <FeatueRow title="Tab Switch Limit" icon={<VscMultipleWindows className="text-emerald-600 text-xl" />}>
                         <span>
                             Allowed <strong className="font-medium">{`${numberToString[tabSwitchLimit + ""]}`}</strong>
                         </span>
-                    </Row>
+                    </FeatueRow>
 
-                    <Row title="Attendees" icon={<MdOutlinePeople className="text-emerald-600 text-xl" />}>
+                    <FeatueRow title="Attendees" icon={<MdOutlinePeople className="text-emerald-600 text-xl" />}>
                         <p>
                             {participants.map((participant, index: number, arr) => {
                                 return <React.Fragment key={participant._id}>
@@ -114,7 +130,7 @@ function TestDataBox({ test }: props) {
                                 </React.Fragment>
                             })}
                         </p>
-                    </Row>
+                    </FeatueRow>
 
                     <div className=" mt-7 bg-yellow-100 flex justify-between py-5 px-8 rounded-lg text-yellow-700 items-center">
                         <p className="flex items-center gap-3 font-medium text-lg">
@@ -132,15 +148,30 @@ function TestDataBox({ test }: props) {
 
             <div className="flex justify-end poppins-regular gap-4">
                 {
-                    test.status === "pending" &&
+                    status === "pending" &&
                     <button className=" cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2">
                         <MdOutlineRocketLaunch className="text-xl group-hover:text-emerald-600" />
                         Activate Test </button>
                 }
-                <button className=" cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2">
-                    <HiOutlineTrash className="text-xl group-hover:text-red-600" />
-                    Delete Test
-                </button>
+                <Modal>
+                    {
+                        status !== "active" && <Modal.Open opens="deleteTest">
+                            <button className=" cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2">
+                                <HiOutlineTrash className="text-xl group-hover:text-red-600" />
+                                Delete Test
+                            </button>
+                        </Modal.Open>
+                    }
+                    <Modal.Window name="deleteTest">
+                        <ConfirmDelete
+                            resourceName="test"
+                            disabled={isDeleting}
+                            onConfirm={() => deleteTest(testId, {
+                                onSettled: () => navigate(-1),
+                            })}
+                        />
+                    </Modal.Window>
+                </Modal>
                 <button
                     onClick={() => navigate(-1)}
                     className=" h-[50px] cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2"
