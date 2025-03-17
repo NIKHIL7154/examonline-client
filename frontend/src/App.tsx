@@ -17,8 +17,13 @@ import ErrorBoundary from "./pages/ErrorBoundary";
 import SetPage from "./pages/SetPage";
 import TestPage from "./pages/TestPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import TestCreation from "./pages/testCreation/TestCreation";
-import QuestionSetSelector from "./features/testCreation/QuestionSetSelector";
+import TestCreation from "./pages/TestCreation";
+import TestQuestionSets from "./features/testCreation/TestQuestionSets";
+import TestName from "./features/testCreation/TestName";
+import TestSettings from "./features/testCreation/TestSettings";
+import TestParticipants from "./features/testCreation/TestParticipants";
+import TestReview from "./features/testCreation/TestReview";
+
 
 const router = createBrowserRouter([
   {
@@ -40,9 +45,11 @@ const router = createBrowserRouter([
           },
           { path: 'dashboard', element: <Dashboard /> },
           { path: 'create', element: <TestCreation/>,children:[
-            {path:"testSets",element:<QuestionSetSelector/>},
-            {path:"testSettings",element:<div>Test Settings</div>},
-            {path:"testParticipants",element:<div>Test Participants</div>}
+            {path:"testName",element:<TestName/>},
+            {path:"testSets",element:<TestQuestionSets/>},
+            {path:"testSettings",element:<TestSettings/>},
+            {path:"testParticipants",element:<TestParticipants/>},
+            {path:"testReview",element:<TestReview/>},
           ] },
           { path: 'tests', element: <Tests /> },
           { path: 'tests/:testId', element: <TestPage /> },
@@ -51,7 +58,10 @@ const router = createBrowserRouter([
           { path: 'questions/:setId', element: <SetPage /> },
 
         ],
-      }, { path: "*", element: <div> page not found </div> }
+      }, 
+      
+      
+      { path: "*", element: <div> page not found </div> }
     ],
     errorElement: <ErrorBoundary />
   }

@@ -9,7 +9,7 @@ type TestDetails={
         duration:number|null,
         tabSwitchLimit:number|null,
         proctoringLevel:"Basic"|"Advanced"| null,
-        resumeable:boolean|null,
+        resumeable:"true"|"false"|null,
     },
     participants:string[],
 }

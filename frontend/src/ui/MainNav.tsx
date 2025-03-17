@@ -50,7 +50,7 @@ const StyledNavLink = styled(NavLink)`
 function MainNav() {
     return (
         <nav className="space-y-4">
-            <Link to={"/app/create/testSets"} className="flex items-center px-3 py-2 gap-2 rounded-md border-2 border-gray-900 bg-gray-900 text-gray-100 
+            <Link to={"/app/create/testName"} className="flex items-center px-3 py-2 gap-2 rounded-md border-2 border-gray-900 bg-gray-900 text-gray-100 
                     font-medium  hover:bg-gray-50 hover:text-gray-900 cursor-pointer transition-all duration-300">
                 <HiPlus className="text-xl" />
                 <span>Create a new test</span>

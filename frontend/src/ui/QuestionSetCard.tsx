@@ -1,29 +1,30 @@
 import { format } from "date-fns";
 import { HiOutlineCalendar, HiOutlineQuestionMarkCircle } from "react-icons/hi";
 import { TbFileText } from "react-icons/tb";
-import { Link } from "react-router";
 
+import { IoCheckmarkDoneCircle } from "react-icons/io5";
 interface Set {
     _id: string;
     name: string;
     totalQuestions: number;
     createdAt: Date;
-
+    
 }
 
 interface SetProp {
     setItem: Set;
-
+    onClick?: (e:React.MouseEvent<HTMLDivElement>) => void;
+    selected?: boolean;
 }
 
-function SetCard({ setItem }: SetProp) {
-    const { _id: setId, name, totalQuestions, createdAt } = setItem;
+function QuestionSetCard({ setItem, onClick = undefined ,selected=true }: SetProp) {
+    const { _id: setId, name, totalQuestions, createdAt} = setItem;
     return (
-        <div className="h-50 w-68 border border-gray-200 py-5 px-6 rounded-xl bg-gray-50 hover:shadow-md hover:shadow-gray-200 transition-all duration-200"
+        <div className={`h-50 w-68 border relative cursor-pointer  py-5 px-6 rounded-xl ${selected?"border-green-100 bg-green-100":"border-gray-200 bg-gray-50"} hover:shadow-md hover:shadow-gray-200 transition-all duration-200`}
             data-quesid={setId}
-
+            onClick={onClick}
         >
-            <p className="p-2 w-fit rounded-lg bg-gray-200 text-gray-500">
+            <p className="p-2 w-fit rounded-lg ">
                 <TbFileText className="text-3xl" />
             </p>
 
@@ -41,12 +42,12 @@ function SetCard({ setItem }: SetProp) {
                     </p>
                 </div>
             </div>
+            {selected && <IoCheckmarkDoneCircle className="absolute right-5 top-3 text-green-500 text-3xl"/>}
 
-            <Link to={`${setId}`} className="text-sm flex justify-end text-gray-700 font-medium">
-                <span className="hover:text-green-600 cursor-pointer">more &rarr;</span>
-            </Link>
+
+            
         </div>
     );
 }
 
-export default SetCard;
+export default QuestionSetCard;

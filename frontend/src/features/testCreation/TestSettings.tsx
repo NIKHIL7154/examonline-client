@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useTestConfig } from "../context/TestConfigContext";
+import { useTestDetails } from "./TestDetailsContext";
 
-
-function TestOptionForm() {
-    const { testConfig, setTestConfig } = useTestConfig();
-    const { testSettings: { startAt, endAt, procturing, resumable, duration = 15 } } = testConfig;
+function TestSettings() {
+    const { testDetails, setTestDetails } = useTestDetails();
+    const { testSettings: { startAt, endAt, proctoringLevel, resumeable, duration = 15, tabSwitchLimit } } = testDetails;
 
     // Local state to track form values before validation
     const [localStartAt, setLocalStartAt] = useState(startAt);
@@ -25,120 +24,14 @@ function TestOptionForm() {
         setLocalDuration(duration);
     }, []);
 
-    // Calculate the time difference between start and end time
-    const calculateTimeDifference = () => {
-        if (localStartAt && localEndAt) {
-            return (localEndAt.getTime() - localStartAt.getTime()) / (1000 * 60); // difference in minutes
-        }
-        return 0;
-    };
 
-    // Calculate the maximum allowed duration based on time difference
-    const getMaxAllowedDuration = () => {
-        const timeDiff = calculateTimeDifference();
 
-        // If time difference is less than 30 minutes, max duration is 15 minutes
-        if (timeDiff < 30) {
-            return 15;
-        }
 
-        // Otherwise, return the maximum multiple of 15 that fits within the time difference
-        return Math.floor(timeDiff / 15) * 15;
-    };
 
-    // Validate and update testConfig if valid
-    const validateAndUpdateConfig = () => {
-        let isValid = true;
-        
-        
 
-        // Validate start and end times
-        if (localStartAt && localEndAt) {
-            if(localStartAt < new Date()){
-                setStartTimeError("Start time cannot be in the past");
-                isValid = false;
-                return
-            }
-            if(localEndAt < new Date()){
-                setEndTimeError("End time cannot be in the past");
-                isValid = false;
-                return;
-            }
-            const timeDifference = calculateTimeDifference();
 
-            if (timeDifference < 15) {
-                setStartTimeError("Start and end times must be at least 15 minutes apart");
-                setEndTimeError("Start and end times must be at least 15 minutes apart");
-                setTestConfig(cur => ({
-                    ...cur,
-                    testSettings: {
-                        ...cur.testSettings,
-                        startAt: undefined,
-                        endAt: undefined,
-
-                    }
-                }));
-                isValid = false;
-            } else {
-                setStartTimeError("");
-                setEndTimeError("");
-            }
-
-            // Validate duration
-            if (localDuration) {
-                const maxAllowedDuration = getMaxAllowedDuration();
-
-                if (localDuration > maxAllowedDuration) {
-                    setDurationError(`Duration cannot exceed ${maxAllowedDuration} minutes for the selected time range`);
-                    isValid = false;
-                } else if (localDuration % 15 !== 0) {
-                    setDurationError("Duration must be a multiple of 15 minutes");
-                    isValid = false;
-                } else {
-                    setDurationError("");
-                }
-            }
-        }
-
-        // Only update testConfig if all validations pass
-        if (isValid) {
-            setTestConfig(cur => ({
-                ...cur,
-                testSettings: {
-                    ...cur.testSettings,
-                    startAt: localStartAt,
-                    endAt: localEndAt,
-                    duration: localDuration,
-                }
-            }));
-        }
-    };
-
-    // Adjust duration when time difference changes
-    useEffect(() => {
-        if (localStartAt && localEndAt) {
-            const maxAllowedDuration = getMaxAllowedDuration();
-
-            // If current duration exceeds the maximum allowed, adjust it down
-            if (localDuration > maxAllowedDuration) {
-                setLocalDuration(maxAllowedDuration);
-            } else if (localDuration < 15) {
-                // Ensure minimum duration is 15 minutes
-                setLocalDuration(15);
-            } else if (localDuration % 15 !== 0) {
-                // Ensure duration is a multiple of 15
-                setLocalDuration(Math.floor(localDuration / 15) * 15);
-            }
-        }
-    }, [localStartAt, localEndAt]);
-
-    // Update local values and validate whenever they change
-    useEffect(() => {
-        validateAndUpdateConfig();
-    }, [localStartAt, localEndAt, localDuration]);
-
-    // Calculate minimum end time (15 minutes after start time)
-    const getMinEndTime = () => {
+    // Calculate minimum end date
+    const getMinEndDate = () => {
         if (!localStartAt) return new Date();
 
         const minEndTime = new Date(localStartAt.getTime());
@@ -146,47 +39,125 @@ function TestOptionForm() {
         return minEndTime;
     };
 
-    const handleStartAt = (date) => {
-        setLocalStartAt(date);
-        // Clear end time if it's now invalid
-        if (localEndAt && date && localEndAt < new Date(date.getTime() + 15 * 60000)) {
+    // Calculate minimum end time (15 minutes after start time)
+    const getMinEndTime = () => {
+        if (!localStartAt) return new Date();
+
+        if (!localEndAt) {
+            const time = new Date(localStartAt.getTime());
+            time.setMinutes(time.getMinutes() + 15);
+            return time;
+        } else if (localEndAt.getDay() === localStartAt.getDay()) {
+            const time = new Date(localStartAt.getTime());
+            time.setMinutes(time.getMinutes() + 15);
+            return time;
+        } else {
+            const time = new Date(localStartAt.getTime());
+            time.setHours(0, 0, 0, 0);
+            return time;
+        }
+    }
+    useEffect(() => {
+        if(localStartAt && localEndAt){
+            setDurationError("");
+            setLocalDuration(15)
+        }
+    }, [localEndAt, localStartAt]);
+
+    const handleStartAt = (date: Date | null) => {
+        setLocalEndAt(null)
+        console.log(date)
+        if (date && date > new Date()) {
+            setLocalStartAt(date);
+            setStartTimeError("");
+            setTestDetails(cur => ({
+                ...cur,
+                testSettings: {
+                    ...cur.testSettings,
+                    startAt: date,
+                }
+            }));
+        } else {
+            setLocalStartAt(null);
             setLocalEndAt(null);
+            setStartTimeError("Start time should be greater than current time")
+            setTestDetails(cur => ({
+                ...cur,
+                testSettings: {
+                    ...cur.testSettings,
+                    startAt: null,
+                    endAt: null
+                }
+            }));
+
         }
     };
 
-    const handleEndAt = (date) => {
-        setLocalEndAt(date);
+   
+    
+
+    const handleEndAt = (date: Date | null) => {
+        setLocalEndAt(date)
+        if (date && localStartAt && date >= localStartAt ){
+            setEndTimeError("");
+            setTestDetails(cur => ({
+                ...cur,
+                testSettings: {
+                    ...cur.testSettings,
+                    endAt: date,
+                }
+            }));
+
+        } else {
+            setTestDetails(cur => ({
+                ...cur,
+                testSettings: {
+                    ...cur.testSettings,
+                    endAt: null,
+                }
+            }));
+            
+            setEndTimeError("End time should be minimum 15 minutes greater than start time")
+        }
+
     };
 
-    const handleProctureOption = (e) => {
-        setTestConfig(cur => ({
+    const handleProctorOption = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setTestDetails(cur => ({
             ...cur,
             testSettings: {
                 ...cur.testSettings,
-                procturing: e.target.value,
+                proctoringLevel: e.target.value as "Basic" | "Advanced",
             }
         }));
     };
 
-    const handleResumeOptions = (e) => {
-        setTestConfig(cur => ({
+    const handleResumeOptions = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setTestDetails(cur => ({
             ...cur,
             testSettings: {
                 ...cur.testSettings,
-                resumable: e.target.value,
+                resumeable: e.target.value as "true" | "false",
             }
         }));
     };
-    const handleTabSwitchLimit = (e) => {
-        setTestConfig(cur => ({
+    const handleTabSwitchLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(testDetails)
+        setTestDetails(cur => ({
             ...cur,
             testSettings: {
                 ...cur.testSettings,
-                tabSwitchLimit: e.target.value,
+                tabSwitchLimit: parseInt(e.target.value),
             }
         }));
     };
 
+    const getMaxAllowedDuration = () => {
+        if (!localStartAt || !localEndAt) return 15;
+
+        const maxAllowedDuration = Math.ceil((localEndAt.getTime() - localStartAt.getTime()) / 60000);
+        return Math.max(Math.floor(maxAllowedDuration / 15) * 15, 15);
+    }
     const increaseDuration = () => {
         const maxAllowedDuration = getMaxAllowedDuration();
         // Increase by 15 minutes, but don't exceed max allowed duration
@@ -199,9 +170,23 @@ function TestOptionForm() {
         const newDuration = Math.max((localDuration || 30) - 15, 15);
         setLocalDuration(newDuration);
     };
+    useEffect(() => {
+        if (localDuration) {
+            setTestDetails(cur => ({
+                ...cur,
+                testSettings: {
+                    ...cur.testSettings,
+                    duration: localDuration,
+                }
+            }));
+        }
+        return () => {
+
+        };
+    }, [localDuration, setTestDetails]);
 
     // Format duration for display
-    const formatDuration = (minutes) => {
+    const formatDuration = (minutes: number) => {
         if (!minutes) return "15 minutes";
 
         const hours = Math.floor(minutes / 60);
@@ -215,11 +200,18 @@ function TestOptionForm() {
             return `${mins} minute${mins > 1 ? 's' : ''}`;
         }
     };
+    const calculateMaxEndTime = () => {
+        if (!localStartAt) return new Date();
+        const maxEndTime = new Date(localStartAt.getTime());
+        maxEndTime.setHours(23, 59, 59, 999);
+        maxEndTime.setDate(new Date().getDate() + 7);
+        return maxEndTime;
+    }
 
     return (
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-white to-gray-50 pt-8 pb-12 px-8 rounded-xl shadow-md">
+        <div className="max-w-4xl mx-auto pt-12 pb-4  px-8 rounded-xl  ">
             <h2 className="text-2xl font-bold text-gray-800 mb-8 border-b border-gray-200 pb-3 pl-2">
-                Test Settings
+                Configure Your Test
             </h2>
 
             <div className="space-y-8">
@@ -229,17 +221,20 @@ function TestOptionForm() {
                         <label className="text-gray-700 font-medium w-1/3 text-lg mb-2 md:mb-0 pl-2">Start Time</label>
                         <div className="w-full md:w-2/3 relative">
                             <DatePicker
+                            id="start-time"
                                 className={`w-full border-0 border-b-2 ${startTimeError ? 'border-red-500' : 'border-gray-300'} rounded-none bg-transparent px-2 py-2 focus:outline-none ${startTimeError ? 'focus:border-red-500' : 'focus:border-indigo-500'}`}
                                 showTimeSelect
                                 selected={localStartAt}
                                 onChange={handleStartAt}
                                 timeFormat="HH:mm"
-                                timeIntervals={5}
+                                timeIntervals={15}
                                 dateFormat="MMMM d, yyyy h:mm aa"
                                 timeCaption="Time"
                                 placeholderText="Select test start date and time"
                                 minDate={new Date()}
-                                
+
+
+
                             />
                             {startTimeError && (
                                 <p className="text-red-500 text-sm mt-1">{startTimeError}</p>
@@ -256,17 +251,21 @@ function TestOptionForm() {
                             <DatePicker
                                 className={`w-full border-0 border-b-2 ${endTimeError ? 'border-red-500' : 'border-gray-300'} rounded-none bg-transparent px-2 py-2 focus:outline-none ${endTimeError ? 'focus:border-red-500' : 'focus:border-indigo-500'}`}
                                 showTimeSelect
-                                timeIntervals={5}
+                                id="end-time"
                                 selected={localEndAt}
                                 onChange={handleEndAt}
                                 timeFormat="HH:mm"
+                                timeIntervals={15}
                                 dateFormat="MMMM d, yyyy h:mm aa"
                                 timeCaption="Time"
                                 placeholderText="Select test end date and time"
-                                minDate={getMinEndTime()}
-                                disabled={!localStartAt}
+                                minDate={getMinEndDate()}
                              
+                                minTime={getMinEndTime()}
+                                maxTime={calculateMaxEndTime()}
                             />
+                            
+                            
                             {endTimeError && (
                                 <p className="text-red-500 text-sm mt-1">{endTimeError}</p>
                             )}
@@ -284,18 +283,18 @@ function TestOptionForm() {
                                     type="button"
                                     onClick={decreaseDuration}
                                     disabled={!localStartAt || !localEndAt || (localDuration || 0) <= 15}
-                                    className={`flex items-center justify-center w-8 h-8 rounded-full ${!localStartAt || !localEndAt || (localDuration || 0) <= 15
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                            : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
+                                    className={`flex items-center cursor-pointer justify-center w-8 h-8 rounded-full ${!localStartAt || !localEndAt || (localDuration || 0) <= 15
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                        : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
                                         }`}
                                     aria-label="Decrease duration"
                                 >
-                                    <span className="text-xl font-bold mb-1">-</span>
+                                    <span className="text-xl font-bold">-</span>
                                 </button>
 
                                 <div className="flex-1 mx-4 text-center">
                                     <span className="text-gray-800 font-medium">
-                                        {localStartAt && localEndAt ? formatDuration(localDuration) : "Set times first"}
+                                        {localStartAt && localEndAt ? formatDuration(localDuration as number) : "Set times first"}
                                     </span>
                                 </div>
 
@@ -303,13 +302,13 @@ function TestOptionForm() {
                                     type="button"
                                     onClick={increaseDuration}
                                     disabled={!localStartAt || !localEndAt || (localDuration || 0) >= getMaxAllowedDuration()}
-                                    className={`flex items-center justify-center w-8 h-8 rounded-full ${!localStartAt || !localEndAt || (localDuration || 0) >= getMaxAllowedDuration()
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                            : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
+                                    className={`flex items-center cursor-pointer justify-center w-8 h-8 rounded-full ${!localStartAt || !localEndAt || (localDuration || 0) >= getMaxAllowedDuration()
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                        : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
                                         }`}
                                     aria-label="Increase duration"
                                 >
-                                    <span className="text-xl font-bold mb-1">+</span>
+                                    <span className="text-xl font-bold">+</span>
                                 </button>
                             </div>
 
@@ -335,8 +334,8 @@ function TestOptionForm() {
                                 name="procture-level"
                                 id="procture-level"
                                 className="w-full border-0 border-b-2 border-gray-300 rounded-none bg-transparent px-2 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer appearance-none"
-                                value={procturing}
-                                onChange={handleProctureOption}
+                                value={proctoringLevel ? proctoringLevel : ""}
+                                onChange={handleProctorOption}
                                 style={{
                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                     backgroundRepeat: 'no-repeat',
@@ -347,8 +346,8 @@ function TestOptionForm() {
                                 <option value="" disabled hidden>
                                     Select level of procturing
                                 </option>
-                                <option value="level-1">Basic - Tab Switch Count, Disabled Copy Paste</option>
-                                <option value="level-2">Advanced - Face recognition, Object Detection and Basic*</option>
+                                <option value="Basic">Basic - Tab Switch Count, Disabled Copy Paste</option>
+                                <option value="Advanced">Advanced - Face recognition, Object Detection and Basic*</option>
                             </select>
                         </div>
                     </div>
@@ -363,8 +362,9 @@ function TestOptionForm() {
                                 type="number"
                                 name="tab-switch-limit"
                                 id="tab-switch-limit"
+                                value={tabSwitchLimit ? tabSwitchLimit : ""}
                                 className="w-full border-0 border-b-2 border-gray-300 rounded-none bg-transparent px-2 py-2 focus:outline-none focus:border-indigo-500"
-                                placeholder="Enter tab switch limit"
+                                placeholder="Enter tab switch limit between 1 and 5"
                                 onChange={handleTabSwitchLimit}
 
                             />
@@ -383,7 +383,7 @@ function TestOptionForm() {
                                 name="resume"
                                 id="resume"
                                 className="w-full border-0 border-b-2 border-gray-300 rounded-none bg-transparent px-2 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer appearance-none"
-                                value={resumable}
+                                value={resumeable ? resumeable : ""}
                                 onChange={handleResumeOptions}
                                 style={{
                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
@@ -406,4 +406,4 @@ function TestOptionForm() {
     );
 }
 
-export default TestOptionForm;
+export default TestSettings;

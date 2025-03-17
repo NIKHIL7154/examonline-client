@@ -33,8 +33,9 @@ function AppLayout() {
 
                     <Header />
                     {/* <Sidebar /> */}
-                    <main className=" bg-gray-100 w-full flex-grow p-[2.8rem] px-[3.2rem] pb-[3.2rem] overflow-y-auto">
-                        <div className="w-full h-full mx-auto flex flex-col gap-[3.2rem]">
+                    {/* p-[2.8rem] px-[3.2rem] pb-[3.2rem] */}
+                    <main className=" bg-gray-100 w-full flex-grow  overflow-y-auto p-[2.8rem] px-[3.2rem] pb-[3.2rem] ">
+                        <div className="w-full h-full  mx-auto flex flex-col gap-[3.2rem]">
                             <Outlet />
                         </div>
                     </main>
