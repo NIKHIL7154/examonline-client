@@ -23,6 +23,9 @@ import TestName from "./features/testCreation/TestName";
 import TestSettings from "./features/testCreation/TestSettings";
 import TestParticipants from "./features/testCreation/TestParticipants";
 import TestReview from "./features/testCreation/TestReview";
+import TestConductPage from "./pages/TestConductPage";
+import { TestNavigationProvider } from "./features/testConduct/TestNavigationContext";
+
 
 
 const router = createBrowserRouter([
@@ -44,13 +47,15 @@ const router = createBrowserRouter([
             element: <Navigate replace to="dashboard" />,
           },
           { path: 'dashboard', element: <Dashboard /> },
-          { path: 'create', element: <TestCreation/>,children:[
-            {path:"testName",element:<TestName/>},
-            {path:"testSets",element:<TestQuestionSets/>},
-            {path:"testSettings",element:<TestSettings/>},
-            {path:"testParticipants",element:<TestParticipants/>},
-            {path:"testReview",element:<TestReview/>},
-          ] },
+          {
+            path: 'create', element: <TestCreation />, children: [
+              { path: "testName", element: <TestName /> },
+              { path: "testSets", element: <TestQuestionSets /> },
+              { path: "testSettings", element: <TestSettings /> },
+              { path: "testParticipants", element: <TestParticipants /> },
+              { path: "testReview", element: <TestReview /> },
+            ]
+          },
           { path: 'tests', element: <Tests /> },
           { path: 'tests/:testId', element: <TestPage /> },
           { path: 'questions', element: <QuestionSets /> },
@@ -58,9 +63,10 @@ const router = createBrowserRouter([
           { path: 'questions/:setId', element: <SetPage /> },
 
         ],
-      }, 
-      
-      
+      },
+      {path:"exam",element:<TestNavigationProvider><TestConductPage/></TestNavigationProvider>},
+
+
       { path: "*", element: <div> page not found </div> }
     ],
     errorElement: <ErrorBoundary />
