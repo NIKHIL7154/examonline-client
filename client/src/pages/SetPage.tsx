@@ -3,13 +3,15 @@ import useQuestionSet from "../features/questions/useQuestionSet";
 import Row from "../ui/Row";
 import { useNavigate } from "react-router";
 import { FaArrowLeft } from "react-icons/fa";
+import SetLoading from "../features/questions/SetLoading";
 
 function SetPage() {
     const { getToken } = useAuth();
     const { isLoading, questionSet } = useQuestionSet(getToken);
     const navigate = useNavigate();
 
-    if (isLoading) return <div> Loading</div>;
+    if (isLoading) return <SetLoading/>;
+    // if (isLoading) return <div> Loading</div>;
     const { set } = questionSet.data;
     const { _id: setId, name, questions } = set;
     return (

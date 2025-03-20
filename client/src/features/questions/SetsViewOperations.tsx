@@ -2,7 +2,7 @@ import { HiOutlineCalendar, HiChevronDown, } from "react-icons/hi";
 import { TbFilePencil, TbFileUpload, TbFileTextSpark } from "react-icons/tb";
 
 import SortBy from "../../ui/SortBy";
-import { FiEdit3 } from "react-icons/fi";
+// import { FiEdit3 } from "react-icons/fi";
 import { FaSortAlphaDown } from "react-icons/fa";
 import Menus from "../../ui/Menus";
 import Modal from "../../ui/Modal";
@@ -35,7 +35,7 @@ function SetsViewOperations() {
             <SortBy
                 options={[
                     { value: "createdAt-desc", label: "Date created", icon: <HiOutlineCalendar /> },
-                    { value: "updatedAt-desc", label: "Last updated", icon: <FiEdit3 /> },
+                    // { value: "updatedAt-desc", label: "Last updated", icon: <FiEdit3 /> },
                     { value: "name-asc", label: "Alphabetical", icon: <FaSortAlphaDown /> },
                 ]}
             />

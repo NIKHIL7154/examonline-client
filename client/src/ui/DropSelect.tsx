@@ -39,9 +39,10 @@ const customStyles: StylesConfig<Option, false> = {
     "&:active": {
       backgroundColor: "oklch(0.928 0.006 264.531)",
     },
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-evenly"
+    // display: "flex",
+    // alignItems: "center",
+    // border: "1px solid black",
+    // justifyContent: "space-evenly"
   }),
   menu: (base) => ({
     ...base,

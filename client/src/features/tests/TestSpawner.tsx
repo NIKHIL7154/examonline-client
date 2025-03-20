@@ -3,6 +3,8 @@ import Menus from "../../ui/Menus";
 import TestRow, { TestAll } from "./TestRow";
 import TestsLoading from "./TestsLoading";
 import useTests from "./useTests";
+import Pagination from "../../ui/Pagination";
+import Empty from "../../ui/Empty";
 
 function TestSpawner() {
     const { getToken } = useAuth();
@@ -10,18 +12,23 @@ function TestSpawner() {
 
     if (isLoading) return (<TestsLoading />)
     const { tests: testsArr, totalTests } = tests.data;
-
-    if (totalTests === 0) return <div className="m-auto text-gray-500 font-normal">My Tests is empty.</div>
+    // if(!bookings?.length)
+    if (!testsArr?.length) return <Empty resourceName="tests"/>
 
 
     return (
-        <Menus>
-            <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-300">
-                {testsArr.map((test: TestAll) => {
-                    return <TestRow key={test._id} testItem={test} />
-                })}
-            </div>
-        </Menus>
+        <>
+            <Menus>
+                <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-300">
+                    {testsArr.map((test: TestAll) => {
+                        return <TestRow key={test._id} testItem={test} />
+                    })}
+                </div>
+            </Menus>
+
+            <Pagination count={totalTests}/>
+            {/* <div>hello</div> */}
+        </>
     );
 }
 

@@ -3,7 +3,7 @@ import { HiOutlineCalendar, HiOutlineQuestionMarkCircle } from "react-icons/hi";
 import { TbFileText } from "react-icons/tb";
 import { Link } from "react-router";
 
-interface Set {
+export interface Set {
     _id: string;
     name: string;
     totalQuestions: number;
