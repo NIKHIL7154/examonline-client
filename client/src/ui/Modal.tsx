@@ -5,13 +5,12 @@ import styled from "styled-components";
 import useOutsideClick from "../hooks/useOutsideClick";
 
 // Styled components
-// background-color: oklch(0.985 0 0);
 const StyledModal = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color:white;
+  background-color: oklch(0.985 0 0);
   border: 1px solid rgba(226, 226, 226, 0.182);
   border-radius: 12px;
   box-shadow: 0 1.5rem 2.5rem rgba(130, 130, 130, 0.203);

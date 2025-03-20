@@ -5,7 +5,7 @@ text:string;
 
 const AIButton = ({text}:GlowButtonProps) => {
   return (
-    <button className="cursor-pointer group relative text-xl dark:bg-neutral-800 bg-white border border-[#d75777] rounded-sm p-px overflow-hidden">
+    <button className="cursor-pointer group relative text-xl dark:bg-neutral-800 bg-white border border-[#f6a0b6]  rounded-sm p-px overflow-hidden">
       <span className="absolute inset-0 rounded-sm overflow-hidden">
         <span className="inset-0 absolute pointer-events-none select-none">
           <span className="block -translate-x-1/2 -translate-y-1/3 size-24 blur-xl" style={{background: 'linear-gradient(135deg, rgb(122, 105, 249), rgb(242, 99, 120), rgb(245, 131, 63))'}} />

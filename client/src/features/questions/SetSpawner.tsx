@@ -1,28 +1,9 @@
 import { useAuth } from "@clerk/clerk-react";
-import SetCard from "./SetCard";
+import SetCard, { Set } from "./SetCard";
 import SetsLoading from "./SetsLoading";
 import useQuestionSets from "./useQuestionSets";
-
-const data = [
-    {
-        _id: "67b992708e1ca35da449d5e4",
-        name: "Computer Basics 10",
-        totalQuestions: 20,
-        createdAt: new Date(Date.now()),
-    },
-    {
-        _id: "67b992708e1rQ35da449d5e4",
-        name: "General Knowledge",
-        totalQuestions: 50,
-        createdAt: new Date(Date.now()),
-    },
-    {
-        _id: "67b992708e1rQ35da449d5e9",
-        name: "Aptitude",
-        totalQuestions: 90,
-        createdAt: new Date(Date.now()),
-    },
-]
+import Pagination from "../../ui/Pagination";
+import Empty from "../../ui/Empty";
 
 function SetSpawner() {
     const { getToken } = useAuth();
@@ -32,15 +13,20 @@ function SetSpawner() {
         return <SetsLoading />
 
     const { totalSets, sets } = questionSets.data;
-    if(totalSets === 0) return <div>No Set found</div>
 
+    if (!sets?.length) return <Empty resourceName="questions sets"/>
+    
     return (
-        <div className="flex flex-wrap gap-4 ">
-            {sets.map((set) => {
-                return <SetCard key={set._id} setItem={set} />
-            })}
+        <>
+            <div className="flex flex-wrap gap-5 ">
+                {sets.map((set: Set) => {
+                    return <SetCard key={set._id} setItem={set} />
+                })}
 
-        </div>
+            </div>
+
+            <Pagination count={totalSets}/>
+        </>
     );
 }
 

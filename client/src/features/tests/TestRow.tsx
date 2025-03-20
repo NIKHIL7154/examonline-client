@@ -7,13 +7,16 @@ import { MdOutlineRocketLaunch } from "react-icons/md";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import { useNavigate } from "react-router";
+import { useDeleteTest } from "./useDeleteTest";
+import { useAuth } from "@clerk/clerk-react";
 
-export interface Test {
+export interface TestAll {
     _id: string;
     name: string;
     createdAt: Date;
     durationInSec: number;
-    participants: number;
+    totalParticipants: number;
+    totalQuestions: number;
     status: "pending" | "active" | "completed";
 }
 
@@ -25,9 +28,12 @@ function TestFeature({ children }: { children: React.ReactNode }) {
     )
 }
 
-function TestRow({ testItem }: { testItem: Test }) {
+function TestRow({ testItem }: { testItem: TestAll }) {
     const navigate = useNavigate();
-    const { _id: testId, name, createdAt, durationInSec: duration, status } = testItem;
+    const { getToken } = useAuth();
+    const { isDeleting, deleteTest } = useDeleteTest(getToken);
+
+    const { _id: testId, name, createdAt, durationInSec: duration, status, totalParticipants } = testItem;
     // const {participants} = testItem;
     return (
         <div className="py-5 px-6 border-b border-gray-200 last:border-b-0 space-y-4">
@@ -56,8 +62,8 @@ function TestRow({ testItem }: { testItem: Test }) {
                     <Modal.Window name="deleteTest">
                         <ConfirmDelete
                             resourceName="test"
-                            disabled={false}
-                            onConfirm={() => console.log("deleted")}
+                            disabled={isDeleting}
+                            onConfirm={() => deleteTest(testId)}
                         />
                     </Modal.Window>
                 </Modal>
@@ -70,11 +76,11 @@ function TestRow({ testItem }: { testItem: Test }) {
                 </TestFeature>
                 <TestFeature>
                     <HiOutlineUsers className="text-lg  " />
-                    <span className=" text-md font-medium">Update Server Logic participants route</span>
-                    {/* <span className=" text-md font-medium">{participants} participants</span> */}
+                    {/* <span className=" text-md font-medium">Update Server Logic participants route</span> */}
+                    <span className=" text-md font-medium">{totalParticipants} participants</span>
                 </TestFeature>
                 <TestFeature>
-                    <HiOutlineCalendar className="text-lg  " />
+                    <HiOutlineCalendar className="text-lg " />
                     <span className=" text-md font-medium">Created {format(createdAt, 'MMM dd, yyyy')}</span>
                 </TestFeature>
             </div>

@@ -6,7 +6,7 @@ import { getQuestionSet } from "../../services/apiQuestionSets";
 
 export default function useQuestionSet(authtoken: () => Promise<string | null>) {
     const { setId } = useParams();
-    
+
     const { isLoading, data: questionSet, error } = useQuery({
         queryKey: ["questionSets", setId],
         queryFn: () => getQuestionSet(authtoken, setId as string),

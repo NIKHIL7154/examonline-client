@@ -155,14 +155,14 @@ const SetEditorForm = () => {
                         </div>
 
                         <div className="mt-4 space-y-2">
-                            <label htmlFor={`correctOption-${index}`} className="block text-sm font-medium text-gray-700 ">
+                            <label htmlFor={`correctOption-${index}`} className="block text-sm font-medium text-gray-600 ">
                                 Correct Answer
                             </label>
                             <select
                                 id={`correctOption-${index}`}
                                 {...register(`questions.${index}.correctOption`, { required: "Correct Answer is required" })}
                                 defaultValue={field.correctOption}
-                                className="w-full text-gray-600 hover:border-gray-500 transition-all duration-200 border cursor-pointer outline-none  border-gray-300 p-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                                className="w-full text-gray-600 font-medium hover:border-gray-500 transition-all duration-200 border cursor-pointer outline-none  border-gray-300 p-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
                             >
                                 <option value="A">Option A</option>
                                 <option value="B">Option B</option>

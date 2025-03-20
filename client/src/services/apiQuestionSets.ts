@@ -1,5 +1,5 @@
 import { createGetRequest, createPostRequest } from "../features/authentication/apiHelper";
-import { serverUrl } from "../utils/globals";
+import { PAGE_SIZE, serverUrl } from "../utils/globals";
 
 interface QuestionType {
     questionTitle: string;
@@ -17,12 +17,21 @@ interface QuestionSetType {
     questions: QuestionType[];
 }
 
-export const getQuestionSets = async (authToken: () => Promise<string | null>) => {
+export const getQuestionSets = async (authToken: () => Promise<string | null>, sortBy: string | undefined = undefined, page: number | undefined = undefined) => {
     try {
-        const response = await createGetRequest(authToken, `${serverUrl}/questionSets`);
+        let url = `${serverUrl}/questionSets`
+        const queryParams = [];
+
+        if (sortBy) queryParams.push(`sortBy=${sortBy}`);
+        if (page) queryParams.push(`page=${page}&limit=${PAGE_SIZE}`);
+        if (queryParams.length > 0) {
+            url += `?${queryParams.join("&")}`;
+        }
+
+        const response = await createGetRequest(authToken, url);
         return response;
     } catch (error) {
-        console.error(error);   
+        console.error(error);
         throw new Error("Question Sets could not be loaded");
     }
 };

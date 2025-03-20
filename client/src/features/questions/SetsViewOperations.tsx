@@ -1,8 +1,8 @@
 import { HiOutlineCalendar, HiChevronDown, } from "react-icons/hi";
-import { TbFilePencil, TbFileUpload } from "react-icons/tb";
+import { TbFilePencil, TbFileUpload, TbFileTextSpark } from "react-icons/tb";
 
 import SortBy from "../../ui/SortBy";
-import { FiEdit3 } from "react-icons/fi";
+// import { FiEdit3 } from "react-icons/fi";
 import { FaSortAlphaDown } from "react-icons/fa";
 import Menus from "../../ui/Menus";
 import Modal from "../../ui/Modal";
@@ -33,8 +33,7 @@ function SetsViewOperations() {
     }
     return (
         <div className="flex gap-3">
-
-            <Modal>
+        <Modal>
                 <Modal.Open opens="buildWithAi">
                    <div>
                     <AIButton text="Create with AI"/>
@@ -50,7 +49,7 @@ function SetsViewOperations() {
             <SortBy
                 options={[
                     { value: "createdAt-desc", label: "Date created", icon: <HiOutlineCalendar /> },
-                    { value: "updatedAt-desc", label: "Last updated", icon: <FiEdit3 /> },
+                    // { value: "updatedAt-desc", label: "Last updated", icon: <FiEdit3 /> },
                     { value: "name-asc", label: "Alphabetical", icon: <FaSortAlphaDown /> },
                 ]}
             />
@@ -59,7 +58,6 @@ function SetsViewOperations() {
                 <Modal>
 
                     <Menus.Menu>
-
                         <Menus.Toggle id={MenuId} customButton={<AddSetMenu />} />
                         <Menus.List id={MenuId}>
                             <Modal.Open opens="uploadSet">
@@ -67,16 +65,14 @@ function SetsViewOperations() {
                             </Modal.Open>
 
                             <Menus.Button onClick={handleEmptyNavigate} icon={<TbFilePencil />}> Start from scratch</Menus.Button>
-                            {/* <Modal.Open opens="buildWithAi">
-                                <Menus.Button icon={<TbFileTextSpark />}> Build with AI</Menus.Button>
-                            </Modal.Open> */}
+                            
                         </Menus.List>
                     </Menus.Menu>
 
                     <Modal.Window name="uploadSet">
                         <UploadSet />
                     </Modal.Window>
-
+                    
                 </Modal>
             </Menus>
 

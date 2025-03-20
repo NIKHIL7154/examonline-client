@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router";
 import styled from "styled-components";
 // import { HiOutlinePlusCircle , HiOutlineUsers ,HiOutlineHome, HiOutlineViewGrid ,HiOutlineDocumentText ,HiOutlineCog    , HiOutlineClipboardList } from "react-icons/hi";
-import { HiOutlineViewGrid, HiOutlineDocumentText, HiOutlineCog, HiOutlineClipboardList, HiPlus } from "react-icons/hi";
+import { HiOutlineUsers, HiOutlineViewGrid, HiOutlineDocumentText, HiOutlineCog, HiOutlineClipboardList, HiPlus } from "react-icons/hi";
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;

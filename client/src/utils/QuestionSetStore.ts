@@ -1,5 +1,14 @@
-import { Question } from "../types/QuestionTypes";
-
+export type Question = {
+    questionTitle: string;
+    options: {
+        A: string;
+        B: string;
+        C: string;
+        D: string;
+    };
+    correctOption: "A" | "B" | "C" | "D";
+    // id: string;
+};
 let Questions :Question[]=[
     {
         questionTitle: "",
@@ -10,7 +19,7 @@ let Questions :Question[]=[
             D: "",
         },
         correctOption: "A",
-       
+        // id: "tfg456",
     },
 ];
 
@@ -30,7 +39,7 @@ export const setQuestions=(questions : Question[])=>{
                     D: "",
                 },
                 correctOption: "A",
-                
+                // id: "tfg456",
             },
             
         ];

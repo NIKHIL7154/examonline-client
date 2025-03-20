@@ -5,22 +5,23 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useAuth } from "@clerk/clerk-react";
 import useTest from "../features/tests/useTest";
 import TestDataBox from "../features/tests/TestDataBox";
+import TestLoading from "../features/tests/TestLoading";
 
 function TestPage() {
     const { getToken } = useAuth();
     const navigate = useNavigate();
 
     const { isLoading, test: testObj } = useTest(getToken);
-    if (isLoading) return <div> Loading</div>;
+    if (isLoading) return <TestLoading/>
     const { test } = testObj.data;
-
+    const isStale = test.status === "stale";
 
     // const { testId } = useParams();
     return (
         <>
             <Row type="horizontal">
                 <span className="flex gap-6 items-center">
-                    <h1 className="text-3xl font-medium text-gray-800">Test #{test._id}</h1>
+                    <h1 className={`text-3xl font-medium text-gray-800 ${isStale && "opacity-60"}`}>Test #{test._id}</h1>
                     <Tag size="lg" type={test.status} />
                 </span>
 
@@ -33,7 +34,7 @@ function TestPage() {
                 </button>
             </Row>
 
-            <TestDataBox test={test} />
+            <TestDataBox test={test} isStale={isStale} />
 
             
         </>

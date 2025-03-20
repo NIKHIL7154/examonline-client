@@ -29,6 +29,8 @@ type TestDetails={
 }
 export const createTest = async (authToken: () => Promise<string | null>, testDetails: TestDetails) => {
     try {
+        //destructuring currently hardcoded 
+        // change later
         const payload={
             name:testDetails.testName,
             questionSet:testDetails.testSets,
