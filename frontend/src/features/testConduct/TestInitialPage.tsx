@@ -65,7 +65,7 @@ const TestInitialPage = (props: Props) => {
   return (
     <div className="flex w-full h-full flex-col lg:flex-row">
       {/* Left Section */}
-      <div className="flex flex-col justify-between bg-[#4CD964] p-8 lg:w-2/6">
+      <div className="flex flex-col justify-between bg-primary p-8 lg:w-2/6">
         <div className="space-y-4 items-center flex-grow flex flex-col justify-center">
           <h2 className="text-xl text-white w-[75%] text-left">Hello, Nikhil Thakur</h2>
           <h1 className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
@@ -122,7 +122,7 @@ const TestInitialPage = (props: Props) => {
           </ol>
 
           <div className="mt-12 flex justify-center">
-            <button onClick={() => setCurrentStep('environment')} className="bg-[#4CD964] p-4 rounded text-white px-8 hover:bg-[#4CD964]/90">
+            <button onClick={() => setCurrentStep('environment')} className="bg-primary p-4 rounded text-white px-8 hover:bg-[#4CD964]/90">
               Continue
             </button>
           </div>

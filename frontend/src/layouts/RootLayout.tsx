@@ -21,8 +21,10 @@ export default function RootLayout() {
       
     >
       {/* <main className='sized flexed overflow-hidden relative'> */}
-        
+        <div className='w-full h-screen'>
+
         <Outlet />
+        </div>
       {/* </main> */}
     </ClerkProvider>
   )

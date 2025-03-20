@@ -22,7 +22,7 @@ function TestNavigationProvider({ children }: { children: ReactNode }){
 function useTestNavigation() {
     const context = useContext(TestConductNavigationContext);
     if (context === undefined)
-        throw new Error("Context was used outside provider");
+        throw new Error("Test Conduct Context was used outside provider");
     return context;
 }
 

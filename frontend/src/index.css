@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+.bg-primary{
+    background-color: var(--custom-color);
+}
+
+:root {
+  --custom-color: #00ac1a;
+}
 .flexed{
     display: flex;
     justify-content: center;
