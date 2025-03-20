@@ -58,29 +58,6 @@ Respond with only the JSON array and nothing else.
 }
 
 
-async function generateContent(prompt: string) {
-    try {
-        const result = await model.generateContent(prompt);
-
-        // Extract the text from the response
-        const rawResponse = result.response.text();
-        console.log(rawResponse);
-
-        // Clean up the response to extract JSON
-        const jsonStart = rawResponse.indexOf("["); // Find the start of the JSON array
-        const jsonEnd = rawResponse.lastIndexOf("]") + 1; // Find the end of the JSON array
-        const jsonString = rawResponse.slice(jsonStart, jsonEnd); // Extract the JSON string
-
-        // Parse the JSON string
-        const response: Question[] = JSON.parse(jsonString);
-        console.log(response);
-    } catch (error) {
-        console.error("Error generating content:", error);
-    }
-}
-
-// generateContent(prompt);
-
 
 function parseJsonResponse(response: string): boolean | Question[] {
     try {

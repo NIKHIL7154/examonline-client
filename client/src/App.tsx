@@ -1,32 +1,32 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// import { BrowserRouter, Route, Routes } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import RootLayout from './layouts/RootLayout'
-import DashboardLayout from './layouts/DashboardLayout'
-import IndexPage from './pages/verificationPage/IndexPage'
-import AuthLayout from './layouts/AuthLayout'
-import AuthPage from './pages/authpage/AuthPage'
 
-
-import ErrorBoundary from './pages/ErrorBoundary'
-import TestsLayout from './pages/tests/TestsLayout'
-import OverviewPage from './pages/overviewpage/OverviewPage'
-
+import AppLayout from "./layouts/AppLayout";
+import Dashboard from "./pages/Dashboard";
+import Tests from "./pages/Tests";
+import QuestionSets from "./pages/QuestionSets";
 import { Toaster } from "react-hot-toast";
+import SetEditorPage from "./pages/SetEditorPage";
 
-import QuestionsPage from './pages/questionSetsPage/QuestionsPage'
-import TestCreationPage from './pages/testCreationPage/TestCreationPage'
-import QuestionModifierPage from './pages/questionMakerPage/QuestionModifierPage'
-import CreateNewTestPage from './pages/testCreationPage/CreateNewTestPage'
-import QuestionSetSelector from './pages/testCreationPage/components/QuestionSetSelector'
-import TestOptionForm from './pages/testCreationPage/components/TestOptionForm'
-import TestParticipants from './pages/testCreationPage/components/TestParticipants'
-import { TestConfigProvider } from './pages/testCreationPage/context/TestConfigContext'
-import TestConductLayout from './pages/testConductPages/TestConductLayout'
-import FaceVerification from './pages/testConductPages/pages/FaceProctoring'
-import { TestNavigationProvider } from './pages/testConductPages/context/TestNavigationContext'
-import QuestionSetPage from './pages/questionSetView/questionSetPage';
-import TestPage from './pages/tests/TestPage';
+import RootLayout from "./layouts/RootLayout";
+import IndexPage from "./pages/IndexPage";
+import AuthLayout from "./layouts/AuthLayout";
+import AuthPage from "./pages/AuthPage";
+import ErrorBoundary from "./pages/ErrorBoundary";
+import SetPage from "./pages/SetPage";
+import TestPage from "./pages/TestPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TestCreation from "./pages/TestCreation";
+import TestQuestionSets from "./features/testCreation/TestQuestionSets";
+import TestName from "./features/testCreation/TestName";
+import TestSettings from "./features/testCreation/TestSettings";
+import TestParticipants from "./features/testCreation/TestParticipants";
+import TestReview from "./features/testCreation/TestReview";
+import TestConductPage from "./pages/TestConductPage";
+import { TestNavigationProvider } from "./features/testConduct/TestNavigationContext";
+
+
 
 const router = createBrowserRouter([
   {
@@ -37,56 +37,43 @@ const router = createBrowserRouter([
         path: "auth", element: <AuthLayout />, children: [
           { path: "", element: <AuthPage /> },
         ]
-      }
-      , {
-        element: <DashboardLayout />,
+      },
+      {
         path: 'app',
+        element: <AppLayout />,
         children: [
-          // { path: '', element: <div>overview page</div> /* add overview page here */ },
-          { path: '', element: <OverviewPage /> /* add overview page here */ },
-          { path: 'tests', element: <TestsLayout /> },
-          { path: 'tests/test/:testId', element: <TestPage /> },
-          // { path: 'create', element: <div>Create test</div> /* add create test page here */ },
-          { path: 'create', element: <TestCreationPage /> /* add create test page here */ },
-          { path: "edit-set", element: <div>Edit set</div> /*add questions page here*/ },
-          { path: "questions", element: <QuestionsPage /> /*add questions page here*/ },
-          { path: "questions/create", element: <QuestionModifierPage /> },
-          { path: "questions/set/:setId", element: <QuestionSetPage /> },
-          { path: "settings", element: <QuestionModifierPage /> },
           {
-            path: "create/new-test", element: <TestConfigProvider><CreateNewTestPage /></TestConfigProvider>, children: [
-              //  if (condition) navigate("/path" , {replace: true});
-              { index: true, element: <Navigate to="testQuestions" replace /> },
-              { path: "testQuestions", element: <QuestionSetSelector /> },
-              { path: "testSettings", element: <TestOptionForm /> },
+            index: true,
+            element: <Navigate replace to="dashboard" />,
+          },
+          { path: 'dashboard', element: <Dashboard /> },
+          {
+            path: 'create', element: <TestCreation />, children: [
+              { path: "testName", element: <TestName /> },
+              { path: "testSets", element: <TestQuestionSets /> },
+              { path: "testSettings", element: <TestSettings /> },
               { path: "testParticipants", element: <TestParticipants /> },
+              { path: "testReview", element: <TestReview /> },
             ]
           },
+          { path: 'tests', element: <Tests /> },
+          { path: 'tests/:testId', element: <TestPage /> },
+          { path: 'questions', element: <QuestionSets /> },
+          { path: 'questions/edit', element: <SetEditorPage /> },
+          { path: 'questions/:setId', element: <SetPage /> },
 
         ],
       },
-      {
-        path: "test", element: <TestNavigationProvider><TestConductLayout /></TestNavigationProvider>
+      {path:"exam",element:<TestNavigationProvider><TestConductPage/></TestNavigationProvider>},
 
-      },
-      {
-        path: "face", element: <FaceVerification />
-      }
+
+      { path: "*", element: <div> page not found </div> }
     ],
     errorElement: <ErrorBoundary />
-  },
-], {
-  future: {
-    v7_relativeSplatPath: true,
-    v7_fetcherPersist: true,
-    v7_normalizeFormMethod: true,
-    v7_partialHydration: true,
-    v7_skipActionErrorRevalidation: true,
-  },
-})
+  }
+])
 
-
-const App = () => {
+function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -95,36 +82,51 @@ const App = () => {
       },
     }
   });
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <RouterProvider router={router} future={{
-        v7_startTransition: true,
-      }} />
+    <>
+      {/* <BrowserRouter>
+        <Routes>
+          <Route element={<AppLayout />} >
 
-      <Toaster
-        position="top-center"
-        gutter={12}
-        containerStyle={{ margin: "8px" }}
-        toastOptions={{
-          success: {
-            duration: 3000,
-          },
-          error: {
-            duration: 5000,
-          },
-          style: {
-            fontSize: "16px",
-            maxWidth: "500px",
-            padding: "16px 24px",
-            backgroundColor: "#fff",
-            color: "#374151",
-          }
-        }}
-      />
-    </QueryClientProvider>
-  )
+            <Route index element={<Navigate replace to="dashboard" />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="create" element={<div>Create test</div>} />
+            <Route path="tests" element={<Tests />} />
+            <Route path="questions" element={<QuestionSets />} />
+            <Route path="questions/edit" element={<SetEditorPage />} />
+          </Route>
+
+          <Route path="*" element={<div> page not found </div>} />
+        </Routes>
+      </BrowserRouter>
+      */}
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <RouterProvider router={router} />
+        <Toaster
+          position="top-center"
+          gutter={12}
+          containerStyle={{ margin: "8px" }}
+          toastOptions={{
+            success: {
+              duration: 3000,
+            },
+            error: {
+              duration: 5000,
+            },
+            style: {
+              fontSize: "16px",
+              maxWidth: "500px",
+              padding: "16px 24px",
+              backgroundColor: "white",
+              color: "oklch(0.373 0.034 259.733)",
+            }
+          }}
+        />
+      </QueryClientProvider>
+
+    </>
+  );
 }
 
-export default App
+export default App;

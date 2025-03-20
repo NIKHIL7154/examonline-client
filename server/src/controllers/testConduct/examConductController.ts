@@ -1,4 +1,5 @@
 
+
 import { QuestionSet } from "../../models/QuestionSetModel";
 import { Test, TestType } from "../../models/TestModel";
 import { createTestDetails, TestDetails } from "../../services/sockets/UserManagerStore";
@@ -9,15 +10,32 @@ export async function verifyTest(testData :TokenPayload) {
     if(!test){
         return null;
     }
-    /* const currentTime = new Date();
-    if(currentTime > new Date(test.endAt) || currentTime<new Date(test.startAt)){
-        return null;
-    } */
-    return test;
+    
+    const currentTime = new Date();
+    let isTimeBounded=false;
+    const testDuration= test.durationInSec as number;
+    const durationInSeconds:number=(test.endAt.getSeconds()-test.startAt.getSeconds())
+    if(durationInSeconds+5 >= testDuration || durationInSeconds-5 <= testDuration){
+        isTimeBounded=true;
+    }
+    if(isTimeBounded){
+        const tenMinutesBefore=new Date(test.startAt.setMinutes(test.startAt.getMinutes()-10));
+        if(currentTime<tenMinutesBefore || currentTime>=test.endAt || currentTime>=test.startAt){
+            return null;
+        }
+        return test;
+    }else{
+        const minTestStartTime = new Date(test.endAt.getSeconds() - testDuration);
+        if(currentTime<test.startAt || currentTime>=minTestStartTime || currentTime>=test.endAt){
+            return null;
+        }
+        return test;
+    }
+    
 }
 
 
-export async function testDetailsAndfetchQuestions(testId: string): Promise<{ examQuestions: ExamQuestion[], resultQuestions: ResultQuestion[],testDetails:TestDetails } | null> {
+export async function fetchTestDetailsAndQuestions(testId: string): Promise<{ examQuestions: ExamQuestion[], resultQuestions: ResultQuestion[],testDetails:TestDetails } | null> {
     try {
         const test = await Test.findById(testId);
         console.log(test);

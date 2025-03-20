@@ -20,8 +20,8 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
         return next(new AppError("Unauthorised : Invalid Token", 401));
     }
 
-    const testValidity = await verifyTest(testData);
-    if (!testValidity) {
+    const validTest = await verifyTest(testData);
+    if (!validTest) {
         return next(new AppError("Test Expired", 403));
     }
 
@@ -29,8 +29,8 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
         status: "success",
         data: {
             testToken:generateTestToken(testData, "4h"),
-            questionCount: testValidity.questionSet.length,
-            duration: testValidity.startAt,
+            questionCount: validTest.questionSet.length,
+            duration: validTest.startAt,
         },
     });
 
