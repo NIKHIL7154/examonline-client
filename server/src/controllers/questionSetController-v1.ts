@@ -22,26 +22,9 @@ export const createQuestionSet = catchAsync(async (req: ProtectedRequest, res: R
 export const getAllSetsByUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth?.userId;
 
-    const paginationStage = [];
+    // const questionSets = await QuestionSet.find({user: userId}).select("-questions")
 
-    if (req.query.page && req.query.limit) {
-        const page = parseInt(req.query.page as string, 10) || 1;
-        const limit = parseInt(req.query.limit as string, 10) || 10;
-        const skip = (page - 1) * limit;
-
-        paginationStage.push({ $skip: skip });
-        paginationStage.push({ $limit: limit });
-    }
-
-    const sortStage = req.query.sortBy
-        ? [{
-            $sort: {
-                [(req.query.sortBy as string).split("-")[0]]:
-                    (req.query.sortBy as string).split("-")[1] === 'desc' ? -1 as 1 | -1 : 1 as 1 | -1
-            }
-        }]
-        : [];
-
+    // const questionSets = await QuestionSet.aggregate([
     const pipeline: PipelineStage[] = [
         { $match: { user: userId } },
         {
@@ -51,35 +34,36 @@ export const getAllSetsByUser = catchAsync(async (req: ProtectedRequest, res: Re
                 createdAt: 1,
                 totalQuestions: { $size: "$questions" }, // Calculate the size of the questions array
             }
-        },
-        {
-            $facet: {
-                metadata: [{ $count: "totalRecords" }], // Count total documents
-                data: [
-                    ...sortStage,
-                    ...paginationStage,
-                ]
-            }
-        },
-        {
-            $project: {
-                totalRecords: { $arrayElemAt: ["$metadata.totalRecords", 0] },
-                data: 1
-            }
         }
     ];
+
+    if (req.query.sortBy) {
+        const sortField = (req.query.sortBy as string).split("-");
+        console.log(sortField);
+
+        // const sortOrder = req.query.order === 'desc' ? -1 : 1; // Default ascending
+        const sortOrder = sortField[1] === 'desc' ? -1 : 1; // Default ascending
+        pipeline.push({ $sort: { [sortField[0]]: sortOrder } });
+    }
+
+    // **Pagination (optional)**
+    if (req.query.page && req.query.limit) {
+        const page = parseInt(req.query.page as string, 10) || 1;
+        const limit = parseInt(req.query.limit as string, 10) || 10;
+        const skip = (page - 1) * limit;
+
+        pipeline.push({ $skip: skip });
+        pipeline.push({ $limit: limit });
+    }
 
     const questionSets = await QuestionSet.aggregate(pipeline);
     if (!questionSets) return next(new AppError("Error occured while test creation, please try again", 404));
 
-    const totalSets = questionSets[0]?.totalRecords || 0;
-    const paginatedData = questionSets[0]?.data || [];
-
     res.status(201).json({
         status: "success",
         data: {
-            totalSets,
-            sets: paginatedData,
+            totalSets: questionSets?.length || 0,
+            sets: questionSets,
         },
     });
 });

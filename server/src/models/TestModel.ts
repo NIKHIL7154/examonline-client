@@ -204,3 +204,58 @@ TestSchema.pre('aggregate', async function (next) {
 
 
 export const Test = mongoose.model<TestType>('Test', TestSchema);
+
+
+// TestSchema.pre('aggregate', async function (next) {
+//     const options = this.options; // Get the aggregation options
+//     const isGetAllTests = options.getAllTests === true;  // Check if the custom flag is set
+
+//     if (isGetAllTests) {
+//         // Access the current aggregation pipeline
+//         const pipeline = this.pipeline();  // Get the pipeline stages
+
+//         // Check if the pipeline has a $match stage and if it contains a userId filter
+//         const matchStage = pipeline.find(stage => stage.$match);
+//         if (matchStage && matchStage.$match && matchStage.$match.user) {
+//             const userId = matchStage.$match.user; // Extract the userId from the match stage
+
+//             // Add a stage to check and set the status to "stale" if conditions are met for that user
+//             pipeline.unshift({
+//                 $set: {
+//                     status: {
+//                         $cond: {
+//                             if: { $and: [{ $eq: ["$status", "pending"] }, { $lt: [new Date(), "$startAt"] }] },
+//                             then: "$status", // If status is "pending" and startAt > Date.now(), keep "pending"
+//                             else: "stale" // Otherwise, set it to "stale"
+//                         }
+//                     }
+//                 }
+//             });
+
+//             try {
+//                 // Perform the update operation: set status to "stale" for matching userId
+//                 const result = await Test.updateMany(
+//                     {
+//                         user: userId, // Only target the documents for the specific userId
+//                         status: "pending",  // Only target "pending" status tests
+//                         startAt: { $lt: new Date() }  // Where startAt < current date
+//                     },
+//                     {
+//                         $set: { status: "stale" }  // Set status to "stale"
+//                     }
+//                 );
+
+//                 // Log the number of modified documents (for debugging purposes)
+//                 console.log(`${result.modifiedCount} documents updated to stale for user ${userId}.`);
+
+//                 next();  // Proceed with the aggregation
+//             } catch (err) {
+//                 return next(err as CallbackError);  // If error occurs, pass it to next middleware
+//             }
+//         } else {
+//             next(); // If no userId is matched in the pipeline, just proceed with the aggregation
+//         }
+//     } else {
+//         next(); // Continue with the aggregation if getAllTests flag is not set
+//     }
+// });
