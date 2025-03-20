@@ -1,5 +1,5 @@
-import { createGetRequest } from "../features/authentication/apiHelper";
-import { serverUrl } from "../utils/globals";
+import { createGetRequest } from "../helpers/apiHelper";
+import { serverUrl } from "../utils/constants";
 
 export const getTests = async (authToken: () => Promise<string | null>) => {
     try {

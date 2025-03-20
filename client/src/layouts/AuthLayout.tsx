@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { useAuth } from '@clerk/clerk-react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router'
+import LoaderNew from '../ui/LoaderNew'
 
-import LoaderNew from '../components/LoaderNew'
 
 
 

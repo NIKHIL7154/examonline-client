@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ClerkProvider,  } from '@clerk/clerk-react'
 
 
@@ -20,12 +20,10 @@ export default function RootLayout() {
       
       
     >
-      {/* <main className='sized flexed overflow-hidden relative'> */}
-        <div className='w-full h-screen'>
-
+      <main className='sized flexed overflow-hidden relative'>
+        
         <Outlet />
-        </div>
-      {/* </main> */}
+      </main>
     </ClerkProvider>
   )
 }

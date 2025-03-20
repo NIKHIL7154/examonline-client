@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { SubmissionMode, UserData, UserManagerStore } from "./UserManagerStore";
 import { verifyEmailToken, verifyTestToken } from "../../config/jwt";
-import { testDetailsAndfetchQuestions, verifyTest } from "../../controllers/testConduct/examConductController";
+import { fetchTestDetailsAndQuestions, verifyTest } from "../../controllers/testConduct/examConductController";
 import { ExamQuestion, TokenPayload } from "../../types/testConductTypes";
 import { addResultToQueue } from "../result/resultSubmissionService";
 import completedUsers from "./CompletedUsers";
@@ -43,7 +43,7 @@ export function SocketController(io: Server) {
             invalidateTest(socket);
             return;
         }
-        const testAndQuestionData = await testDetailsAndfetchQuestions(payload.testId);
+        const testAndQuestionData = await fetchTestDetailsAndQuestions(payload.testId);
         if(!testAndQuestionData){
             invalidateTest(socket);
             return;

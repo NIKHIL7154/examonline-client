@@ -1,5 +1,5 @@
-import { createGetRequest, createPostRequest } from "../features/authentication/apiHelper";
-import { serverUrl } from "../utils/globals";
+import { createGetRequest, createPostRequest } from "../helpers/apiHelper";
+import { serverUrl } from "../utils/constants"
 
 interface QuestionType {
     questionTitle: string;
