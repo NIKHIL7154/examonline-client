@@ -34,23 +34,14 @@ export const createUser = catchAsync(async (req: ProtectedRequest, res: Response
 
 export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth.userId;
-
-    const filter: any = { user: userId };
-
-    // Handle the status filter logic based on the query parameter
-    if (req.query.status && req.query.status !== 'all') {
-        filter.status = req.query.status; // Filter by status if not 'all'
-    }
-
-    const paginationStage = [];
+    let skip = NaN;
+    let limit = NaN;
+    let page = NaN;
 
     if (req.query.page && req.query.limit) {
-        const page = parseInt(req.query.page as string, 10) || 1;
-        const limit = parseInt(req.query.limit as string, 10) || 10;
-        const skip = (page - 1) * limit;
-
-        paginationStage.push({ $skip: skip });
-        paginationStage.push({ $limit: limit });
+        page = parseInt(req.query.page as string, 10) || 1;
+        limit = parseInt(req.query.limit as string, 10) || 10;
+        skip = (page - 1) * limit;
     }
 
     const sortStage = req.query.sortBy
@@ -62,18 +53,20 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
         }]
         : [];
 
+    // const tests = await Test.find({ user: userId });
+    // const tests = await Test.aggregate([
     const pipeline: PipelineStage[] = [
         {
             // Match tests that belong to the current user
-            $match: filter
+            $match: { user: userId }
         },
         {
             // Lookup the question sets to get the total number of questions in each questionSet
             $lookup: {
-                from: 'questionsets',
-                localField: 'questionSet',
-                foreignField: '_id',
-                as: 'questionSets'
+                from: 'questionsets', // Assuming your question set collection name is 'questionsets'
+                localField: 'questionSet', // Field in the Test model that references the QuestionSet model
+                foreignField: '_id', // Field in QuestionSet model
+                as: 'questionSets' // Alias to store the joined data
             }
         },
         {
@@ -93,10 +86,10 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
         {
             // Lookup the participants to get the total number of participants (based on the list array length)
             $lookup: {
-                from: 'participants',
-                localField: 'participants',
-                foreignField: '_id',
-                as: 'participantInfo'
+                from: 'participants', // Assuming your participants collection name is 'participants'
+                localField: 'participants', // Field in Test model that references Participants model
+                foreignField: '_id', // Field in Participants model
+                as: 'participantInfo' // Alias to store the joined data
             }
         },
         {
@@ -113,7 +106,24 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
                 }
             }
         },
+        // {
+        //     $set: {
+        //         status: {
+        //             $cond: {
+        //                 if: {
+        //                     $and: [
+        //                         { $eq: ["$status", "pending"] },
+        //                         { $lt: ["$startAt", new Date()] }
+        //                     ]
+        //                 },
+        //                 then: "stale",  // If status is "pending" and startAt < Date.now(), set status to "stale"
+        //                 else: "$status"  // Else, keep the existing status
+        //             }
+        //         }
+        //     }
+        // },
         {
+            // Optionally, project only the fields you need
             $project: {
                 name: 1,
                 status: 1,
@@ -132,8 +142,13 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
             $facet: {
                 metadata: [{ $count: "totalRecords" }], // Count total documents
                 data: [
-                    ...sortStage,
-                    ...paginationStage,
+                    // Conditionally apply sorting
+                    ...sortStage, // If no sorting, don't apply
+
+                    // Conditionally apply pagination
+                    ...(req.query.page && req.query.limit
+                        ? [{ $skip: skip }, { $limit: limit }]
+                        : []) // If no page/limit, return all records
                 ]
             }
         },
@@ -143,12 +158,29 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
                 data: 1
             }
         }
+        // ]).option({ getAllTests: true });
     ];
+
+    // if (req.query.sortBy) {
+    //     const sortField = (req.query.sortBy as string).split("-");
+    //     // const sortOrder = req.query.order === 'desc' ? -1 : 1; // Default ascending
+    //     const sortOrder = sortField[1] === 'desc' ? -1 : 1; // Default ascending
+    //     pipeline.push({ $sort: { [sortField[0]]: sortOrder } });
+    // }
+
+    // if (req.query.page && req.query.limit) {
+    //     const page = parseInt(req.query.page as string, 10) || 1;
+    //     const limit = parseInt(req.query.limit as string, 10) || 10;
+    //     const skip = (page - 1) * limit;
+
+    //     pipeline.push({ $skip: skip });
+    //     pipeline.push({ $limit: limit });
+    // }
 
     const tests = await Test.aggregate(pipeline).option({ getAllTests: true });
 
     if (!tests) return next(new AppError("Error occured while fetching tests, please try again", 404));
-
+    
     const totalTests = tests[0]?.totalRecords || 0;
     const paginatedData = tests[0]?.data || [];
 
