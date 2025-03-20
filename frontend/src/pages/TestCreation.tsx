@@ -7,10 +7,10 @@ const TestCreation = () => {
   
 
   return (
-    <div className="w-full pb-8  flex flex-col items-center ">
+    <div className="w-full flex flex-col items-center ">
       <AnimatedTimeline />
 
-      <div className="w-full pb-16 min-h-[420px] relative bg-white  rounded-2xl shadow-lg overflow-x-hidden">
+      <div className="w-full mt-8 pb-12 flexed min-h-[420px] relative bg-white  rounded-lg shadow-lg overflow-x-hidden">
         <TestDetailsProvider>
             <Outlet />
 
