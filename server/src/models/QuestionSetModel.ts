@@ -11,7 +11,7 @@ interface QuestionType extends Document {
     correctOption: String;
 }
 
-interface QuestionSetType extends Document{
+export interface QuestionSetType extends Document{
     name: String;
     questions: QuestionType[];
     user: String;

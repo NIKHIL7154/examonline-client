@@ -1,9 +1,14 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { TokenPayload } from '../types/testConductTypes';
+import { envManager } from '../app';
 
-const emailSecretKey: jwt.Secret = 'very secret recipe'; // Replace with your actual secret key
 
-const testSecretKey: jwt.Secret='test secret recipe';
+
+
+
+const emailSecretKey: jwt.Secret = envManager("JWT_EMAIL_SECRET"); // Replace with your actual secret key
+
+const testSecretKey: jwt.Secret=envManager("JWT_TEST_SECRET"); 
 
 export const generateEmailToken = (payload: TokenPayload, expiry: SignOptions["expiresIn"]): string => {
     return jwt.sign(payload, emailSecretKey, { expiresIn: expiry });

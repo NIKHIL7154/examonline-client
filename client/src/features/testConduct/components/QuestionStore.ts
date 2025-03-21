@@ -78,6 +78,7 @@ export function useQuestionStore(){
         },
         getQuestions:() => {
             // return questions;
+            console.log(questions)
             return demoQuestions;
         }
     }

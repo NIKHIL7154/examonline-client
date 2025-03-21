@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { set } from 'react-hook-form';
-const useTabStatus = (divRef: React.RefObject<HTMLDivElement>, socketStatus: boolean) => {
+const useTabStatus = (divRef: React.RefObject<HTMLDivElement> | null, socketStatus: boolean) => {
     const [isTabActive, setIsTabActive] = useState(true);
     const flag = useRef<boolean>(false);
     useEffect(() => {
-        const mainDiv = divRef.current;
+        const mainDiv = divRef?.current;
         mainDiv?.focus();
         const handleFocusIn = () => {
             // setIsTabActive(true);
@@ -25,7 +24,7 @@ const useTabStatus = (divRef: React.RefObject<HTMLDivElement>, socketStatus: boo
             }, 1)
         };
         const handleMouseDown = (e: MouseEvent) => {
-            if (divRef.current?.contains(e.target as Node)) {
+            if (divRef?.current?.contains(e.target as Node)) {
                 console.log("Mouse down inside");
                 flag.current = true;
                
@@ -36,7 +35,7 @@ const useTabStatus = (divRef: React.RefObject<HTMLDivElement>, socketStatus: boo
         };
 
         const handleClickInside = (e: MouseEvent) => {
-            if (divRef.current?.contains(e.target as Node)) {
+            if (divRef?.current?.contains(e.target as Node)) {
                 console.log("Mouse clicked inside div");
                 flag.current = true;
             }
