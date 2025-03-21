@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router';
 import LoaderNew from '../../ui/LoaderNew';
 import { useTestNavigation } from './TestNavigationContext';
-
-
 
 
 type Props = {
@@ -12,36 +9,60 @@ type Props = {
 }
 
 const TestInitialPage = (props: Props) => {
+ 
 
-  const token = useParams().token;
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+
+
   const [testVerificationStatus, setTestVerificationStatus] = useState<boolean>(true);
-  const [requestStatus, setRequestStatus] = useState<boolean>(true);
+  const [requestStatus, setRequestStatus] = useState<boolean>(false);
+  const [serverResponse, setserverResponse] = useState<string>('');
+  const [testInfo, settestInfo] = useState({
+    duration:0,
+    questionCount:0,
+    userName:""
+  });
   const { setCurrentStep } = useTestNavigation();
   useEffect(() => {
     const verifyTest = async () => {
       try {
-        const response = await axios.post('http://localhost:5000/test', { token });
+        const response = await axios.post('http://localhost:2121/test', { token });
+        console.log(response)
         if (response.status == 200) {
-          props.updateToken(response.data.token);
-          setRequestStatus(true);
+          props.updateToken(response.data.data.testToken);
+          
+          settestInfo({
+            duration: response.data.data.duration,
+            questionCount: response.data.data.questionCount,
+            userName: response.data.data.userName
+          })
+          
           setTestVerificationStatus(true);
         } else {
           setTestVerificationStatus(false)
         }
 
-      } catch (error) {
+      } catch (error: any) {
+        
         console.log(error);
         setTestVerificationStatus(false)
+        if(error.response.status===401){
+          setserverResponse("No Test Found")
+        }else{
+          setserverResponse(error.response.data.message);
+        }
+        
 
       } finally {
         setRequestStatus(true);
       }
     }
-    // verifyTest();
+    verifyTest();
     return () => {
 
     };
-  }, [token]);
+  }, []);
 
   if (!requestStatus) {
     return <div className='w-full h-full flex flex-col items-center justify-center'>
@@ -53,9 +74,9 @@ const TestInitialPage = (props: Props) => {
   if (!testVerificationStatus) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-bold mb-4">Test Invalid or Expired</h2>
-        <p className="text-lg">The test you are trying to access is either invalid or has expired. Please check the test link or contact support for further assistance.</p>
-        <button onClick={() => window.location.href = '/'} className="mt-6 bg-[#4CD964] p-4 rounded text-white px-8 hover:bg-[#4CD964]/90">
+        <h2 className="text-2xl font-bold mb-4">404</h2>
+        <p className="text-lg">{serverResponse}</p>
+        <button onClick={() => window.location.href = '/'} className="mt-6 cursor-pointer bg-[#4CD964] p-3 rounded text-white px-6 hover:bg-[#4CD964]/90">
           Go to Home
         </button>
       </div>)
@@ -67,7 +88,7 @@ const TestInitialPage = (props: Props) => {
       {/* Left Section */}
       <div className="flex flex-col justify-between bg-primary p-8 lg:w-2/6">
         <div className="space-y-4 items-center flex-grow flex flex-col justify-center">
-          <h2 className="text-xl text-white w-[75%] text-left">Hello, Nikhil Thakur</h2>
+          <h2 className="text-xl text-white w-[75%] text-left">Hello, {testInfo.userName}</h2>
           <h1 className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
             Welcome to
             <br />
@@ -77,11 +98,11 @@ const TestInitialPage = (props: Props) => {
         <div className="mt-8 flex h-16 text-center justify-center  flex-col gap-4 text-white sm:flex-row sm:gap-12">
           <div className=''>
             <p className="text-lg">Test duration</p>
-            <p className="text-2xl font-semibold">60 min</p>
+            <p className="text-2xl font-semibold">{testInfo.duration} min</p>
           </div>
           <div>
             <p className="text-lg">Total questions</p>
-            <p className="text-2xl font-semibold">50</p>
+            <p className="text-2xl font-semibold">{testInfo.questionCount}</p>
           </div>
         </div>
       </div>

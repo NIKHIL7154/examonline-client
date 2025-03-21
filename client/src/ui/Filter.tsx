@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useSearchParams } from "react-router";
-import styled, { css } from "styled-components";
+
 
 // Define types for the option and filter props
 interface Option {
@@ -13,7 +13,7 @@ interface FilterProps {
     options: Option[];
 }
 
-const StyledFilter = styled.div`
+/* const StyledFilter = styled.div`
   border: 1px solid var(--color-grey-100);
   background-color: var(--color-grey-0);
   box-shadow: var(--shadow-sm);
@@ -21,13 +21,13 @@ const StyledFilter = styled.div`
   padding: 0.4rem;
   display: flex;
   gap: 0.4rem;
-`;
+`; */
 
-interface FilterButtonProps {
+/* interface FilterButtonProps {
     active: "true" | "false";
-}
+} */
 
-const FilterButton = styled.button<FilterButtonProps>`
+/* const FilterButton = styled.button<FilterButtonProps>`
   background-color: var(--color-grey-0);
   border: none;
 
@@ -48,7 +48,7 @@ const FilterButton = styled.button<FilterButtonProps>`
     background-color: var(--color-brand-600);
     color: var(--color-brand-50);
   }
-`;
+`; */
 
 const Filter = ({ filterField, options }: FilterProps) => {
     const [searchParams, setSearchParams] = useSearchParams();

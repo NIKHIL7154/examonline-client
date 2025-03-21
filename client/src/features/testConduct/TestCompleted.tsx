@@ -1,6 +1,6 @@
-type Props = {}
 
-const TestCompleted = (props: Props) => {
+
+const TestCompleted = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-green-50">
             <div className="bg-white p-8 rounded-lg shadow-lg text-center">

@@ -120,6 +120,7 @@ const SetEditorForm = () => {
                             <AutoTextArea
                                 id={`questionTitle-${index}`}
                                 defaultValue={field.questionTitle}
+                                
                                 {...register(`questions.${index}.questionTitle`, { required: "Question Title is cannot be empty" })}
                                 placeholder="Enter your question here"
 

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuestionStore } from "./components/QuestionStore";
 import { useTestNavigation } from "./TestNavigationContext";
 import { socket } from "../../services/socket";
+import { SocketEvents } from "../../types/ExamConductTypes";
 
 
 
@@ -11,31 +12,23 @@ type Question = {
   userChoice: string;
   visited: boolean;
 };
-enum SocketEvents {
-  SYNC = "sync",
-  DISCONNECT = "disconnect",
-  START_TEST = "startTest",
-  SYNC_TIME = "syncTime",
-  TEST_COMPLETED = "testCompleted",
-  TAB_SWITCH = "tabSwitch",
-  ANSWER_SUBMITTED = "answerSubmitted"
-}  
+
 
 type OptionType = "A" | "B" | "C" | "D";
 const ExamConductPage = () => {
   const {getQuestions,setQuestions}=useQuestionStore();
   const questions:Question[] =getQuestions();
-  const { currentStep, setCurrentStep } = useTestNavigation();
+  const {  setCurrentStep } = useTestNavigation();
   const [timeLeft, setTimeLeft] = useState(300); // 20 minutes in seconds
-  const [progress, setProgress] = useState(50);
+  const [progress] = useState(50);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>(questions[currentQuestionIndex].userChoice);
   const arr: Array<OptionType> = ["A", "B", "C", "D"];
   
   useEffect(() => {
-    socket.off("syncTime");
+    socket.off(SocketEvents.SYNC_TIME);
     
-    socket.on("syncTime", (data) => {
+    socket.on(SocketEvents.SYNC_TIME, (data) => {
       setTimeLeft(data.timeLeft
       )
       console.log(data.timeLeft)
@@ -56,10 +49,7 @@ const ExamConductPage = () => {
   };
 
   const handleQuestionChange = (index: number) => {
-    console.log(questions)
-    console.log(index)
-    console.log(questions[index]) 
-    console.log(selectedAnswer)
+  
     questions[currentQuestionIndex].visited = true;
     setQuestions(questions);
     setCurrentQuestionIndex(index);
@@ -79,9 +69,9 @@ const ExamConductPage = () => {
   }
   const handleTestSubmission = () => {
     setCurrentStep("completed")
+    socket.emit(SocketEvents.TEST_COMPLETED,{})
     return
 
-    socket.emit(SocketEvents.TEST_COMPLETED,{})
   }
 
 

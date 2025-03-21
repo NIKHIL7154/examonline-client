@@ -1,4 +1,5 @@
 import mongoose, { CallbackError, Document, Query } from "mongoose";
+import { QuestionSetType } from "./QuestionSetModel";
 
 function normalizeDate(date: Date): Date {
     const normalizedDate = new Date(date);
@@ -11,7 +12,8 @@ function normalizeDate(date: Date): Date {
 // ADD DURATION
 export interface TestType extends Document {
     name: string;
-    questionSet: mongoose.Types.ObjectId[];
+    // questionSet: mongoose.Types.ObjectId[];
+    questionSet: QuestionSetType[];
     status: string;
     createdAt: Date;
     startAt: Date;

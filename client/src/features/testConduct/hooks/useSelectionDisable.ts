@@ -6,11 +6,11 @@ import { useEffect } from 'react'
 /**
  * Prevent user select
  */
-export function useSelectionDisable(divRef: React.RefObject<HTMLDivElement>,socketStatus:boolean) {
+export function useSelectionDisable(divRef: React.RefObject<HTMLDivElement>|null,socketStatus:boolean) {
   useEffect(() => {
 
 
-    const parent = divRef.current
+    const parent = divRef?.current
     const selectionDisbaleInterval = setInterval(() => {
       const properties = [
         'user-select',

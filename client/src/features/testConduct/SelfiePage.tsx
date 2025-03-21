@@ -35,7 +35,7 @@ const SelfiePage = (props:Props) => {
                 setHasPermissions(false);
             }
         };
-        // getPermissions();
+        getPermissions();
     }, []);
 
     // Start Video Feed

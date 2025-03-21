@@ -26,7 +26,7 @@ function TestParticipants() {
     const [listName, setlistName] = useState("");
     const { participants: testParticipants } = testDetails;
     const { getToken } = useAuth();
-    const { isCreating, createParticipants } = useCreateParticipants(getToken);
+    const {  createParticipants } = useCreateParticipants(getToken);
     const { isLoading, participants } = useParticipants(getToken);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
