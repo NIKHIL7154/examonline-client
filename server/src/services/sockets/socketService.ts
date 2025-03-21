@@ -61,7 +61,7 @@ export function SocketController(io: Server) {
             removeInactiveUserTimeout(userEmail);
             const user = getUser(userEmail);
             if (user.completed) {
-                socket.emit("testCompleted");
+                socket.emit(SocketEvents.TEST_COMPLETED,{});
                 socket.disconnect();
                 return;
             }
@@ -99,7 +99,7 @@ export function SocketController(io: Server) {
 
             addUser(userEmail, newUser);
             
-            console.log("new user");
+            console.log("New user");
 
             socket.emit(SocketEvents.START_TEST, newUser.questions);
 

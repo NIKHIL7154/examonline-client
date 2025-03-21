@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import ExamConductPage from "./ExamConductPage";
 import { useTestNavigation } from "./TestNavigationContext";
 import { useFullScreenDetector } from "./hooks/useFullScreenDetector";
@@ -15,16 +15,16 @@ type Props = {
 
 const ProcturPage = (props: Props) => {
 
-    const { currentStep, setCurrentStep } = useTestNavigation();
+    const { setCurrentStep } = useTestNavigation();
 
 
     const isFullscreen = useFullScreenDetector();
     const divRef = useRef<HTMLDivElement>(null);
     const socketStatus = useSocketConnectionStatus();
-    const [isTabActive, setIsTabActive] = useTabStatus(divRef , socketStatus) as [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    const [isTabActive, setIsTabActive] = useTabStatus(divRef as RefObject<HTMLDivElement> , socketStatus) as [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     const { setQuestions } = useQuestionStore();
     const [testStarted, settestStarted] = useState<boolean>(true);
-    useSelectionDisable(divRef, socketStatus);
+    useSelectionDisable(divRef as  RefObject<HTMLDivElement>, socketStatus);
     
 /*     useEffect(() => {
         if (!isTabActive) {
@@ -58,6 +58,10 @@ const ProcturPage = (props: Props) => {
                 socket.disconnect();
                 setCurrentStep("completed");
             })
+        }
+        if(false){
+            socketSetup()
+
         }
 
         return () => {

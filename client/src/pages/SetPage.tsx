@@ -41,7 +41,7 @@ function SetPage() {
                         </p>
                     </div>
 
-                    {questions.map((field, index: number) => (
+                    {questions.map((field:any, index: number) => (
                         <div
                             key={index}
                             className="bg-gray-50 border border-gray-300 rounded-lg px-7 py-7 relative"

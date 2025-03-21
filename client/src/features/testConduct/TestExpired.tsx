@@ -1,7 +1,7 @@
 
-type Props = {};
 
-const TestExpired = (props: Props) => {
+
+const TestExpired = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-900 text-center p-6">
             <h1 className="text-3xl font-bold mb-4">

@@ -7,7 +7,7 @@ import AppError from "../utils/appError";
 
 const router = express.Router();
 
-
+type NullMessage=string;
 router.post("/", catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { token } = req.body;
@@ -20,17 +20,21 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
         return next(new AppError("Unauthorised : Invalid Token", 401));
     }
 
-    const validTest = await verifyTest(testData);
-    if (!validTest) {
-        return next(new AppError("Test Expired", 403));
+    const testValidity = await verifyTest(testData);
+    if (typeof testValidity==="string") {
+        return next(new AppError(testValidity, 404));
+        
     }
+    const questionCount=testValidity.questionSet.reduce((acc,curr)=>acc+curr.questions.length,0);
 
     res.status(200).json({
         status: "success",
         data: {
             testToken:generateTestToken(testData, "4h"),
-            questionCount: validTest.questionSet.length,
-            duration: validTest.startAt,
+            userName: testData.userName,
+            
+            questionCount,
+            duration: (testValidity.durationInSec as number /60) //in minutes,
         },
     });
 
@@ -42,7 +46,7 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
 //test route to create token
 router.post("/create", async (req: Request, res: Response) => {
     const payload = req.body;
-    const token = generateEmailToken(payload, "8h");
+    const token = generateEmailToken(payload, "10h");
     res.json({ token });
 
 })
