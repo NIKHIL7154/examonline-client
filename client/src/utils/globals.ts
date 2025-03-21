@@ -1,3 +1,5 @@
-export const serverUrlAuth = `http://localhost:2121/api/verifyuser`;
-export const serverUrl = `http://localhost:2121/api/v1/user`;
-export const PAGE_SIZE = 10;
+import getEnvironmentVariable from "./envManager";
+
+export const serverUrlAuth = getEnvironmentVariable("VITE_USER_VERIFICATION");
+export const serverUrl = getEnvironmentVariable("VITE_SERVER_URL");
+export const PAGE_SIZE = getEnvironmentVariable("VITE_PAGE_SIZE");
