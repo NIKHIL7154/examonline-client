@@ -42,6 +42,16 @@ export const getTest = async (authToken: () => Promise<string | null>, testId: s
     }
 };
 
+export const getActivateTest = async (authToken: () => Promise<string | null>, testId: string) => {
+    try {
+        const response = await createGetRequest(authToken, `${serverUrl}/tests/shareLinks/${testId}`);
+        return response;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Test could not be loaded");
+    }
+};
+
 export const deleteTest = async (authToken: () => Promise<string | null>, testId: string) => {
     try {
         const response = await createDeleteRequest(authToken, `${serverUrl}/tests/${testId}`);

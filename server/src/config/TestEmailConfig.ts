@@ -56,7 +56,7 @@ const formatTestInfoMail = (testName: string,startAt: Date, endAt: Date, testDur
 
 const updateForwardedEMailStatus = async (requestId: string) => {
     // console.log(`All emails have been sent for request ID: ${requestId}`);
-    await Test.findByIdAndUpdate(requestId, { linksForwarded: "forwarded" });
+    await Test.findByIdAndUpdate(requestId, { linksForwarded: "forwarded", status: "active" });
 }
 
 export {
