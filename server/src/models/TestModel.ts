@@ -174,7 +174,14 @@ TestSchema.pre('aggregate', async function (next) {
                     $cond: {
                         if: { $and: [{ $eq: ["$status", "pending"] }, { $lt: [new Date(), "$startAt"] }] },
                         then: "$status", // If status is "pending" and startAt > Date.now(), keep "pending"
-                        else: "stale" // Otherwise, set it to "stale"
+                        else: {
+                            // Keep the status unchanged for all other statuses (active, completed, etc.)
+                            $cond: {
+                                if: { $ne: ["$status", "pending"] }, // If status is not "pending"
+                                then: "$status", // No change, keep current status (active, completed, etc.)
+                                else: "stale" // This will never hit, as the outer condition already prevents this.
+                            }
+                        }
                     }
                 }
             }

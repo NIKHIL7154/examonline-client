@@ -6,9 +6,11 @@ import Menus from "../../ui/Menus";
 import { MdOutlineRocketLaunch } from "react-icons/md";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
+import ConfirmActivate from "../../ui/ConfirmActivate";
 import { useNavigate } from "react-router";
 import { useDeleteTest } from "./useDeleteTest";
 import { useAuth } from "@clerk/clerk-react";
+import useActivateTest from "./useActivateTest";
 
 export interface TestAll {
     _id: string;
@@ -29,11 +31,12 @@ function TestFeature({ children }: { children: React.ReactNode }) {
 }
 
 function TestRow({ testItem }: { testItem: TestAll }) {
+    const { _id: testId, name, createdAt, durationInSec: duration, status, totalParticipants } = testItem;
     const navigate = useNavigate();
     const { getToken } = useAuth();
     const { isDeleting, deleteTest } = useDeleteTest(getToken);
+    const {isSending, activateTest} = useActivateTest(getToken);
 
-    const { _id: testId, name, createdAt, durationInSec: duration, status, totalParticipants } = testItem;
     // const {participants} = testItem;
     return (
         <div className="py-5 px-6 border-b border-gray-200 last:border-b-0 space-y-4">
@@ -50,8 +53,9 @@ function TestRow({ testItem }: { testItem: TestAll }) {
                             <Menus.Button icon={<HiExternalLink />} onClick={() => navigate(`${testId}`)}>
                                 Open </Menus.Button>
 
-                            {status === "pending" && <Menus.Button icon={<MdOutlineRocketLaunch />}>
-                                Activate Test </Menus.Button>
+                            {status === "pending" && <Modal.Open opens="activateTest">
+                                <Menus.Button icon={<MdOutlineRocketLaunch />}>
+                                    Activate Test </Menus.Button></Modal.Open>
                             }
                             {status !== "active" && <Modal.Open opens="deleteTest">
                                 <Menus.Button icon={<HiOutlineTrash />}>
@@ -64,6 +68,13 @@ function TestRow({ testItem }: { testItem: TestAll }) {
                             resourceName="test"
                             disabled={isDeleting}
                             onConfirm={() => deleteTest(testId)}
+                        />
+                    </Modal.Window>
+                    <Modal.Window name="activateTest">
+                        <ConfirmActivate
+                            resourceName="test"
+                            disabled={isSending}
+                            onConfirm={() => activateTest(testId)}
                         />
                     </Modal.Window>
                 </Modal>
