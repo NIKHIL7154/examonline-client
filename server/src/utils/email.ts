@@ -40,8 +40,8 @@ export default class Email {
             host: process.env.EMAIL_HOST as string,
             port: Number(process.env.EMAIL_PORT),
             auth: {
-                user: process.env.EMAIL_USERNAME,
-                pass: process.env.EMAIL_PASSWORD,
+                user: process.env.PER_EMAIL_USERNAME,
+                pass: process.env.PER_EMAIL_PASSWORD,
             },
         });
     }

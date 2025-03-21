@@ -14,6 +14,8 @@ import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import { useAuth } from "@clerk/clerk-react";
 import { useDeleteTest } from "./useDeleteTest";
+import ConfirmActivate from "../../ui/ConfirmActivate";
+import useActivateTest from "./useActivateTest";
 
 interface QuestionSet {
     name: string;
@@ -71,6 +73,8 @@ function TestDataBox({ test, isStale }: props) {
     const navigate = useNavigate();
     const { getToken } = useAuth();
     const { isDeleting, deleteTest } = useDeleteTest(getToken);
+    const { isSending, activateTest } = useActivateTest(getToken);
+
 
     const { _id: testId, name, status, startAt, endAt, createdAt, durationInSec, proctoring, tabSwitchLimit, linksForwarded, questionSet, participants } = test;
     const punc = (index: number, arr: QuestionSet[] | Participants[]) => (arr.length - 1 === index) ? "" : ", "
@@ -156,13 +160,14 @@ function TestDataBox({ test, isStale }: props) {
             </div>
 
             <div className="flex justify-end poppins-regular gap-4">
-                {
-                    status === "pending" &&
-                    <button className=" cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2">
-                        <MdOutlineRocketLaunch className="text-xl group-hover:text-emerald-600" />
-                        Activate Test </button>
-                }
                 <Modal>
+                    {
+                        status === "pending" && <Modal.Open opens="activateTest">
+                            <button className=" cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2">
+                                <MdOutlineRocketLaunch className="text-xl group-hover:text-emerald-600" />
+                                Activate Test </button>
+                        </Modal.Open>
+                    }
                     {
                         status !== "active" && <Modal.Open opens="deleteTest">
                             <button className=" cursor-pointer text-gray-600 group hover:bg-gray-200 px-4 py-3 transition duration-200 flex items-center border border-gray-300 bg-gray-50 rounded-lg gap-2">
@@ -178,6 +183,13 @@ function TestDataBox({ test, isStale }: props) {
                             onConfirm={() => deleteTest(testId, {
                                 onSettled: () => navigate(-1),
                             })}
+                        />
+                    </Modal.Window>
+                    <Modal.Window name="activateTest">
+                        <ConfirmActivate
+                            resourceName="test"
+                            disabled={isSending}
+                            onConfirm={() => activateTest(testId)}
                         />
                     </Modal.Window>
                 </Modal>
