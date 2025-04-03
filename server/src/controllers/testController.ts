@@ -18,6 +18,7 @@ import {
 } from "../config/TestEmailConfig";
 import { clientUrl } from "../utils/basicUtilityFunction";
 import { PipelineStage } from "mongoose";
+import { addAnalytics } from "../config/analyticsConfig";
 
 export const createUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const user = await User.create(req.body);
@@ -209,6 +210,7 @@ export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, n
         // Check if the old test exists
         if (!oldTest) return next(new AppError("No test found with that ID", 404));
 
+        addAnalytics(oldTest);
         // Send the response with the old test
         return res.status(200).json({
             status: "success",
@@ -217,6 +219,8 @@ export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, n
             },
         });
     }
+    
+    addAnalytics(test);
 
     // Send the response with the updated test
     res.status(200).json({
