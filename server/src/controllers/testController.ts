@@ -287,7 +287,7 @@ export const sendTestLink = catchAsync(async (req: ProtectedRequest, res: Respon
             userName: info.name,
             uid,
         }, test.endAt)
-        const testUrl = `${clientUrl}?token=${emailToken}/`
+        const testUrl = `${clientUrl}?token=${emailToken}`
         EmailQueue.enqueue(sendEmailTask(info, testUrl, testInfoEmail, testId))
     })
 

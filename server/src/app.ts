@@ -17,6 +17,7 @@ import {initializeSockets} from "./config/socket";
 
 
 
+
 //routes
 import verifyUserDataRoute from "./routes/verifyUserData";
 import testRoutes from "./routes/testRoutes";
@@ -34,6 +35,7 @@ import { createUser } from "./controllers/testController";
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+
 process.on('uncaughtException', (err) => {
     console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
     console.log(err.name, err.message);
@@ -42,6 +44,11 @@ process.on('uncaughtException', (err) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+import testingRoutes from "./routes/testingRoutes1";
+//onlyfor testing
+app.use("/",testingRoutes)
+
 
 app.use(cors({
     origin: "http://localhost:5173"
@@ -54,12 +61,12 @@ if (process.env.NODE_ENV === "development") {
 
 //socket initialized
 const server = http.createServer(app);
-// initializeSockets(server);
+initializeSockets(server);
 
 
 
 
-app.use(express.json());
+
 const MongoURL = process.env.MONGO_URI ? process.env.MONGO_URI : "mongodb://localhost:27017/test";
 connect(MongoURL);
 
@@ -87,6 +94,7 @@ app.use("/api/v1/user/questionGen", questionGenRoute);
 
 //test conduct route
 app.use("/test",examConductRoutes);
+
 
 
 app.use(globalAppHandler)

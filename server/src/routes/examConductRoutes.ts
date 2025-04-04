@@ -4,6 +4,8 @@ import { TokenPayload } from "../types/testConductTypes";
 import { verifyTest } from "../controllers/testConduct/examConductController";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
+import { signToken } from "../config/TestEmailConfig";
+import completedUsers from '../services/sockets/CompletedUsers';
 
 const router = express.Router();
 
@@ -16,8 +18,12 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
     }
 
     const testData = verifyEmailToken(token);
+    console.log(testData,"testData");
     if (!testData || !testData.testId || !testData.userEmail || !testData.userName || !testData.uid) {
         return next(new AppError("Unauthorised : Invalid Token", 401));
+    }
+    if(completedUsers.has(testData.uid)){
+        return next(new AppError("Test already completed", 403));
     }
 
     const testValidity = await verifyTest(testData);
@@ -47,6 +53,7 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
 router.post("/create", async (req: Request, res: Response) => {
     const payload = req.body;
     const token = generateEmailToken(payload, "10h");
+    // const token = signToken(payload, new Date(Date.now() + 1000 * 60 * 60 * 10));
     res.json({ token });
 
 })

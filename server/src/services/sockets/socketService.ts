@@ -7,7 +7,7 @@ import { addResultToQueue } from "../result/resultSubmissionService";
 import completedUsers from "./CompletedUsers";
 
 
-const { addUser, getUser, hasUser, removeUser,tabSwitched, updateUser,removeInactiveUserTimeout,setInactiveUserTimeout, isGlobalTimerRunning, startGlobalTimer,updateQuestions,testCompletedForUser } = UserManagerStore();
+const { addUser, getUser, hasUser, removeUser, tabSwitched, updateUser, removeInactiveUserTimeout, setInactiveUserTimeout, isGlobalTimerRunning, startGlobalTimer, updateQuestions, testCompletedForUser } = UserManagerStore();
 
 export enum SocketEvents {
     SYNC = "sync",
@@ -18,16 +18,16 @@ export enum SocketEvents {
     TAB_SWITCH = "tabSwitch",
     ANSWER_SUBMITTED = "answerSubmitted",
     INVALID_TEST = "invalidTest"
-}   
+}
 
 
 function invalidateTest(socket: Socket) {
-    socket.emit(SocketEvents.INVALID_TEST,{});
+    socket.emit(SocketEvents.INVALID_TEST, {});
     socket.disconnect();
 }
 
 export function SocketController(io: Server) {
-    io.on("connection",async (socket) => {
+    io.on("connection", async (socket) => {
         const token = socket.handshake.auth.token as string;
         if (!token) {
             invalidateTest(socket);
@@ -38,30 +38,24 @@ export function SocketController(io: Server) {
             invalidateTest(socket);
             return;
         }
-        if(completedUsers.has(payload.userEmail)){
+        if (completedUsers.has(payload.uid)) {
             socket.emit(SocketEvents.TEST_COMPLETED);
             invalidateTest(socket);
             return;
         }
-        const testAndQuestionData = await fetchTestDetailsAndQuestions(payload.testId);
-        if(!testAndQuestionData){
-            invalidateTest(socket);
-            return;
-        }
-        const { examQuestions,resultQuestions,testDetails} = testAndQuestionData;
 
-        const userEmail = payload.userEmail;
-        
+        const userUID = payload.uid;
 
 
 
-        
 
-        if (hasUser(userEmail)) {
-            removeInactiveUserTimeout(userEmail);
-            const user = getUser(userEmail);
+
+
+        if (hasUser(userUID)) {
+            removeInactiveUserTimeout(userUID);
+            const user = getUser(userUID);
             if (user.completed) {
-                socket.emit(SocketEvents.TEST_COMPLETED,{});
+                socket.emit(SocketEvents.TEST_COMPLETED, {});
                 socket.disconnect();
                 return;
             }
@@ -69,19 +63,25 @@ export function SocketController(io: Server) {
             if (user.inactiveTimeout) {
                 clearTimeout(user.inactiveTimeout);
             }
-            updateUser(userEmail, { socket: socket,disconnected:false });
+            updateUser(userUID, { socket: socket, disconnected: false });
 
             console.log("old user");
             socket.emit(SocketEvents.START_TEST, user.questions);
 
             // socket.emit("syncTime", { timeLeft: user.timeLeft });
         } else {
+            const testAndQuestionData = await fetchTestDetailsAndQuestions(payload.testId);
+            if (!testAndQuestionData) {
+                invalidateTest(socket);
+                return;
+            }
+            const { examQuestions, resultQuestions, testDetails } = testAndQuestionData;
             const newUser: UserData = {
                 socket,
-                userUid: userEmail,
+                userUid: userUID,
                 startAt: new Date(),
-                duration: 60,
-                timeLeft: 60,
+                duration: testDetails.testDuration,
+                timeLeft: testDetails.testDuration,
                 testId: payload.testId,
                 completed: false,
                 disconnected: false,
@@ -91,67 +91,67 @@ export function SocketController(io: Server) {
                 disconnectionCount: 0,
                 disqualified: false,
                 userName: payload.userName,
-                userEmail: payload.userEmail, 
+                userEmail: payload.userEmail,
                 anotherPersonCount: 0,
                 mobileDetectionCount: 0,
-                testDetails:testDetails
+                testDetails: testDetails
             };
 
-            addUser(userEmail, newUser);
-            
+            addUser(userUID, newUser);
+
             console.log("New user");
 
             socket.emit(SocketEvents.START_TEST, newUser.questions);
 
         }
-        if(!isGlobalTimerRunning()){
+        if (!isGlobalTimerRunning()) {
             startGlobalTimer();
         }
 
         socket.on(SocketEvents.TAB_SWITCH, () => {
-            if (!hasUser(userEmail)) {
+            if (!hasUser(userUID)) {
                 socket.disconnect();
                 return;
             }
-            tabSwitched(userEmail);
+            tabSwitched(userUID);
         })
 
         socket.on(SocketEvents.DISCONNECT, () => {
-            if (!hasUser(userEmail)) return
-            updateUser(userEmail, { disconnected: true });
-            console.log('Disconnected', getUser(userEmail).userUid);
-            
-            setInactiveUserTimeout(userEmail)
+            if (!hasUser(userUID)) return
+            updateUser(userUID, { disconnected: true });
+            console.log('Disconnected', getUser(userUID).userUid);
+
+            setInactiveUserTimeout(userUID)
         });
 
         socket.on(SocketEvents.TEST_COMPLETED, async (data) => {
-            if (!hasUser(userEmail)) {
+            if (!hasUser(userUID)) {
                 socket.disconnect();
                 return;
             }
-            const user = getUser(userEmail);
+            const user = getUser(userUID);
             if (user.completed) {
                 socket.disconnect();
                 return;
             }
-            socket.emit(SocketEvents.TEST_COMPLETED,{});
-            testCompletedForUser(userEmail,SubmissionMode.SUBMITTED_BY_USER);
+            socket.emit(SocketEvents.TEST_COMPLETED, {});
+            testCompletedForUser(userUID, SubmissionMode.SUBMITTED_BY_USER);
             socket.disconnect();
         });
         socket.on(SocketEvents.ANSWER_SUBMITTED, (data) => {
-            if (!hasUser(userEmail)) {
+            if (!hasUser(userUID)) {
                 socket.disconnect();
                 return;
             }
-            console.log("Answer submitted by user", getUser(userEmail).userUid, data);
-            updateQuestions(userEmail,data.questionIndex,data.question);
+            console.log("Answer submitted by user", getUser(userUID).userUid, data);
+            updateQuestions(userUID, data.questionIndex, data.question);
         })
-        socket.on(SocketEvents.TAB_SWITCH,()=>{
-            if (!hasUser(userEmail)) {
+        socket.on(SocketEvents.TAB_SWITCH, () => {
+            if (!hasUser(userUID)) {
                 socket.disconnect();
                 return;
             }
-            tabSwitched(userEmail);
+            tabSwitched(userUID);
         })
 
 
