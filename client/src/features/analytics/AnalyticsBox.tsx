@@ -1,9 +1,11 @@
+import DoughnutChart from "./DoughnutChart";
 
 function AnalyticsBox() {
     return (
         <div className="grid grid-cols-3 gap-5">
             <div className="grid grid-cols-2 gap-5 col-span-2">
                 <div className="h-70 bg-gray-50 rounded-2xl">
+                    <DoughnutChart/>
                 </div>
                 <div className="h-70 bg-gray-50 rounded-2xl"></div>
                 <div className="bg-gray-50 h-70 col-span-2 rounded-2xl"></div>
