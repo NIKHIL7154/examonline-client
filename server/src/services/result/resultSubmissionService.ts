@@ -74,6 +74,7 @@ async function processQueue(){
 
     while(!queue.isEmpty()){
         const data=queue.peek();
+        console.log(data)
         if(!data) break;
 
         try {

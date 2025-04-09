@@ -34,8 +34,7 @@ export async function verifyTest(testData :TokenPayload): Promise<TestType | Nul
         if(currentTime<tenMinutesBefore){
             return "Your Test is not started yet. Please try logging 10 minutes before the test starts";
         }else if(currentTime>=test.endAt || currentTime>=test.startAt){
-            return "Your Test login window has ended. You cannot take this test now."
-            
+            return "Your Test login window has ended. You cannot take this test now."   
         }
         return test;
     }else{
@@ -56,7 +55,7 @@ export async function verifyTest(testData :TokenPayload): Promise<TestType | Nul
 export async function fetchTestDetailsAndQuestions(testId: string): Promise<{ examQuestions: ExamQuestion[], resultQuestions: ResultQuestion[],testDetails:TestDetails } | null> {
     try {
         const test = await Test.findById(testId);
-        console.log(test);
+        
         if(!test){
             return null;
         }
@@ -64,7 +63,7 @@ export async function fetchTestDetailsAndQuestions(testId: string): Promise<{ ex
         if(!questionSet){
             return null;
         }
-        console.log('questionSet',questionSet);
+      
 
         // const questions = questionSet.questions;
         const questions = shuffleArray(questionSet.questions)

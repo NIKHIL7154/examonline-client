@@ -30,7 +30,6 @@ export default function SystemCheck() {
         if (index < initialSteps.length - 1) {
             handleStepClick(index + 1)
         }else{
-            alert("Test Completed")
             setCurrentStep("proctur")
         }
     }

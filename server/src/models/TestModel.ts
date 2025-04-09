@@ -25,7 +25,11 @@ export interface TestType extends Document {
     user: string;
     participants: mongoose.Types.ObjectId[];
     linksForwarded: string;
+
+    _id:string;
+
     analytics: mongoose.Types.ObjectId;
+
     // participants: mongoose.Types.ObjectId;
 }
 

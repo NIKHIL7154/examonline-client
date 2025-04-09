@@ -49,6 +49,9 @@ const TestInitialPage = (props: Props) => {
         setTestVerificationStatus(false)
         if(error.response.status===401){
           setserverResponse("No Test Found")
+        }else if(error.response.status===403){
+          setserverResponse("Test Already Started")
+          setCurrentStep('completed')
         }else{
           setserverResponse(error.response.data.message);
         }

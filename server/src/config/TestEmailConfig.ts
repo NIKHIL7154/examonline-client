@@ -15,6 +15,7 @@ export interface testInfoEmailType {
     testStartTime: number | null;
 }
 
+
 const signToken = (payload: EmailTokenPayload, testEndAt: Date) => {
     const secret = process.env.JWT_EMAIL_SECRET;
 

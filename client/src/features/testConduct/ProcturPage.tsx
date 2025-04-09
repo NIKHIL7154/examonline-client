@@ -7,6 +7,7 @@ import useTabStatus from "./hooks/useTabStatus";
 import { useQuestionStore } from "./components/QuestionStore";
 import { useSelectionDisable } from "./hooks/useSelectionDisable";
 import { socket } from "../../services/socket";
+import axios from "axios";
 
 
 type Props = {
@@ -59,15 +60,75 @@ const ProcturPage = (props: Props) => {
                 setCurrentStep("completed");
             })
         }
-        if(false){
-            socketSetup()
+        
+        socketSetup()
 
-        }
+        
 
         return () => {
 
         };
     }, [setQuestions]);
+
+    useEffect(()=>{
+        const captureImageAtRandomIntervals = () => {
+            const videoElement = document.createElement("video");
+            const canvasElement = document.createElement("canvas");
+            const context = canvasElement.getContext("2d");
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+            videoElement.srcObject = stream;
+            videoElement.play();
+
+            const captureImage = async () => {
+                if (context) {
+                canvasElement.width = videoElement.videoWidth;
+                canvasElement.height = videoElement.videoHeight;
+                context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+                const imageData = canvasElement.toDataURL("image/png");
+
+                try {
+                    const formData = new FormData();
+                    const byteString = atob(imageData.split(",")[1]);
+                    const arrayBuffer = new ArrayBuffer(byteString.length);
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    for (let i = 0; i < byteString.length; i++) {
+                    uint8Array[i] = byteString.charCodeAt(i);
+                    }
+                    const blob = new Blob([uint8Array], { type: "image/png" });
+                    formData.append("image", blob, "selfie.png");
+
+                    const response = await axios.post("http://localhost:8000/verify?user_id=nikhil&socket_id=jsahas", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    });
+                    if (response.status === 200) {
+                    console.log("Photo uploaded successfully:", response.data);
+                    } else {
+                    console.error("Error uploading photo:", response.statusText);
+                    }
+                } catch (error) {
+                    // alert("Error uploading photo: Can't verify your face");
+                    console.log("Error uploading photo:", error);
+                }
+                }
+
+                const randomInterval = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
+                setTimeout(captureImage, randomInterval);
+            };
+
+            captureImage();
+            })
+            .catch((error) => {
+            console.error("Error accessing user media:", error);
+            });
+        };
+
+        captureImageAtRandomIntervals();
+
+    },[])
 
     const enterFullscreen = () => {
         if (document.documentElement.requestFullscreen) {

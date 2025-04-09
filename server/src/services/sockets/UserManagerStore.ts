@@ -15,19 +15,19 @@ enum FinalStatus {
     Disqualified = "Disqualified",
     Completed = "Completed"
 }
-export type TestDetails={
-    testName:string;
-    endAt:Date;
-    startAt:Date;
-    testDuration:Number;
+export type TestDetails = {
+    testName: string;
+    endAt: Date;
+    startAt: Date;
+    testDuration: number;
 
 }
-export function createTestDetails(test:TestType):TestDetails{
+export function createTestDetails(test: TestType): TestDetails {
     return {
-        testName:test.name,
-        endAt:test.endAt,
-        startAt:test.startAt,
-        testDuration:test.durationInSec
+        testName: test.name,
+        endAt: test.endAt,
+        startAt: test.startAt,
+        testDuration: test.durationInSec as number
     }
 
 }
@@ -53,7 +53,7 @@ export type UserData = {
     anotherPersonCount: number;
     resultQuestions: ResultQuestion[];
     mobileDetectionCount: number;
-    testDetails:TestDetails
+    testDetails: TestDetails
 };
 
 
@@ -61,9 +61,9 @@ export type UserData = {
 
 const demoQuestions: ExamQuestion[] = [
     {
-        
+
         questionTitle: "What is the capital of France?",
-        
+
         userChoice: "B",
         visited: false,
         options: {
@@ -74,9 +74,9 @@ const demoQuestions: ExamQuestion[] = [
         }
     },
     {
-        
+
         questionTitle: "What is the capital of France?",
-        
+
         userChoice: "A",
         visited: false,
         options: {
@@ -90,7 +90,7 @@ const demoQuestions: ExamQuestion[] = [
 
 const demoResultQuestions: ResultQuestion[] = [
     {
-        
+
         questionTitle: "What is the capital of France?",
         options: {
             A: "Paris",
@@ -101,7 +101,7 @@ const demoResultQuestions: ResultQuestion[] = [
         correctOption: "A"
     },
     {
-        
+
         questionTitle: "What is the capital of France?",
         options: {
             A: "Paris",
@@ -123,19 +123,19 @@ export const demoUser: UserData = {
     tabSwitchCount: 2,
     disconnectionCount: 1,
     disqualified: false,
-    questions: demoQuestions, 
+    questions: demoQuestions,
     completed: true,
     disconnected: true,
     userName: "NIKHlu",
     userEmail: "john.doe@example.com",
     anotherPersonCount: 1,
-    resultQuestions:demoResultQuestions, 
+    resultQuestions: demoResultQuestions,
     mobileDetectionCount: 3,
-    testDetails:{
-        testName:"Demo Test",
-        endAt:new Date(),
-        startAt:new Date(),
-        testDuration:3600
+    testDetails: {
+        testName: "Demo Test",
+        endAt: new Date(),
+        startAt: new Date(),
+        testDuration: 3600
     }
 };
 
@@ -147,26 +147,26 @@ let globaltimer: NodeJS.Timeout | null = null;
 
 function startGlobalTimer() {
     globaltimer = setInterval(() => {
-        
+
         let updates: Record<string, { socket: Socket, timeLeft: number }> = {}; // Stores {token: timeLeft}
-        
-        if(users.size===0){
-            if(globaltimer){
+
+        if (users.size === 0) {
+            if (globaltimer) {
                 clearInterval(globaltimer);
-                globaltimer=null;
+                globaltimer = null;
             }
         }
         users.forEach((user, token) => {
             if (!user.completed && !user.disconnected) {
-                
+
                 user.timeLeft = Math.max(0, user.timeLeft - 1);
 
                 if (user.timeLeft <= 0) {
                     user.socket.emit(SocketEvents.TEST_COMPLETED);
                     user.completed = true;
-                    testCompletedForUser(token,SubmissionMode.TIME_ENDS);
+                    testCompletedForUser(token, SubmissionMode.TIME_ENDS);
                     user.socket.disconnect();
-                    
+
                     return;
                 }
 
@@ -222,7 +222,7 @@ export function UserManagerStore() {
             user.inactiveTimeout = setTimeout(() => {
                 user.completed = true;
                 console.log("User completed due to inactivity", token);
-                testCompletedForUser(token,SubmissionMode.AUTO_SUBMITTED,user);
+                testCompletedForUser(token, SubmissionMode.AUTO_SUBMITTED, user);
             }, 1000 * 10);
         },
         removeInactiveUserTimeout: (token: string) => {
@@ -238,10 +238,10 @@ export function UserManagerStore() {
             user.tabSwitchCount++;
             users.set(token, user);
         },
-        updateQuestions:(token:string,index:number,question:ExamQuestion)=>{
+        updateQuestions: (token: string, index: number, question: ExamQuestion) => {
             const user = users.get(token);
             if (!user) return;
-            user.questions[index]=question;
+            user.questions[index] = question;
             users.set(token, user);
         },
         testCompletedForUser
@@ -249,11 +249,11 @@ export function UserManagerStore() {
     };
 }
 
-function testCompletedForUser(token:string,mode:SubmissionMode,inactiveUser:UserData|null = null){
-    if(inactiveUser){
-        inactiveUser.submissionMode=mode;
+function testCompletedForUser(token: string, mode: SubmissionMode, inactiveUser: UserData | null = null) {
+    if (inactiveUser) {
+        inactiveUser.submissionMode = mode;
         addResultToQueue(inactiveUser);
-        completedUsers.add(inactiveUser.userEmail,{testId:inactiveUser.testId,expiry:new Date(Date.now()+1000*60)});
+        completedUsers.add(inactiveUser.userUid, { testId: inactiveUser.testId, expiry: new Date(Date.now() + 1000 * 60) });
         users.delete(token);
         return;
     }
@@ -262,7 +262,7 @@ function testCompletedForUser(token:string,mode:SubmissionMode,inactiveUser:User
     user.completed = true;
     user.submissionMode = mode;
     //here are those users who completed the test 
-    completedUsers.add(user.userEmail,{testId:user.testId,expiry:new Date(Date.now()+1000*60)});
+    completedUsers.add(user.userUid, { testId: user.testId, expiry: user.testDetails.endAt });
     addResultToQueue(user);
     users.delete(token);
 }

@@ -1,6 +1,8 @@
+import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
+import { imageServer } from "../../utils/globals";
 
 type Props={
     handleStepNavigation:(index:number)=>void,
@@ -12,6 +14,8 @@ const SelfiePage = (props:Props) => {
     const [photo, setPhoto] = useState<string | null>(null);
     const [isPhotoTaken, setIsPhotoTaken] = useState<boolean>(false);
     const webcamRef = useRef<Webcam | null>(null);
+    
+    
     // const navigate = useNavigate();
 
     // Request Camera Permissions
@@ -59,10 +63,41 @@ const SelfiePage = (props:Props) => {
     };
 
     // Confirm Photo and Navigate
-    const confirmPhoto = () => {
+    const confirmPhoto = async () => {
         if (photo) {
+            
+            // return;
+            try {
+                // http://localhost:8000/store?user_id=nikhlu
+                const formData = new FormData();
+                const byteString = atob(photo.split(",")[1]);
+                const arrayBuffer = new ArrayBuffer(byteString.length);
+                const uint8Array = new Uint8Array(arrayBuffer);
+                for (let i = 0; i < byteString.length; i++) {
+                    uint8Array[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([uint8Array], { type: "image/png" });
+                formData.append("image", blob, "selfie.png");
+
+                const response = await axios.post(imageServer+"/store?user_id=nikhil", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+                if(response.status === 200) {
+                    console.log("Photo uploaded successfully:", response.data);
+                    props.handleStepNavigation(2);
+                }else{
+                    console.error("Error uploading photo:", response.statusText);
+                    setPhoto(null);
+                }
+                
+            } catch (error) {
+                alert("Error uploading photo: Cant verify your face");
+                console.log("Error uploading photo:", error);
+                setPhoto(null);
+            }
             // localStorage.setItem("capturedSelfie", photo); // Store photo in local storage
-            props.handleStepNavigation(2);
         }
     };
 
