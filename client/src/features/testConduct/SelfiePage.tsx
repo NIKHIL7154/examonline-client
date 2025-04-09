@@ -1,8 +1,8 @@
 import axios from "axios";
-import { set } from "date-fns";
 import { useState, useRef, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
+import { imageServer } from "../../utils/globals";
 
 type Props={
     handleStepNavigation:(index:number)=>void,
@@ -14,6 +14,8 @@ const SelfiePage = (props:Props) => {
     const [photo, setPhoto] = useState<string | null>(null);
     const [isPhotoTaken, setIsPhotoTaken] = useState<boolean>(false);
     const webcamRef = useRef<Webcam | null>(null);
+    
+    
     // const navigate = useNavigate();
 
     // Request Camera Permissions
@@ -77,7 +79,7 @@ const SelfiePage = (props:Props) => {
                 const blob = new Blob([uint8Array], { type: "image/png" });
                 formData.append("image", blob, "selfie.png");
 
-                const response = await axios.post("http://localhost:8000/store?user_id=nikhil", formData, {
+                const response = await axios.post(imageServer+"/store?user_id=nikhil", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
