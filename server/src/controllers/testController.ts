@@ -18,6 +18,7 @@ import {
 } from "../config/TestEmailConfig";
 import { clientUrl } from "../utils/basicUtilityFunction";
 import { PipelineStage } from "mongoose";
+import { addAnalytics } from "../config/analyticsConfig";
 
 export const createUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const user = await User.create(req.body);
@@ -32,6 +33,19 @@ export const createUser = catchAsync(async (req: ProtectedRequest, res: Response
 
 });
 
+const calc15DaysRange = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const next15Days = new Date(tomorrow);
+    next15Days.setDate(next15Days.getDate() + 15);
+
+    return { tomorrow, next15Days };
+}
+
 export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
     const userId = req.auth.userId;
 
@@ -40,6 +54,15 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
     // Handle the status filter logic based on the query parameter
     if (req.query.status && req.query.status !== 'all') {
         filter.status = req.query.status; // Filter by status if not 'all'
+    }
+
+    if (req.query.next15Days === "true") {
+        const { tomorrow, next15Days } = calc15DaysRange();
+        filter.startAt = {
+            $gte: tomorrow,  // From tomorrow onward
+            $lte: next15Days, // Up to 15 days from tomorrow
+        };
+        filter.status = "pending"
     }
 
     const paginationStage = [];
@@ -118,10 +141,10 @@ export const getAllTestsByUser = catchAsync(async (req: ProtectedRequest, res: R
                 name: 1,
                 status: 1,
                 createdAt: 1,
-                // startAt: 1,
+                startAt: 1,
                 durationInSec: 1,
                 // endAt: 1,
-                // proctoring: 1,
+                proctoring: 1,
                 // tabSwitchLimit: 1,
                 // resumable: 1,
                 totalQuestions: 1,
@@ -209,6 +232,7 @@ export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, n
         // Check if the old test exists
         if (!oldTest) return next(new AppError("No test found with that ID", 404));
 
+        addAnalytics(oldTest);
         // Send the response with the old test
         return res.status(200).json({
             status: "success",
@@ -217,6 +241,8 @@ export const getTest = catchAsync(async (req: ProtectedRequest, res: Response, n
             },
         });
     }
+
+    addAnalytics(test);
 
     // Send the response with the updated test
     res.status(200).json({

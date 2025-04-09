@@ -29,7 +29,7 @@ function Header() {
                 </button>
 
             </>}
-            <div className='flexed gap-4'>
+            <div className='flexed gap-4 min-h-[28px]'>
                 <UserButton />
                 <p>{user?.fullName}</p>
             </div>

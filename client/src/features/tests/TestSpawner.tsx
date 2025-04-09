@@ -11,9 +11,12 @@ function TestSpawner() {
     const { isLoading, tests } = useTests(getToken)
 
     if (isLoading) return (<TestsLoading />)
+
+    if (!tests?.data?.tests?.length) return <Empty resourceName="tests" />
+    
     const { tests: testsArr, totalTests } = tests.data;
     // if(!bookings?.length)
-    if (!testsArr?.length) return <Empty resourceName="tests"/>
+    // if (!testsArr?.length) return <Empty resourceName="tests"/>
 
 
     return (
@@ -26,7 +29,7 @@ function TestSpawner() {
                 </div>
             </Menus>
 
-            <Pagination count={totalTests}/>
+            <Pagination count={totalTests} />
             {/* <div>hello</div> */}
         </>
     );
