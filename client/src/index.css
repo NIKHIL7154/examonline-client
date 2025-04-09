@@ -7,6 +7,16 @@
 :root {
   --custom-color: #00ac1a;
 }
+
+.scrollbar-hide {
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 .flexed{
     display: flex;
     justify-content: center;

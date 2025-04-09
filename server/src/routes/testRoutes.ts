@@ -8,6 +8,9 @@ router.route("/")
     .get(getAllTestsByUser)
     .post(createTest);
 
+// router.route("/hostedTestCount")
+//     .get(getHostedTestCount);
+
 router.route("/:id")
     .get(getTest)
     .delete(deleteTest)

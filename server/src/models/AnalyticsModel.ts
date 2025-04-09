@@ -19,6 +19,8 @@ interface incidentsType {
 }
 
 export interface AnalyticsType extends Document {
+    proctured: boolean;
+    testAt: Date;
     attendance: number;
     performance: gradePercent;
     totalMarks: number;
@@ -34,6 +36,12 @@ export interface AnalyticsType extends Document {
 
 
 const AnalyticsSchema = new mongoose.Schema<AnalyticsType>({
+    proctured: {
+        type: Boolean,
+    },
+    testAt: {
+        type: Date,
+    },
     attendance: {
         type: Number,
         default: 0,
@@ -103,4 +111,4 @@ const AnalyticsSchema = new mongoose.Schema<AnalyticsType>({
 });
 
 
-export const Analytics = mongoose.model<AnalyticsType>('Test', AnalyticsSchema);
+export const Analytics = mongoose.model<AnalyticsType>('Analytics', AnalyticsSchema);

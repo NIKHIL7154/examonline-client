@@ -3,6 +3,9 @@ import { GoogleSpreadsheet, GoogleSpreadsheetRow } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 import creds from '../keys/examfusion-451510-70bae177b416.json';
 import { SheetHeaders } from "../services/result/resultSubmissionService";
+import { Analytics } from "../models/AnalyticsModel";
+import { Participants, ParticipantsType } from "../models/ParticipantsModel";
+import { ObjectId } from "mongoose";
 
 
 const SHEET_ID = '1DDMXxdo1KomH6EJHu23njbPTFLHvJSkI94OIlZQFWh0';
@@ -42,15 +45,17 @@ const calculateAnalytics = (rows: GoogleSpreadsheetRow[], analyseProctured: bool
 
     let submissionType = {
         timeout: 0,
-        inactive: 0,
-        userSubmission: 0
+        inactive_autosubmit: 0,
+        userSubmission: 0,
+        incidents_autosubmit: 0,
     };
 
     let incidents = {
         tabSwitchCount: 0,
         mobileDetectionCount: 0,
-        anotherPersonCount: 0
+        anotherPersonCount: 0,
     };
+    let incidentsPerStudent = 0;
 
     let topScore = -Infinity; // Initialize to the lowest possible value
     let lowestScore = Infinity; // Initialize to the highest possible value 
@@ -97,17 +102,22 @@ const calculateAnalytics = (rows: GoogleSpreadsheetRow[], analyseProctured: bool
         if (submissionTypeValue === 'Time Ends') {
             submissionType.timeout += 1;
         } else if (submissionTypeValue === 'Auto Submitted by System due to Inactivity') {
-            submissionType.inactive += 1;
+            submissionType.inactive_autosubmit += 1;
         } else if (submissionTypeValue === 'Submitted by User') {
             submissionType.userSubmission += 1;
+        } else if (submissionTypeValue === 'Auto Submitted by System due to Malpractice') {
+            submissionType.incidents_autosubmit += 1;
         }
 
+        if (tabSwitchCount > 0) incidentsPerStudent += 1;
         incidents.tabSwitchCount += tabSwitchCount;
 
         if (analyseProctured) {
             mobileDetectionCount = parseFloat(row.get(SheetHeaders.MOBILE_DETECTION_COUNT));
             anotherPersonCount = parseFloat(row.get(SheetHeaders.ANOTHER_PERSON_COUNT));
 
+            if (mobileDetectionCount > 0) incidentsPerStudent += 1;
+            if (anotherPersonCount > 0) incidentsPerStudent += 1;
             incidents.mobileDetectionCount += mobileDetectionCount;
             incidents.anotherPersonCount += anotherPersonCount;
         }
@@ -126,7 +136,9 @@ const calculateAnalytics = (rows: GoogleSpreadsheetRow[], analyseProctured: bool
     });
 
     // Calculate overallAttemptRate
-    const overallAttemptRate = (totalAttemptedQuestions / attendance).toFixed(2);
+    const overallAttempt = (totalAttemptedQuestions / attendance)
+    const overallAttemptRate = ((overallAttempt / totalQuestions) * 100).toFixed(2);
+    // const overallAttemptRate = (totalAttemptedQuestions / attendance).toFixed(2);
 
     // Calculate overallAttemptAccuracy
     const overallAttemptAccuracy = (totalAccuracy / attendance).toFixed(2);
@@ -137,39 +149,70 @@ const calculateAnalytics = (rows: GoogleSpreadsheetRow[], analyseProctured: bool
 
     const technicalIssueRate = parseFloat(((technicalIssue / attendance) * 100).toFixed(2)) || 0;
 
-    const incidentsRate = {
-        tabSwitchRate: parseFloat((incidents.tabSwitchCount / attendance).toFixed(2)) || 0,
-        mobileDetectionRate: analyseProctured
-            ? parseFloat((incidents.mobileDetectionCount / attendance).toFixed(2)) || 0
-            : "Featute opted out",
-        anotherPersonRate: analyseProctured
-            ? parseFloat((incidents.anotherPersonCount / attendance).toFixed(2)) || 0
-            : "Featute opted out",
+    const incidentsRatePerStudent = parseFloat(((incidentsPerStudent / attendance)*100).toFixed(2)) || 0;
+    const incidentsCount = {
+        tabSwitchRate: incidents.tabSwitchCount,
+        mobileDetectionRate: analyseProctured ? incidents.mobileDetectionCount : "Feature opted out",
+        anotherPersonRate: analyseProctured ? incidents.anotherPersonCount : "Feature opted out",
     }
+    // const incidentsRate = {
+    //     tabSwitchRate: parseFloat((incidents.tabSwitchCount / attendance).toFixed(2)) || 0,
+    //     mobileDetectionRate: analyseProctured
+    //         ? parseFloat((incidents.mobileDetectionCount / attendance).toFixed(2)) || 0
+    //         : "Feature opted out",
+    //     anotherPersonRate: analyseProctured
+    //         ? parseFloat((incidents.anotherPersonCount / attendance).toFixed(2)) || 0
+    //         : "Feature opted out",
+    // }
 
+    const submissionsRate = {
+        timeout: parseFloat(((submissionType.timeout / attendance) * 100).toFixed(2)) || 0,
+        inactive_autosubmit: parseFloat(((submissionType.inactive_autosubmit / attendance) * 100).toFixed(2)) || 0,
+        userSubmission: parseFloat(((submissionType.userSubmission / attendance) * 100).toFixed(2)) || 0,
+        incidents_autosubmit: analyseProctured ? parseFloat(((submissionType.incidents_autosubmit / attendance) * 100).toFixed(2)) || 0 : "Feature opted out",
+    }
     // Return the final analytics object
     return {
         attendance,
         performance,
         totalMarks,
         totalQuestions,
-        submissionType,
+        submissionType: submissionsRate,
         overallAttemptRate: parseFloat(overallAttemptRate),
         overallAttemptAccuracy: parseFloat(overallAttemptAccuracy),
         averageScore: parseFloat(averageScore),
         technicalIssueRate,
-        incidents: incidentsRate,
+        incidents: incidentsCount,
+        incidentsRatePerStudent,
         topScore,
         lowestScore,
     };
+}
+
+async function getAccumulatedListLength(participants: { _id: ObjectId, listName: string }[]) {
+    // Map over the participants to fetch their lists
+    const participantPromises = participants.map(async (participant) => {
+        const foundParticipant = await Participants.findById(participant._id); // Fetch the participant
+        return foundParticipant ? foundParticipant.list : null; // Return the list or null if not found
+    });
+
+    // Wait for all promises to resolve
+    const participantLists = await Promise.all(participantPromises);
+
+    // Now use reduce to accumulate the lengths of the lists
+    const accumulatedLength = participantLists.reduce((acc, list) => {
+        return acc + (list ? list.length : 0); // Add the length of the list if it exists
+    }, 0); // Initial value of the accumulator is 0
+
+    return accumulatedLength; // Return the accumulated length
 }
 
 export const addAnalytics = async (test: TestType) => {
     // if (test.status !== "completed") return null;
     // if (test.analytics) return null;
     // const { _id: testId } = test;
-    const { user, proctoring } = test;
-    const testId = "67b993108e1ca35da449d5e6";
+    const { user, proctoring, startAt } = test;
+    const testId = "67ee47d3bf1c2ddc4431604b";
     try {
         if (!doc) {
             doc = new GoogleSpreadsheet(SHEET_ID, new JWT({
@@ -189,13 +232,21 @@ export const addAnalytics = async (test: TestType) => {
 
         const rows = await sheet.getRows();
         // const structuredRows = rows.map((row: GoogleSpreadsheetRow) => mapRowData(row));
+        const expectedAttendance = await getAccumulatedListLength(test.participants as any)
 
         const analytics = {
+            testAt: startAt,
+            proctured: proctoring,
+            expectedAttendance,
             ...calculateAnalytics(rows, proctoring),
             user,
         };
 
+
+        // const analyticsDocs = await Analytics.find();
+        // console.log(analyticsDocs);
         console.log(analytics);
+
 
 
 
