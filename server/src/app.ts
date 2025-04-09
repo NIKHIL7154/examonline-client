@@ -24,7 +24,7 @@ import testRoutes from "./routes/testRoutes";
 import participantsRoutes from "./routes/participantsRoutes";
 import questionSetRoutes from "./routes/questionSetRoutes";
 import questionGenRoute from "./routes/questionGenRoute";
-
+import analyticsRoutes from "./routes/analyticsRoutes";
 import examConductRoutes from "./routes/examConductRoutes";
 
 // DISABLE ON PROD
@@ -91,6 +91,7 @@ app.use("/api/v1/user/tests", testRoutes);
 app.use("/api/v1/user/participants", participantsRoutes);
 app.use("/api/v1/user/questionSets", questionSetRoutes);
 app.use("/api/v1/user/questionGen", questionGenRoute);
+app.use("/api/v1/user/analytics", analyticsRoutes);
 
 //test conduct route
 app.use("/test",examConductRoutes);

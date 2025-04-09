@@ -25,7 +25,11 @@ export interface TestType extends Document {
     user: string;
     participants: mongoose.Types.ObjectId[];
     linksForwarded: string;
+
     _id:string;
+
+    analytics: mongoose.Types.ObjectId;
+
     // participants: mongoose.Types.ObjectId;
 }
 
@@ -152,6 +156,10 @@ const TestSchema = new mongoose.Schema<TestType>({
     //     type: Boolean,
     //     required: true
     // }
+    analytics: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Analytics",
+    }
 });
 
 TestSchema.pre<Query<any, TestType>>(/^find/, function (next) {

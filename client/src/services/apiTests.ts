@@ -6,6 +6,28 @@ type Filter = {
     value: string
 }
 
+// export const getTestCount = async (authToken: () => Promise<string | null>) => {
+//     try{
+//         const url = `${serverUrl}/tests/hostedTestCount`
+//         const response = await createGetRequest(authToken, url);
+//         return response;
+//     }catch (error) {
+//         console.error(error);
+//         throw new Error("Test count could not be loaded");
+//     }
+// }
+
+export const getTestsNext15 = async (authToken: () => Promise<string | null>) => {
+    try {
+        const url = `${serverUrl}/tests?next15Days=true`
+        const response = await createGetRequest(authToken, url);
+        return response;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Tests could not be loaded");
+    }
+};
+
 export const getTests = async (
     authToken: () => Promise<string | null>,
     filter: Filter | undefined = undefined,

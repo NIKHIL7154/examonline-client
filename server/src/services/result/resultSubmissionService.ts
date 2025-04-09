@@ -13,7 +13,7 @@ const SHEET_ID = '1DDMXxdo1KomH6EJHu23njbPTFLHvJSkI94OIlZQFWh0';
 
 let doc: any |null = null;
 
-enum SheetHeaders{
+export enum SheetHeaders{
     STUDENT_NAME = "Student Name",
     EMAIL = "Email",
     UID = "UID",
