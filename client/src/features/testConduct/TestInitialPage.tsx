@@ -2,18 +2,16 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import LoaderNew from '../../ui/LoaderNew';
 import { useTestNavigation } from './TestNavigationContext';
+import { setExamData } from '../../utils/ExamData';
 
 
-type Props = {
-  updateToken: (token: string) => void;
-}
 
-const TestInitialPage = (props: Props) => {
+const TestInitialPage = () => {
  
 
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token");
-
+  
 
   const [testVerificationStatus, setTestVerificationStatus] = useState<boolean>(true);
   const [requestStatus, setRequestStatus] = useState<boolean>(false);
@@ -30,7 +28,12 @@ const TestInitialPage = (props: Props) => {
         const response = await axios.post('http://localhost:2121/test', { token });
         console.log(response)
         if (response.status == 200) {
-          props.updateToken(response.data.data.testToken);
+          const data= response.data.data;
+          setExamData({
+            token: data.testToken,
+            duration: data.duration,
+            questionCount: data.questionCount,
+            userUID: data.uid})
           
           settestInfo({
             duration: response.data.data.duration,

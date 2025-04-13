@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { useTestNavigation } from "../features/testConduct/TestNavigationContext";
 import TestInitialPage from "../features/testConduct/TestInitialPage";
 import SystemCheck from "../features/testConduct/SystemCheck";
@@ -8,16 +8,11 @@ import TestExpired from "../features/testConduct/TestExpired";
 
 
 
-
-
-
 type TestSteps= "initial" | "environment" | "proctur" | "completed" | "expired";
 const TestConductPage = () => {
   const { currentStep, setCurrentStep } = useTestNavigation();
-  const [testToken, setTestToken] = useState<string>("alba");
-  const updateToken=(token:string)=>{
-    setTestToken(token);
-  }
+
+
   return (
     <div className="w-full h-full relative">
       <select name="state" className="absolute left-0 top-0" onChange={(e)=>setCurrentStep(e.target.value as TestSteps)} id="">
@@ -28,15 +23,11 @@ const TestConductPage = () => {
         <option value="completed">Completed</option>
         <option value="expired">Expired</option>
       </select>
-      {currentStep === "initial" && <TestInitialPage updateToken={updateToken}/>}
-      {currentStep === "environment" && <SystemCheck/>}
+      {currentStep === "initial" && <TestInitialPage />}
+      {currentStep === "environment" && <SystemCheck />}
       
-      {currentStep === "testing" && <div>
-        <input onChange={(e)=>setTestToken(e.target.value)} type="text" placeholder="Enter id here" />
-        <button onClick={() => setCurrentStep("proctur")}>Submit
-        </button>
-      </div>}
-      {currentStep === "proctur" && <ProcturPage testToken={testToken} />}
+      
+      {currentStep === "proctur" && <ProcturPage/>}
       {currentStep==="completed" && <TestCompleted/>}
 
       {currentStep==="expired" && <TestExpired/>}

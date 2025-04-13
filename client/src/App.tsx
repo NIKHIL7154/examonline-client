@@ -10,7 +10,7 @@ import { Toaster } from "react-hot-toast";
 import SetEditorPage from "./pages/SetEditorPage";
 
 import RootLayout from "./layouts/RootLayout";
-import IndexPage from "./pages/IndexPage";
+
 import AuthLayout from "./layouts/AuthLayout";
 import AuthPage from "./pages/AuthPage";
 import ErrorBoundary from "./pages/ErrorBoundary";
@@ -25,6 +25,7 @@ import TestParticipants from "./features/testCreation/TestParticipants";
 import TestReview from "./features/testCreation/TestReview";
 import TestConductPage from "./pages/TestConductPage";
 import { TestNavigationProvider } from "./features/testConduct/TestNavigationContext";
+import HomePage from "./pages/HomePage";
 
 
 
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      { path: '/', element: <IndexPage /> },
+      { path: '/', element: <HomePage /> },
       {
         path: "auth", element: <AuthLayout />, children: [
           { path: "", element: <AuthPage /> },

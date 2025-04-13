@@ -46,6 +46,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 import testingRoutes from "./routes/testingRoutes1";
+import { startWorker } from "./services/sockets/ProctoringResult";
 //onlyfor testing
 app.use("/",testingRoutes)
 
@@ -62,7 +63,7 @@ if (process.env.NODE_ENV === "development") {
 //socket initialized
 const server = http.createServer(app);
 initializeSockets(server);
-
+startWorker();
 
 
 

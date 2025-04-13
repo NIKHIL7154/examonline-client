@@ -12,7 +12,7 @@ router.post("/createtest",catchAsync(async (req:Request,res:Response)=>{
     const startAt = new Date();
     const minutes = startAt.getMinutes();
     
-    const roundedMinutes = (Math.ceil(minutes / 5) * 5)+5;
+    const roundedMinutes = (Math.ceil(minutes / 5) * 5);
     startAt.setMinutes(roundedMinutes, 0, 0);
     const durationInSec = 3600; // 1 hour in seconds
     const endAt = new Date(startAt.getTime() + durationInSec * 1000 * 48);

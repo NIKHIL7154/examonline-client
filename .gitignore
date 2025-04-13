@@ -27,4 +27,8 @@ keys/
 *.sln
 *.sw?
 
+venv
+.venv
+__pycache__
+
 

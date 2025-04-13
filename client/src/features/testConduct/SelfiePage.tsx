@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import { imageServer } from "../../utils/globals";
+import { getExamData } from "../../utils/ExamData";
 
 type Props={
     handleStepNavigation:(index:number)=>void,
@@ -78,8 +79,8 @@ const SelfiePage = (props:Props) => {
                 }
                 const blob = new Blob([uint8Array], { type: "image/png" });
                 formData.append("image", blob, "selfie.png");
-
-                const response = await axios.post(imageServer+"/store?user_id=nikhil", formData, {
+                const userUID=getExamData()?.userUID;
+                const response = await axios.post(imageServer+"/store?user_id="+userUID, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },

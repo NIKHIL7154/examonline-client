@@ -38,7 +38,7 @@ router.post("/", catchAsync(async (req: Request, res: Response, next: NextFuncti
         data: {
             testToken:generateTestToken(testData, "4h"),
             userName: testData.userName,
-            
+            uid: testData.uid,
             questionCount,
             duration: (testValidity.durationInSec as number /60) //in minutes,
         },
