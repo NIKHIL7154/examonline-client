@@ -14,8 +14,8 @@ import { SocketEvents } from "../../types/ExamConductTypes";
 
 
 const ProcturPage = () => {
-
-    const { setCurrentStep } = useTestNavigation();
+    
+    const {currentStep, setCurrentStep } = useTestNavigation();
     const { token, userUID } = getExamData();
 
     const isFullscreen = useFullScreenDetector();
@@ -124,7 +124,9 @@ const ProcturPage = () => {
                         }
 
                         const randomInterval = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
-                        setTimeout(captureImage, randomInterval);
+                        if(currentStep =="proctur"){
+                            setTimeout(captureImage, randomInterval);
+                        }
                     };
 
                     captureImage();
