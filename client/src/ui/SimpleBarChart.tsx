@@ -4,7 +4,6 @@ import { BarChart, Bar, Tooltip, ResponsiveContainer } from 'recharts';
 import { testAnalyticsType } from '../features/analytics/AnalyticsBox';
 import { format, isSameDay } from 'date-fns';
 
-// Sample data for the Bar Chart
 // const data = [
 //     { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
 //     { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
