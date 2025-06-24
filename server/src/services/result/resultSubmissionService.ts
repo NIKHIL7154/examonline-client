@@ -27,7 +27,10 @@ export enum SheetHeaders{
     DISCONNECTION_COUNT = "Disconnection Count",
     MOBILE_DETECTION_COUNT = "Mobile Detection Count",
     ANOTHER_PERSON_COUNT = "Another Person Count",
+    IMAGES_ANALYZED = "Images Analyzed",
+    CHEATING_COUNT = "Cheating Count",
     SUBMISSION_TYPE = "Submission Type"
+
 }
 
 export function addResultToQueue(data:UserData){
@@ -89,6 +92,7 @@ async function processQueue(){
 
             await doc.loadInfo();
             let sheet = doc.sheetsByTitle[data.testId];
+            
 
             if (!sheet) {
                 sheet = await doc.addSheet({
@@ -112,6 +116,8 @@ async function processQueue(){
                 [SheetHeaders.DISCONNECTION_COUNT]: data.disconnectionCount,
                 [SheetHeaders.MOBILE_DETECTION_COUNT]: data.mobileDetectionCount,
                 [SheetHeaders.ANOTHER_PERSON_COUNT]: data.anotherPersonCount,
+                [SheetHeaders.IMAGES_ANALYZED]: data.imagesAnalyzed,
+                [SheetHeaders.CHEATING_COUNT]: data.cheatingCount,
                 [SheetHeaders.SUBMISSION_TYPE]: data.submissionMode
             }
             await sheet.addRow(obj);

@@ -7,6 +7,7 @@ import { createPostRequest } from "../authentication/apiHelper";
 import { setQuestions } from "../../utils/QuestionSetStore";
 import { Question } from "../../types/QuestionTypes";
 import ParticlesButton from "../../ui/ParticlesButton";
+import { serverUrl } from "../../utils/globals";
 
 type Props = {
     templateIndex: number
@@ -39,7 +40,7 @@ const AiQuestionGenerator = ({ templateIndex, goBack }: Props) => {
                 count: genOptions.numQuestions,
                 topic: genOptions.template
             }
-            const response = await createPostRequest(getToken, "http://localhost:2121/api/v1/user/questionGen", payload)
+            const response = await createPostRequest(getToken, serverUrl+"/questionGen", payload)
             const { data: { questions } } = response
             toast.dismiss()
             toast.success("Questions generated successfully")

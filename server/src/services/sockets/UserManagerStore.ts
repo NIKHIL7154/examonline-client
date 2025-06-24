@@ -53,7 +53,9 @@ export type UserData = {
     anotherPersonCount: number;
     resultQuestions: ResultQuestion[];
     mobileDetectionCount: number;
-    testDetails: TestDetails
+    testDetails: TestDetails;
+    imagesAnalyzed: number;
+    cheatingCount: number;
 };
 
 
@@ -136,7 +138,9 @@ export const demoUser: UserData = {
         endAt: new Date(),
         startAt: new Date(),
         testDuration: 3600
-    }
+    },
+    cheatingCount: 0,
+    imagesAnalyzed: 0,
 };
 
 

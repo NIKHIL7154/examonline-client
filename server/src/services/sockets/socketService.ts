@@ -95,6 +95,8 @@ export function SocketController(io: Server) {
                 anotherPersonCount: 0,
                 mobileDetectionCount: 0,
                 testDetails: testDetails
+                ,imagesAnalyzed: 0,
+                cheatingCount: 0,
             };
 
             addUser(userUID, newUser);

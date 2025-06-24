@@ -8,41 +8,40 @@ import { useQuestionStore } from "./components/QuestionStore";
 import { useSelectionDisable } from "./hooks/useSelectionDisable";
 import { socket } from "../../services/socket";
 import axios from "axios";
+import { getExamData } from "../../utils/ExamData";
+import { SocketEvents } from "../../types/ExamConductTypes";
 
 
-type Props = {
-    testToken: string;
-}
 
-const ProcturPage = (props: Props) => {
-
-    const { setCurrentStep } = useTestNavigation();
-
+const ProcturPage = () => {
+    
+    const {currentStep, setCurrentStep } = useTestNavigation();
+    const { token, userUID } = getExamData();
 
     const isFullscreen = useFullScreenDetector();
     const divRef = useRef<HTMLDivElement>(null);
     const socketStatus = useSocketConnectionStatus();
-    const [isTabActive, setIsTabActive] = useTabStatus(divRef as RefObject<HTMLDivElement> , socketStatus) as [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    const [isTabActive, setIsTabActive] = useTabStatus(divRef as RefObject<HTMLDivElement>, socketStatus) as [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     const { setQuestions } = useQuestionStore();
     const [testStarted, settestStarted] = useState<boolean>(true);
-    useSelectionDisable(divRef as  RefObject<HTMLDivElement>, socketStatus);
-    
-/*     useEffect(() => {
+    useSelectionDisable(divRef as RefObject<HTMLDivElement>, socketStatus);
+
+    useEffect(() => {
         if (!isTabActive) {
             console.log("Tab switched");
-            socket.emit("tab-switched");
+            socket.emit(SocketEvents.TAB_SWITCH, { userUID });
         }
         return () => {
 
         }
     }, [isTabActive]);
- */
+
 
     useEffect(() => {
         function socketSetup() {
             // socket.auth = { token: "test-Token" };
 
-            socket.auth = { token: props.testToken };
+            socket.auth = { token: token };
             socket.connect();
             socket.on("startTest", (data) => {
                 console.log("Test started", data)
@@ -59,76 +58,87 @@ const ProcturPage = (props: Props) => {
                 socket.disconnect();
                 setCurrentStep("completed");
             })
+            socket.on("proctoring", (data) => {
+                console.log("Proctoring data received", data)
+                if (data.message) {
+                    alert(data.message);
+                }
+            })
         }
-        
+
         socketSetup()
 
-        
+
 
         return () => {
-
+            socket.off("startTest");
+            socket.off("disconnect");
+            socket.off("testCompleted");
+            socket.off("proctoring");
         };
-    }, [setQuestions]);
+    }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         const captureImageAtRandomIntervals = () => {
             const videoElement = document.createElement("video");
             const canvasElement = document.createElement("canvas");
             const context = canvasElement.getContext("2d");
 
             navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-            videoElement.srcObject = stream;
-            videoElement.play();
+                .then((stream) => {
+                    videoElement.srcObject = stream;
+                    videoElement.play();
 
-            const captureImage = async () => {
-                if (context) {
-                canvasElement.width = videoElement.videoWidth;
-                canvasElement.height = videoElement.videoHeight;
-                context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-                const imageData = canvasElement.toDataURL("image/png");
+                    const captureImage = async () => {
+                        if (context) {
+                            canvasElement.width = videoElement.videoWidth;
+                            canvasElement.height = videoElement.videoHeight;
+                            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+                            const imageData = canvasElement.toDataURL("image/png");
 
-                try {
-                    const formData = new FormData();
-                    const byteString = atob(imageData.split(",")[1]);
-                    const arrayBuffer = new ArrayBuffer(byteString.length);
-                    const uint8Array = new Uint8Array(arrayBuffer);
-                    for (let i = 0; i < byteString.length; i++) {
-                    uint8Array[i] = byteString.charCodeAt(i);
-                    }
-                    const blob = new Blob([uint8Array], { type: "image/png" });
-                    formData.append("image", blob, "selfie.png");
+                            try {
+                                const formData = new FormData();
+                                const byteString = atob(imageData.split(",")[1]);
+                                const arrayBuffer = new ArrayBuffer(byteString.length);
+                                const uint8Array = new Uint8Array(arrayBuffer);
+                                for (let i = 0; i < byteString.length; i++) {
+                                    uint8Array[i] = byteString.charCodeAt(i);
+                                }
+                                const blob = new Blob([uint8Array], { type: "image/png" });
+                                formData.append("image", blob, "selfie.png");
 
-                    const response = await axios.post("http://localhost:8000/verify?user_id=nikhil&socket_id=jsahas", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                    });
-                    if (response.status === 200) {
-                    console.log("Photo uploaded successfully:", response.data);
-                    } else {
-                    console.error("Error uploading photo:", response.statusText);
-                    }
-                } catch (error) {
-                    // alert("Error uploading photo: Can't verify your face");
-                    console.log("Error uploading photo:", error);
-                }
-                }
+                                const response = await axios.post(`http://localhost:8000/verify?user_id=${userUID}&socket_id=qwerty`, formData, {
+                                    headers: {
+                                        "Content-Type": "multipart/form-data",
+                                    },
+                                });
+                                if (response.status === 200) {
+                                    console.log("Photo uploaded successfully:", response.data);
+                                } else {
+                                    console.error("Error uploading photo:", response.statusText);
+                                }
+                            } catch (error) {
+                                // alert("Error uploading photo: Can't verify your face");
+                                console.log("Error uploading photo:", error);
+                            }
+                        }
 
-                const randomInterval = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
-                setTimeout(captureImage, randomInterval);
-            };
+                        const randomInterval = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
+                        if(currentStep =="proctur"){
+                            setTimeout(captureImage, randomInterval);
+                        }
+                    };
 
-            captureImage();
-            })
-            .catch((error) => {
-            console.error("Error accessing user media:", error);
-            });
+                    captureImage();
+                })
+                .catch((error) => {
+                    console.error("Error accessing user media:", error);
+                });
         };
 
         captureImageAtRandomIntervals();
 
-    },[])
+    }, [])
 
     const enterFullscreen = () => {
         if (document.documentElement.requestFullscreen) {
